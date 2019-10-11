@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+  <title>Ubicua Cloud</title>
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin"
+    rel="stylesheet" type="text/css">
+  <link href="assets/css/ionicons.min.css" rel="stylesheet" type="text/css">
+  <link href="assets/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="assets/css/pixeladmin.min.css" rel="stylesheet" type="text/css">
+  <link href="assets/css/widgets.min.css" rel="stylesheet" type="text/css">
+  <link href="assets/css/ubicua.css" rel="stylesheet" type="text/css">
+
+  <!-- Theme -->
+  <link href="assets/css/themes/adminflare.min.css" rel="stylesheet" type="text/css">
+
+  <!-- Pace.js -->
+  <script src="assets/pace/pace.min.js"></script>
+  <script src="assets/js/wppjs.js"></script>
+</head>
+
+<body>
+  <!-- Nav -->
+  <nav class="px-nav px-nav-left">
+    <button type="button" class="px-nav-toggle" data-toggle="px-nav">
+      <span class="px-nav-toggle-arrow"></span>
+      <span class="navbar-toggle-icon"></span>
+      <span class="px-nav-toggle-label font-size-11">HIDE MENU</span>
+    </button>
+
+    <ul class="px-nav-content">
+      <li class="px-nav-item active">
+        <a href="dashboard.html">
+          <i class="px-nav-icon ion-ios-pulse"></i>
+          <span class="px-nav-label">Dashboard</span>
+        </a>
+      </li>
+      <li class="px-nav-item">
+        <a href="agentes.html">
+          <i class="px-nav-icon ion-ios-people"></i>
+          <span class="px-nav-label">Atendentes</span>
+        </a>
+      </li>
+      <li class="px-nav-item active">
+        <a href="cadsta.html">
+          <i class="px-nav-icon ion-android-checkbox-outline"></i>
+          <span class="px-nav-label">Status de Atendimento</span>
+        </a>
+      </li>
+      <li class="px-nav-item">
+        <a href="mailing.html">
+          <i class="px-nav-icon ion-clipboard"></i>
+          <span class="px-nav-label">Cadastro de Mailing</span>
+        </a>
+      </li>
+      <li class="px-nav-item px-nav-dropdown">
+        <a href="#">
+          <i class="px-nav-icon ion-ios-paper"></i>
+          <span class="px-nav-label">Relatórios</span>
+        </a>
+        <ul class="px-nav-dropdown-menu">
+          <li class="px-nav-item active">
+            <a href="report1.html">
+              <span class="px-nav-label">Analítico de Atendimentos</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Navbar -->
+  <nav class="navbar px-navbar">
+    <div class="navbar-header">
+      <a class="navbar-brand px-demo-brand">
+        <n class="page-header-icon" style="color: white">Atendimento WhatsApp</n>
+      </a>
+    </div>
+
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#px-navbar-collapse"
+      aria-expanded="false">
+      <i class="navbar-toggle-icon"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="px-navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li>
+          <a href="#"></a>
+          </a>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+            aria-expanded="false">
+            <i class="px-navbar-icon fa fa-bullhorn font-size-14"></i>
+            <span class="px-navbar-icon-label">Notificaçõess</span>
+            <span class="px-navbar-label label label-danger">0</span>
+          </a>
+          <div class="dropdown-menu p-a-0" style="width: 300px">
+          </div>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+            aria-expanded="false">
+            <img src="assets/images/avatar.png" alt="" class="px-navbar-image">
+            <span id="lboperador" class="hidden-md" style="color:white"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a href="index.html">Log out</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <div class="px-content">
+    <div class="page-header">
+      <h1 class="ion-ios-pulse"> Dashboard</h1>
+    </div>
+    <!-- Stats -->
+    <div class="col-md-3">
+      <div class="box darken" style="background-color: #C653C6; color: #FFFFFF">
+        <div class="box-cell p-x-3 p-y-1">
+          <div class="font-weight-semibold font-size-12">Aguardando na Fila</div>
+          <div id="" class="font-weight-bold font-size-20" style="display: inline-block;">
+            <span><span id="aguardando">0</span>&nbsp&nbsp&nbsp<button id="btntempo"
+                class="btn btn-sm btn-rounded btn-outline" style="backgrond-color: #FFFFFF; color: #FFFFFF;"><i
+                  class="fa fa-clock-o"></i>&nbsp;&nbsp;<span id="taf"
+                  style="color: #FFFFFF;font-weight: bold;">0</span></button><span>
+          </div>
+          <i class="box-bg-icon middle right font-size-52 ion-ios-people"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3"">
+         <div class=" box bg-success darken">
+      <div class="box-cell p-x-3 p-y-1">
+        <div class="font-weight-semibold font-size-12">Em Atendimento</div>
+        <div id="" class="font-weight-bold font-size-20">
+          <h1 id="EmAtendimento">0</h1>
+        </div>
+        <i class="box-bg-icon middle right font-size-52 ion-ios-box"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="box bg-warning darken">
+      <div class="box-cell p-x-3 p-y-1">
+        <div class="font-weight-semibold font-size-12">Encerrados</div>
+        <div class="font-weight-bold font-size-20">
+          <h1 id="AtendimentoEncerrados">0</h1>
+        </div>
+        <i class="box-bg-icon middle right font-size-52 ion-android-done"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="box bg-info darken">
+      <div class="box-cell p-x-3 p-y-1">
+        <div class="font-weight-semibold font-size-12">Tempo Médio de Atendimento</div>
+        <div class="font-weight-bold font-size-20">
+          <small class="font-weight-light"></small>
+          <h1 id="TempoMedio">0</h1>
+        </div>
+        <i class="box-bg-icon middle right font-size-52 ion-arrow-graph-up-right"></i>
+      </div>
+    </div>
+  </div>
+  </br>
+  </br>
+  </br>
+  </br>
+  <div class="col-md-12">
+    <div class="panel panel-danger panel-dark">
+      <div class="panel-heading panel-ranger">
+        <span class="panel-title">Atendentes Online</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Usuário</th>
+              <th>Logado</th>
+              <th>Em Atendimento</th>
+              <th>Encerrados</th>
+              <th>Deslogar</td>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+
+  <!-- / Stats -->
+  </div>
+
+
+  <!-- Footer -->
+  <footer class="px-footer px-footer-bottom">© 2018 Ubicua Cloud</footer>
+
+  <div id="modal-default1" class="modal fade modal-alert modal-danger">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <i class="fa ion-alert-circled"></i>
+        </div>
+        <div class="modal-title">AVISO</div>
+        <div class="modal-body">Confirma Deslogar o Operador ?</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">NÃO</button>
+          <button id="confirmadeslogar" type="button" class="btn btn-danger" data-dismiss="modal">SIM</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load jQuery -->
+  <script src="assets/js/jquery.min.js"></script>
+
+  <script src="assets/js/socket.io.js"></script>
+
+  <!-- Core scripts -->
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/pixeladmin.min.js"></script>
+
+  <!-- Your scripts -->
+  <script src="assets/js/app.js"></script>
+  <script>
+
+    var sid;
+    var socket = io.connect('https://ccs.sanofi-mobile.com.br');
+    var operador = sessionStorage.getItem('fkname');
+    $('#lboperador').text(operador);
+    // Usuário Logado ?
+    if (sessionStorage.getItem('fkname') == null) {
+      window.location = "index.html";
+    }
+
+    socket.on('sentinel_clients_queue', function (payload) {
+      $("#EmAtendimento").text(payload[0].total);
+      $("#aguardando").text(payload[1].total);
+      $("#AtendimentoEncerrados").text(payload[2].total);
+      if (payload[1].total > 0) {
+        $("#btntempo").show();
+        // Calculando tempo em fila
+        var _time = payload[4].total;
+        var _minutes = _time / 60;
+        var _rmin = Math.floor(_minutes);
+        var _total = _rmin * 60;
+        var _seconds = _time - _total;
+        if (_time < 60) {
+          $("#taf").text(_time + " segundos");
+        } else if (_time > 60 && _time < 120) {
+          $("#taf").text(_rmin + " minuto e " + _seconds + " segundos");
+        } else {
+          $("#taf").text(_rmin + " minutos e " + _seconds + " segundos");
+        }
+      } else {
+        $("#btntempo").hide();
+      }
+      var tempmed = payload[3].total;
+      var atendeIn = payload[0].total;
+      var media = Math.round(tempmed / atendeIn);
+      if (media > 0) {
+      } else {
+        media = 0;
+      }
+      $("#TempoMedio").text(media + " minutos");
+    });
+
+    socket.on('sentinel_clients_alive', function (payload) {
+
+      var tt = JSON.parse(payload);
+      var _addtr;
+      var _count = 1;
+      for (i = 0; i < tt.length; i++) {
+        if (tt[i].fkid.length == 36) {
+          var _dt1 = new Date(tt[i].fkon);
+          var _dt2 = new Date();
+          var _timediff = Math.abs(_dt2.getTime() - _dt1.getTime());
+          var _secdiff = Math.floor((_timediff / 1000 / 60) << 0);
+          var _tempoon = '';
+          if (_secdiff < 1) {
+            _tempoon = "Menos de 1 minuto";
+          } else if (_secdiff == 1) {
+            _tempoon = "1 minuto";
+          } else {
+            _tempoon = _secdiff + " minutos";
+          }
+          _ip = tt[i].fkip;
+          _addtr += "<tr><td>" + _count + "</td><td><img src='assets/images/avatar.png' alt='' style='width:26px;height:26px;' class='border-round'>&nbsp;&nbsp;" + tt[i].fkname + "</a></td><td>" + _tempoon + "</td><td width='150px;'><span class='label label-success pull-left' id='atendein" + tt[i].fkid + "'>0</span></td><td><span class='label label-warning pull-left' id='encerrain" + tt[i].fkid + "'>0</span></td><td><button class='buttonatend' onclick='onforcedisconnect(\"" + tt[i].socketid + "\")'><i class='dropdown-icon fa fa-power-off'></i></button></td></tr>";
+          _count = _count + 1;
+        }
+      }
+      $("#tbody").text('');
+      $("#tbody").append(_addtr);
+    });
+
+    socket.on('view_agents', function (payload) {
+
+      var ta = JSON.parse(payload);
+      for (i = 0; i < ta.length; i++) {
+        $('#' + ta[i].atendimentos + ta[i].fkto).text(ta[i].total);
+      }
+
+    });
+
+    function onforcedisconnect(socketid) {
+      sid = socketid;
+      $('#modal-default1').modal();
+    }
+
+    $('#confirmadeslogar').on('click', function () {
+      //$('#modal-default4').modal('toggle');
+      var payload = { socketid: sid };
+      socket.emit('force_disconnect', payload);
+    });
+
+  </script>
+</body>
+
+</html>

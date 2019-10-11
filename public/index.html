@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+  <title>Ubicua Cloud</title>
+
+  <link rel="shortcut icon" href="assets/images/5797ico3.png" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin" rel="stylesheet" type="text/css">
+  <link href="assets/css/ionicons.min.css" rel="stylesheet" type="text/css">
+  <link href="assets/css/fontawesome-all.min.css" rel="stylesheet">
+
+  <!-- DEMO ONLY: Function for the proper stylesheet loading according to the demo settings -->
+  <script>function _pxDemo_loadStylesheet(a, b, c) { var c = c || decodeURIComponent((new RegExp(";\\s*" + encodeURIComponent("px-demo-theme") + "\\s*=\\s*([^;]+)\\s*;", "g").exec(";" + document.cookie + ";") || [])[1] || "dark-black"), d = "rtl" === document.getElementsByTagName("html")[0].getAttribute("dir"); document.write(a.replace(/^(.*?)((?:\.min)?\.css)$/, '<link href="$1' + (c.indexOf("dark") !== -1 && a.indexOf("/css/") !== -1 && a.indexOf("/themes/") === -1 ? "-dark" : "") + (!d || 0 !== a.indexOf("assets/css") && 0 !== a.indexOf("assets/demo") ? "" : ".rtl") + '$2" rel="stylesheet" type="text/css"' + (b ? 'class="' + b + '"' : "") + ">")) }</script>
+
+  <!-- DEMO ONLY: Set RTL direction -->
+  <script>"ltr" !== document.getElementsByTagName("html")[0].getAttribute("dir") && "1" === decodeURIComponent((new RegExp(";\\s*" + encodeURIComponent("px-demo-rtl") + "\\s*=\\s*([^;]+)\\s*;", "g").exec(";" + document.cookie + ";") || [])[1] || "0") && document.getElementsByTagName("html")[0].setAttribute("dir", "rtl");</script>
+
+  <!-- DEMO ONLY: Load PixelAdmin core stylesheets -->
+  <script>
+    _pxDemo_loadStylesheet('assets/css/bootstrap.min.css', 'px-demo-stylesheet-bs');
+    _pxDemo_loadStylesheet('assets/css/pixeladmin.min.css', 'px-demo-stylesheet-core');
+  </script>
+
+  <!-- DEMO ONLY: Load theme -->
+  <script>
+    function _pxDemo_loadTheme(a) { var b = decodeURIComponent((new RegExp(";\\s*" + encodeURIComponent("px-demo-theme") + "\\s*=\\s*([^;]+)\\s*;", "g").exec(";" + document.cookie + ";") || [])[1] || "dark-blue"); _pxDemo_loadStylesheet(a + b + ".min.css", "px-demo-stylesheet-theme", b) }
+    _pxDemo_loadTheme('assets/css/themes/');
+  </script>
+
+  <!-- Pace.js -->
+  <script src="assets/pace/pace.min.js"></script>
+
+  <!-- Socket.IO -->
+  <script src="assets/js/socket.io.js"></script>
+
+  <!-- Demo -->
+  <script src="assets/demo/demo.js"></script>
+
+  <!-- rtUbicuaPlatform -->
+  <script src="assets/demo/rtubicua.js"></script>
+
+  <!-- Custom styling -->
+  <style>
+    .page-signin-header {
+      box-shadow: 0 2px 2px rgba(0, 0, 0, .05), 0 1px 0 rgba(0, 0, 0, .05);
+    }
+
+    .page-signin-header .btn {
+      position: absolute;
+      top: 12px;
+      right: 15px;
+    }
+
+    html[dir="rtl"] .page-signin-header .btn {
+      right: auto;
+      left: 15px;
+    }
+
+    .page-signin-container {
+      width: auto;
+      margin: 30px 10px;
+    }
+
+    .page-signin-container form {
+      border: 0;
+      box-shadow: 0 2px 2px rgba(0, 0, 0, .05), 0 1px 0 rgba(0, 0, 0, .05);
+    }
+
+    @media (min-width: 544px) {
+      .page-signin-container {
+        width: 350px;
+        margin: 60px auto;
+      }
+    }
+
+    .page-signin-social-btn {
+      width: 40px;
+      padding: 0;
+      line-height: 40px;
+      text-align: center;
+      border: none !important;
+    }
+
+    #page-signin-forgot-form {
+      display: none;
+    }
+  </style>
+  <!-- / Custom styling -->
+</head>
+
+<body>
+  <div class="page-signin-header p-a-2 text-sm-center bg-white">
+    <img src="assets/images/logo-ubc.png" alt="">
+  </div>
+
+  <!-- Sign In form -->
+
+  <div class="page-signin-container" id="page-signin-form">
+    <br/>
+    <h2 class="m-t-0 m-b-4 text-xs-center font-weight-semibold font-size-20">Acesso a Plataforma</h2>
+
+    <div class="panel p-a-4">
+      <fieldset class=" form-group form-group-lg">
+        <input id="iusuario" type="text" class="form-control" placeholder="Usuário">
+      </fieldset>
+
+      <fieldset class=" form-group form-group-lg">
+        <input id="isenha" type="password" class="form-control" placeholder="Senha">
+      </fieldset>
+
+      <div class="clearfix">
+        <label class="custom-control custom-checkbox pull-xs-left">
+          <input id="cbLembrarUsuario" type="checkbox" class="custom-control-input">
+          <span class="custom-control-indicator"></span>
+          Lembrar Usuário
+        </label>
+      </div>
+
+      <button id="btnlogin" class="btn btn-block btn-lg btn-primary m-t-3">Login</button>
+    </div>
+
+    <h4 class="m-y-3 text-xs-center font-weight-semibold text-muted">Plataforma Multi Atendimentos</h4>
+
+    <div class="text-xs-center">
+      <a class="page-signin-social-btn btn btn-success btn-rounded" data-placement="top" data-toggle="tooltip" title="WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+      </a>&nbsp;&nbsp;&nbsp;
+      <a href="index.html" class="page-signin-social-btn btn btn-primary btn-rounded" data-toggle="tooltip" title="Facebook Messenger">
+        <i class="fab fa-facebook-messenger"></i>
+      </a>&nbsp;&nbsp;&nbsp;
+      <a href="index.html" class="page-signin-social-btn btn btn-rounded" style="background-color: #33abde" data-toggle="tooltip"
+        title="Telegram">
+        <i class="fab fa-telegram"></i>
+      </a>&nbsp;&nbsp;&nbsp;
+      <a href="index.html" class="page-signin-social-btn btn btn-danger btn-rounded" data-toggle="tooltip" title="Chat">
+        <i class="fas fa-comments"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- ==============================================================================
+  |
+  |  SCRIPTS
+  |
+  =============================================================================== -->
+
+  <!-- jQuery -->
+  <script src="assets/js/jquery.min.js"></script>
+
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/pixeladmin.min.js"></script>
+
+  <script>
+    // -------------------------------------------------------------------------
+    // Initialize DEMO sidebar
+
+    $(function () {
+      pxDemo.initializeDemoSidebar();
+
+      $('#px-demo-sidebar').pxSidebar();
+      pxDemo.initializeDemo();
+
+    });
+  </script>
+
+  <script>
+    // -------------------------------------------------------------------------
+    // Initialize RT Ubicua Platform
+
+    $(function () {
+      rtUbicuaPlatform.initialize();
+    });
+
+    $("#isenha").on('keyup', function (event) {
+      event.preventDefault();
+      if (event.keyCode === 13) {
+        $("#btnlogin").click();
+      }
+    });
+
+    $("#cbLembrarUsuario").on('click', function (event) {
+      if ($("#cbLembrarUsuario").prop('checked') == true) {
+        var fkname = $("#iusuario").val();
+        localStorage.setItem('fk_name', fkname);
+        localStorage.setItem('fk_ru', true);
+      } else {
+        localStorage.removeItem('fk_name');
+        localStorage.setItem('fk_ru', false);
+      }
+    });
+
+    $("#btnlogin").on('click', function (event) {
+      var fkname = $("#iusuario").val();
+      var fkpass = $("#isenha").val();
+      rtUbicuaPlatform.onlogin(fkname, fkpass);
+    });
+
+  </script>
+
+  <script>
+    // -------------------------------------------------------------------------
+    // Initialize page components
+
+    $(function () {
+      pxDemo.initializeBgsDemo('body', 0, '#000', function (isBgSet) {
+        $('h2')[isBgSet ? 'addClass' : 'removeClass']('text-white font-weight-bold');
+
+        $('h4')
+          .addClass(isBgSet ? 'text-white' : 'text-muted')
+          .removeClass(isBgSet ? 'text-muted' : 'text-white');
+      });
+
+      $('#page-signin-forgot-link').on('click', function (e) {
+        e.preventDefault();
+
+        $('#page-signin-form').css({ display: 'none' });
+        $('#page-signin-forgot-form').css({ display: 'block' });
+
+        $(window).trigger('resize');
+      });
+
+      $('#page-signin-forgot-back').on('click', function (e) {
+        e.preventDefault();
+
+        $('#page-signin-form').css({ display: 'block' });
+        $('#page-signin-forgot-form').css({ display: 'none' });
+
+        $(window).trigger('resize');
+      });
+
+      $('[data-toggle="tooltip"]').tooltip();
+
+      // Lembrar Usuario	
+      if (localStorage.getItem('fk_ru') == 'true') {
+        $("#iusuario").val(localStorage.getItem('fk_name'));
+        $('#cbLembrarUsuario').prop('checked', true);
+      } else {
+        $("#iusuario").val('');
+        $("#isenha").val('');
+        $("#cbLembrarUsuario").prop('checked', false);
+      }
+    });
+  </script>
+
+</body>
+
+</html>

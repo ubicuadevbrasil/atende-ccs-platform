@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+  <title>Ubicua Cloud</title>
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin"
+    rel="stylesheet" type="text/css">
+  <link href="assets/css/ionicons.min.css" rel="stylesheet" type="text/css">
+  <link href="assets/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+  <!-- Core stylesheets -->
+  <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="assets/css/pixeladmin.min.css" rel="stylesheet" type="text/css">
+  <link href="assets/css/widgets.min.css" rel="stylesheet" type="text/css">
+  <link href="supervisor/assets/css/ubicua.css" rel="stylesheet" type="text/css">
+
+  <!-- Theme -->
+  <link href="assets/css/themes/adminflare.min.css" rel="stylesheet" type="text/css">
+
+  <!-- Scripts -->
+  <script src="assets/js/socket.io.js"></script>
+  <script src="assets/pace/pace.min.js"></script>
+  <script src="supervisor/assets/js/wppjs.js"></script>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar px-navbar">
+    <div class="navbar-header">
+      <a class="navbar-brand px-demo-brand">
+        <n class="page-header-icon" style="color: white">Consulta Atendimentos Sanofi/Medley</n>
+      </a>
+    </div>
+
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#px-navbar-collapse"
+      aria-expanded="false">
+      <i class="navbar-toggle-icon"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="px-navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li>
+          <a href="#"></a>
+          </a>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+            aria-expanded="false">
+            <img src="assets/images/avatar.png" alt="" class="px-navbar-image">
+            <span id="lboperador" class="hidden-md" style="color:white"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a href="index.html">Log out</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <div class="px-content">
+    <div>
+      <h5 style="margin-top: 0px;" class="pull-left">
+        <i class="fa fa-filter"></i> Filtros</h5>
+      <a href="#" id="openpanfil" style="margin-top: 0px; display: none;"
+        class="pull-right font-weight-normal font-size-11">
+        <i class="fa fa-chevron-circle-down"></i> show</a>
+      <a href="#" id="closepanfil" style="margin-top: 0px;" class="pull-right font-weight-normal font-size-11">
+        <i class="fa fa-chevron-circle-up"></i> hide</a>
+    </div>
+    <br>
+    <div id="panfil" class="panel">
+      <div class="panel-body">
+        <div class="gridnv1">
+          <div class="input-group" style="width: 200px;">
+            <span class="input-group-addon">
+              <i class="fa fa-building-o"></i>
+            </span>
+            <input id="iCNPJ" type="text" class="form-control" placeholder="CNPJ">
+          </div>
+          <div class="input-group" style="width: 200px;">
+            <span class="input-group-addon">
+              <i class="fa fa-mobile"></i>
+            </span>
+            <input id="iCEL" type="text" class="form-control" placeholder="Celular">
+          </div>
+          <div class="input-group" style="width: 200px; display:none;">
+            <span class="input-group-addon">
+              <i class="fa fa-id-card-o"></i>
+            </span>
+            <input id="iNPED" type="text" class="form-control" placeholder="No. Pedido">
+          </div>
+          <div class="input-group" style="width: 220px; display:none;">
+            <span class="input-group-addon">
+              <i class="fa fa-calendar"></i>
+            </span>
+            <input type="text" id="daterange-1" class="form-control" placeholder="Período">
+          </div>
+        </div>
+        <div>
+          <div class="box-cell pull-right" style="width: 150px; border-style: none;">
+            <a id="btnbusca" class="btn btn-block btn-primary">
+              <span class="btn btn-primary btn-label-icon left ion-search"></span>Busca
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br />
+    <div>
+      <h5 style="margin-top: 0px;" class="pull-left">
+        <i class="fa fa-list-alt"></i> Resultados</h5>
+      <a href="#" id="openpanres" style="margin-top: 0px; display: none;"
+        class="pull-right font-weight-normal font-size-11">
+        <i class="fa fa-chevron-circle-down"></i> show</a>
+      <a href="#" id="closepanres" style="margin-top: 0px;" class="pull-right font-weight-normal font-size-11">
+        <i class="fa fa-chevron-circle-up"></i> hide</a>
+    </div>
+    <br>
+    <div id="panres" class="panel">
+      <div class="panel-body">
+        <div class="table-primary">
+          <!--<div class="table-footer clearfix" id="datatables_info" style="display: none">
+            <div class="DT-label">
+              <div class="dataTables_info" role="status" aria-live="polite">
+                Mostrando
+                <span id='contatual'>1 - 20</span> de
+                <span id='contatotal'>20</span> Resultados</div>
+            </div>
+            <div class="DT-pagination">
+              <div class="dataTables_paginate paging_simple_numbers" id="datatables_paginate">
+                <ul id='pagtab' class="pagination">
+
+                </ul>
+              </div>
+            </div>
+          </div>-->
+          <div id="datatables_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+            <table class="table table-striped table-bordered dataTable no-footer" id="datatables" role="grid"
+              aria-describedby="datatables_info" style="display: none">
+              <thead>
+                <tr role="row0">
+                  <th style="width: 213px;">Número do Cliente</th>
+                  <th style="width: 213px;">CNPJ</th>
+                  <th style="width: 213px;">Nome do Atendente</th>
+                  <th style="width: 180px;">Hora</th>
+                  <th style="width: 126px;">Data</th>
+                  <th style="width: 126px;">No. Pedido</th>
+                  <th style="width: 126px;">Segmento</th>
+                  <th style="width: 126px;">Valor</th>
+                  <th style="width: 126px;">Histórico</th>
+                </tr>
+              </thead>
+              <tbody id='tableresult'>
+              </tbody>
+            </table>
+          </div>
+          <div></div>
+          <div class="table-footer clearfix" id="datatables_info2" style="display: none">
+            <div class="DT-label">
+              <div class="dataTables_info" role="status" aria-live="polite">
+                Mostrando
+                <span id='contatual2'>1 - 20</span> de
+                <span id='contatotal2'>20</span> Resultados</div>
+            </div>
+            <div class="DT-pagination">
+              <div class="dataTables_paginate paging_simple_numbers" id="datatables_paginate">
+                <ul id='pagtab2' class="pagination">
+
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="px-footer px-footer-bottom">© 2018 Ubicua Cloud</footer>
+
+  <div id="modalubc1" class="modal fade modal-alert modal-warning" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <i class="fa fa-warning"></i>
+        </div>
+        <div class="modal-title" id='modaltitle1'></div>
+        <div class="modal-body" id='modaltitle2'></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalHistorico" tabindex="-1" style="height: 600px;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button id="fecharhis" type="button" class="close" data-dismiss="modal">×</button>
+          <h4 class="modal-title">Histórico de Interação</h4>
+        </div>
+        <div class="modal-body"
+          style="padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+          <div id="chathistory" class="panel scrollstyle" style="overflow-y: auto; height: 400px;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load JS's -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/pixeladmin.min.js"></script>
+  <script src="supervisor/assets/js/app.js"></script>
+  <script src="assets/js/dinamyctest.js"></script>
+  <script src="supervisor/assets/js/ubicua.js"></script>
+
+  <script type="text/javascript">
+
+    $('#btnnovo').on('click', function () {
+      $('#idescnew').val('');
+      $('#modal-default').modal();
+    });
+
+    $('#btnsavenew').on('click', function () {
+
+      var descricao = $('#idescnew').val();
+      if (descricao != '') {
+        socket.emit('add_sta', { descricao: descricao.toUpperCase() });
+        $('#modal-default').modal('toggle');
+      } else {
+        alert('Preencha Todos os Campos');
+      }
+    });
+
+  </script>
+
+  <script type="text/javascript">
+
+    /********************************************************************************************************************************************************/
+
+    var json;
+    var socket = io.connect('https://ccs.sanofi-mobile.com.br');
+    var idcontato = 0;
+    var operador = sessionStorage.getItem('fkname');
+    $('#lboperador').text(operador);
+    // Usuário Logado ?
+    if (sessionStorage.getItem('fkname') == null) {
+      window.location = "restricted.html";
+    }
+
+    /********************************************************************************************************************************************************/
+
+    socket.on('connect', function () {
+      console.log('-----------------------------------------------------------------------------------');
+      console.log('-----------------------------------------------------------------------------------');
+      console.log('------------------------CONECTADO-----CONECTADO------------------------------------');
+      console.log('-----------------------------------------------------------------------------------');
+      console.log('-----------------------------------------------------------------------------------');
+
+      socket.emit('bi-liststa', { fkid: 'a05c3708-32b3-11e8-9d7a-000c29369337' });
+
+      socket.on('bi-liststa', function (payload) {
+        var json = JSON.parse(payload);
+        var cx = json.length;
+        $("#tbodyz").empty();
+        var buscaval = $('#buscarlista').val();
+
+        if (buscaval == "") {
+          for (a = 0; a < cx; a++) {
+            var teste = a;
+            var menu = '';
+            menu += divstatus(json[a].descricao, json[a].id, teste);
+            $('#tbodyz').append(menu);
+          }
+        } else {
+          for (a = 0; a < cx; a++) {
+            var descricao = json[a].descricao;
+            var id = json[a].id;
+            var jsonteste = a;
+            searchtip(descricao, id, jsonteste);
+          }
+        }
+
+      });
+
+    });
+
+    /********************************************************************************************************************************************************/
+
+    socket.on('disconnect', function () {
+      console.log('-----------------------------------------------------------------------------------');
+      console.log('-----------------------------------------------------------------------------------');
+      console.log('------------------------DISCONECTADO-----DISCONECTADO------------------------------');
+      console.log('-----------------------------------------------------------------------------------');
+      console.log('-----------------------------------------------------------------------------------');
+    });
+
+    /********************************************************************************************************************************************************/
+
+    var ida = 0;
+
+    $('#btnsaveedt').on('click', function () {
+
+      if ($('#idescedt').val() != "") {
+
+        var descricao = $('#idescedt').val();
+        socket.emit('upd_sta', { id: ida, descricao: descricao.toUpperCase() });
+        ida = 0;
+
+        $('#modal-default2').modal('toggle');
+      }
+
+    });
+
+    var globalqry
+    var globalqry2 = "";
+
+    function testsock2() {
+      var str = $('#daterange-1').val();
+      if (str != "") {
+        globalqry = onformataperiodo(str);
+      }
+
+      var v_number = $('#iCEL').val();
+      var v_cnpj = $('#iCNPJ').val();
+      var v_nped = $('#iNPED').val();
+
+      globalqry2 = "";
+
+      if (v_cnpj != "") {
+        globalqry2 += "cnpj= '" + v_cnpj + "'";
+      }
+
+      if (v_number != "") {
+        if (globalqry2 != "") {
+          globalqry2 += " and mobile= '55" + v_number + "'";
+        } else {
+          globalqry2 += "mobile= '55" + v_number + "'";
+        }
+      }
+
+      if (v_nped != "") {
+        if (globalqry2 != "") {
+          globalqry2 += " and pedido= '" + v_nped + "'";
+        } else {
+          globalqry2 += "pedido= '" + v_nped + "'";
+        }
+      }
+      console.log(globalqry2);
+      testsock();
+    }
+
+    function testsock() {
+      if (globalqry != null) {
+        if (globalqry2 == "") {
+          var payload = { params: "" + globalqry2 + "" + globalqry + "", limit: 0 };
+        } else {
+          var payload = { params: "" + globalqry2 + " AND " + globalqry + "", limit: 0 };
+        }
+      } else {
+        var payload = { params: "" + globalqry2 + "", limit: 0 };
+      }
+      console.log(payload);
+      socket.emit('bi-report1', payload);
+    }
+
+    $('#btnbusca').on('click', function () {
+      if ($('#iCEL').val() != "" || $('#iCNPJ').val() != "" || $('#iNPED').val() != "" || $('#daterange-1').val() != "") {
+        testsock2();
+        //$('#pagtab').empty();
+        $('#pagtab2').empty();
+        $('#tableresult').empty();
+      } else {
+        $('#modaltitle1').text('Campos em Branco!');
+        $('#modaltitle2').text('Preencha o Campo de Celular, CNPJ ou No. Pedido para Prosseguir com a Busca!');
+        $('#modalubc1').modal();
+      }
+    });
+
+    var contg;
+    var contadorglobal = 0;
+    var marcabtnpag;
+
+    socket.on('bi-report1', function (payload) {
+      if (payload.count > 0) {
+        contadorglobal = payload.count;
+        //$('#contatotal').text(payload.count);
+        $('#contatotal2').text(payload.count);
+        if (payload.count < 20) {
+          //$('#contatual').text('1 - ' + payload.count);
+          $('#contatual2').text('1 - ' + payload.count);
+        }
+        //document.getElementById("datatables_info").style.display = "block";
+        document.getElementById("datatables_info2").style.display = "block";
+        document.getElementById("datatables").style.display = "block";
+        var tbres = JSON.parse(payload.reportadata);
+        var qnt = tbres.length;
+        contg = 1;
+        var pagct = 0;
+        for (i = 0; i < qnt; i++) {
+          var table = '';
+          table += tabsup(tbres[i].sessionid, tbres[i].mobile, tbres[i].cnpj, tbres[i].atendente, tbres[i].hora, tbres[i].data, tbres[i].pedido, tbres[i].segmento, tbres[i].valor, tbres[i].status);
+          $('#tableresult').append(table);
+        }
+        //Paginação botoes Começo ----------------------------------------------------------
+        var pag = '';
+        pag += pagtab2('next');
+        //$('#pagtab').append(pag);
+        $('#pagtab2').append(pag);
+        for (i = 0; i < payload.count; i++) {
+          if (i > pagct) {
+            var pag = '';
+            pag += pagtab(contg, pagct);
+            //$('#pagtab').append(pag);
+            $('#pagtab2').append(pag);
+            if (contg > 5) {
+              document.getElementById(pagct).style.display = "none";
+            }
+            pagct = pagct + 20;
+            contg = contg + 1;
+          }
+        }
+        var pag2 = '';
+        pag2 += pagtab2('back');
+        //$('#pagtab').append(pag2);
+        $('#pagtab2').append(pag2);
+        //Paginação botoes fim ----------------------------------------------------------
+        $("#" + marcabtnpag).addClass("active");
+        marcabtnpag = '';
+      } else {
+        $('#modaltitle1').text('Sem Resultados!');
+        $('#modaltitle2').text('Nenhum Registro Encontrado !');
+        $('#modalubc1').modal();
+      }
+    });
+
+    function funcpag(data) {
+      parametrosetas = 0;
+      testsock3(data);
+      marcabtnpag = data;
+      //$('#pagtab').empty();
+      $('#pagtab2').empty();
+      $('#tableresult').empty();
+      var data2 = Number(data) + 20;
+      data = Number(data) + 1;
+      if (data == 0) {
+        //$('#contatual').text('1 - 20');
+        $('#contatual2').text('1 - 20');
+      } else if (contadorglobal <= data2) {
+        //$('#contatual').text(data + ' - ' + contadorglobal);
+        $('#contatual2').text(data + ' - ' + contadorglobal);
+      } else {
+        //$('#contatual').text(data + ' - ' + data2);
+        $('#contatual2').text(data + ' - ' + data2);
+      }
+    }
+
+    function testsock3(data) {
+      if (globalqry != null) {
+        var payload = { params: "" + globalqry2 + "" + globalqry + "", limit: data };
+      } else {
+        var payload = { params: "" + globalqry2 + "", limit: data };
+      }
+      console.log(payload);
+      socket.emit('bi-report1', payload);
+    }
+
+    function openbox1(box) {
+
+      var descricao = $('#de' + box).text();
+      ida = $('#id' + box).text();
+      $('#idescedt').val(descricao);
+
+      $('#modal-default2').modal();
+    }
+
+    function openbox2(box) {
+
+      ida = $('#id' + box).text();
+      $('#modal-default3').modal();
+
+    }
+
+    function openbox3(box) {
+
+      ida = $('#id' + box).text();
+      var nome = $('#nm' + box).text();
+      $('#snome').text(" Usuário: " + nome);
+      $('#edtsenha').val('');
+      $('#edtsenhac').val('');
+      $('#modal-default1').modal();
+
+    }
+
+    $('#confirmaenc').on('click', function () {
+      socket.emit('del_sta', { id: ida });
+    });
+
+    $('#buscarlista').keyup(function () {
+      socket.emit('bi-liststa', { fkid: 'a05c3708-32b3-11e8-9d7a-000c29369337' });
+    });
+
+    $('#openpanfil').on('click', function (event) {
+      $('#panfil').fadeIn();
+      $('#closepanfil').show();
+      $('#openpanfil').hide();
+    });
+
+    $('#closepanfil').on('click', function (event) {
+      $('#panfil').fadeOut();
+      $('#closepanfil').hide();
+      $('#openpanfil').show();
+    });
+
+    $('#openpanres').on('click', function (event) {
+      $('#panres').fadeIn();
+      $('#closepanres').show();
+      $('#openpanres').hide();
+    });
+
+    $('#closepanres').on('click', function (event) {
+      $('#panres').fadeOut();
+      $('#closepanres').hide();
+      $('#openpanres').show();
+    });
+
+    function searchtip(descricao, id, jsonteste) {
+      var input, filter;
+      input = document.getElementById("buscarlista");
+      //filter = input.value.toUpperCase();
+      if (descricao.toUpperCase().indexOf(filter) > -1) {
+        var menu = '';
+        menu += divstatus(descricao, id, jsonteste);
+        $('#tbodyz').append(menu);
+      } else {
+      }
+    }
+
+    function openhist(data) {
+      var payload = { sessionid: data };
+      socket.emit('bi-historyone', payload);
+    }
+
+    socket.on('bi-historyone', function (payload) {
+      if (payload.contacts.length != 0) {
+        var logs = JSON.parse(payload.logs);
+        var contacts = JSON.parse(payload.contacts);
+        $('#chathistory').empty();
+        onchatmsg(contacts, logs, 'chathistory');
+        $('#modalHistorico').modal();
+      } else {
+        $('#myModal9').modal();
+      }
+    });
+
+    $(function () {
+      $('#daterange-1').daterangepicker({
+        "locale": {
+          "format": "DD/MM/YYYY",
+          "separator": " - ",
+          "applyLabel": "Salvar",
+          "cancelLabel": "Cancelar",
+          "fromLabel": "De",
+          "toLabel": "Até",
+          "customRangeLabel": "Custom",
+          "daysOfWeek": [
+            "Dom",
+            "Seg",
+            "Ter",
+            "Qua",
+            "Qui",
+            "Sex",
+            "Sab"
+          ],
+          "monthNames": [
+            "Janeiro",
+            "Fevereiro",
+            "Março",
+            "Abril",
+            "Maio",
+            "Junho",
+            "Julho",
+            "Agosto",
+            "Setembro",
+            "Outubro",
+            "Novembro",
+            "Dezembro"
+          ],
+          "firstDay": 1
+        }
+      });
+      $('#daterange-1').val('');
+    });
+  </script>
+
+</body>
+
+</html>
