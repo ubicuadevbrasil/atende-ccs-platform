@@ -406,6 +406,8 @@
       var str = $('#daterange-1').val();
       if (str != "") {
         globalqry = onformataperiodo(str);
+        console.log("g - " + globalqry);
+        
       }
 
       var v_number = $('#iCEL').val();
@@ -562,11 +564,15 @@
     });
 
     $('#btnexcel').on('click', function () {
+      console.log(toExcelParams);
+      
       tableToExcel(toExcelParams);
     });
 
     function tableToExcel(data) {
       var payload = data;
+      console.log(payload);
+      
       socket.emit('bi-report1toxlsx', payload);
     }
 
