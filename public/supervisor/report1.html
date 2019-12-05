@@ -407,7 +407,7 @@
       if (str != "") {
         globalqry = onformataperiodo(str);
         console.log("g - " + globalqry);
-        
+
       }
 
       var v_number = $('#iCEL').val();
@@ -418,22 +418,22 @@
       globalqry2 = "";
 
       if (v_cnpj != "") {
-        globalqry2 += "cnpj= '" + v_cnpj + "'";
+        globalqry2 += "a.cnpj= '" + v_cnpj + "'";
       }
 
       if (v_number != "") {
         if (globalqry2 != "") {
-          globalqry2 += " and mobile= '55" + v_number + "'";
+          globalqry2 += " and a.mobile= '55" + v_number + "'";
         } else {
-          globalqry2 += "mobile= '55" + v_number + "'";
+          globalqry2 += "a.mobile= '55" + v_number + "'";
         }
       }
 
       if (v_nped != "") {
         if (globalqry2 != "") {
-          globalqry2 += " and pedido= '" + v_nped + "'";
+          globalqry2 += " and p.pedido= '" + v_nped + "'";
         } else {
-          globalqry2 += "pedido= '" + v_nped + "'";
+          globalqry2 += "p.pedido= '" + v_nped + "'";
         }
       }
       if (v_direction != "") {
@@ -458,6 +458,7 @@
       } else {
         var payload = { params: "" + globalqry2 + "", limit: 0 };
       }
+      console.log(payload);
       socket.emit('bi-report1', payload);
       toExcelParams = payload;
     }
@@ -565,14 +566,14 @@
 
     $('#btnexcel').on('click', function () {
       console.log(toExcelParams);
-      
+
       tableToExcel(toExcelParams);
     });
 
     function tableToExcel(data) {
       var payload = data;
       console.log(payload);
-      
+
       socket.emit('bi-report1toxlsx', payload);
     }
 

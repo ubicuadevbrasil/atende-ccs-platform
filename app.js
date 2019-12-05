@@ -31,8 +31,8 @@ var dbcc = require('ubc/dbcc.js');
 };*/
 
 var options = {
-        key: fs.readFileSync('/etc/ssl/private/domain.key'),
-        cert: fs.readFileSync('/etc/ssl/certs/chained.pem')
+        key: fs.readFileSync('/etc/letsencrypt/live/ccs.sanofi-mobile.com.br/privkey.pem'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/ccs.sanofi-mobile.com.br/fullchain.pem')
 };
 
 // Config App Express
@@ -337,7 +337,13 @@ function onrefusegroup(admin) {
         var _message = "Prezado Cliente,\n\nEsse canal não permite mensagens a partir de Grupo WhatsApp.";
         dbcc.query("SELECT uuid() as UUID;", function (err, id) {
                 var _custom_uid = id[0].UUID;
-                request.post({ url: 'https://www.waboxapp.com/api/send/chat', form: { token: 'f5f56af0e668306ccb81bee06fdbe1425a87473b5e615', uid: '5511995518459', to: _mobile, custom_uid: _custom_uid, text: _message } }, function (err, httpResponse, body) {
+                let teste = {
+                        infra: '5511995518459@c.us',
+                        id: _mobile + '@c.us',
+                        msg: _message,
+                        media: 'chat'
+                }
+                request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
                 });
         });
 }
@@ -395,10 +401,17 @@ io.on('connection', function (socket) {
                 var _message = payload.message;
                 dbcc.query("SELECT uuid() as UUID;", function (err, id) {
                         var _custom_uid = id[0].UUID;
-                        request.post({ url: 'https://www.waboxapp.com/api/send/chat', form: { token: 'f5f56af0e668306ccb81bee06fdbe1425a87473b5e615', uid: '5511995518459', to: _mobile, custom_uid: _custom_uid, text: _message } }, function (err, httpResponse, body) {
-                                log("Response LON", body);
-                                var _response = JSON.parse(body);
-                                if (_response.success === true) {
+                        let teste = {
+                                infra: '5511995518459@c.us',
+                                id: _mobile + '@c.us',
+                                msg: _message,
+                                media: 'chat'
+                        }
+                        request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                                console.log(teste)
+                                log("Response WABOXAPP", body);
+                                var _response = body;
+                                if (_response === 'ok') {
                                         console.log('Alarme Enviando com Sucesso...')
                                 }
                         });
@@ -413,10 +426,17 @@ io.on('connection', function (socket) {
                 dbcc.query("SELECT uuid() as UUID;", function (err, id) {
                         var _custom_uid = id[0].UUID;
                         if (_host == "LON") {
-                                request.post({ url: 'https://www.waboxapp.com/api/send/chat', form: { token: 'f5f56af0e668306ccb81bee06fdbe1425a87473b5e615', uid: '5511995518459', to: _mobile, custom_uid: _custom_uid, text: _message } }, function (err, httpResponse, body) {
+                                let teste = {
+                                        infra: '5511995518459@c.us',
+                                        id: _mobile + '@c.us',
+                                        msg: _message,
+                                        media: 'chat'
+                                }
+                                request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                                        console.log(teste)
                                         log("Response WABOXAPP", body);
-                                        var _response = JSON.parse(body);
-                                        if (_response.success === true) {
+                                        var _response = body;
+                                        if (_response === 'ok') {
                                                 dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
                                                         if (result.length > 0) {
                                                                 // Armazenando Log da Conversa
@@ -470,10 +490,17 @@ io.on('connection', function (socket) {
                 dbcc.query("SELECT uuid() as UUID;", function (err, id) {
                         var _custom_uid = id[0].UUID;
                         if (_host == "LON") {
-                                request.post({ url: 'https://www.waboxapp.com/api/send/chat', form: { token: 'f5f56af0e668306ccb81bee06fdbe1425a87473b5e615', uid: '5511995518459', to: _mobile, custom_uid: _custom_uid, text: _message } }, function (err, httpResponse, body) {
+                                let teste = {
+                                        infra: '5511995518459@c.us',
+                                        id: _mobile + '@c.us',
+                                        msg: _message,
+                                        media: 'chat'
+                                }
+                                request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                                        console.log(teste)
                                         log("Response WABOXAPP", body);
-                                        var _response = JSON.parse(body);
-                                        if (_response.success === true) {
+                                        var _response = body;
+                                        if (_response === 'ok') {
                                                 // Armazenando Log da Conversa
                                                 var _id = _custom_uid;
                                                 var _fromid = 1;
@@ -644,15 +671,17 @@ io.on('connection', function (socket) {
                 dbcc.query("SELECT uuid() as UUID;", function (err, id) {
                         var _custom_uid = id[0].UUID;
                         if (_host == "LON") {
-                                if (_type == "image") {
-                                        _urlbox = 'https://www.waboxapp.com/api/send/image';
-                                } else {
-                                        _urlbox = 'https://www.waboxapp.com/api/send/media';
+                                let teste = {
+                                        infra: '5511995518459@c.us',
+                                        id: _mobile + '@c.us',
+                                        msg: cdn + _hashfile,
+                                        media: 'chat'
                                 }
-                                request.post({ url: 'https://www.waboxapp.com/api/send/image', form: { token: 'f5f56af0e668306ccb81bee06fdbe1425a87473b5e615', uid: '5511995518459', to: _mobile, custom_uid: _custom_uid, url: cdn + _hashfile } }, function (err, httpResponse, body) {
+                                request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                                        console.log(teste)
                                         log("Response WABOXAPP", body);
-                                        var _response = JSON.parse(body);
-                                        if (_response.success === true) {
+                                        var _response = body;
+                                        if (_response === 'ok') {
                                                 //dbcc.query("INSERT INTO  db_sanofi_ccs.tab_sikmedia (id, toid, typefile, hashfile, descfile) VALUES(?, ?, ?, ?, ?)", [_custom_uid, _mobile, _type, _hashfile, _descfile]);
                                                 dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
                                                         if (result.length > 0) {
@@ -1506,9 +1535,16 @@ io.on('connection', function (socket) {
 
                 dbcc.query("SELECT uuid() as UUID;", function (err, id) {
                         var _custom_uid = id[0].UUID;
+                        let teste = {
+                                infra: '5511995518459@c.us',
+                                id: '5511949122854@c.us',
+                                msg: payload,
+                                media: 'chat'
+                        }
                         if (_host == "LON") {
-                                request.post({ url: 'https://www.waboxapp.com/api/send/chat', form: { token: 'f5f56af0e668306ccb81bee06fdbe1425a87473b5e615', uid: '5511995518459', to: '5511949122854', custom_uid: _custom_uid, text: payload } }, function (err, httpResponse, body) {
-                                        log("Response WABOXAPP Monitor", body);
+                                request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                                        console.log(teste)
+                                        log("Response WABOXAPP", body);
                                 });
                         }
                 });
@@ -1644,10 +1680,17 @@ io.on('connection', function (socket) {
                 dbcc.query("SELECT uuid() as UUID;", function (err, id) {
                         var _custom_uid = id[0].UUID;
                         if (_host == "LON") {
-                                request.post({ url: 'https://www.waboxapp.com/api/send/chat', form: { token: 'f5f56af0e668306ccb81bee06fdbe1425a87473b5e615', uid: '5511995518459', to: _mobile, custom_uid: _custom_uid, text: _message } }, function (err, httpResponse, body) {
+                                let teste = {
+                                        infra: '5511995518459@c.us',
+                                        id: _mobile + '@c.us',
+                                        msg: _message,
+                                        media: 'chat'
+                                }
+                                request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                                        console.log(teste)
                                         log("Response WABOXAPP", body);
-                                        var _response = JSON.parse(body);
-                                        if (_response.success === true) {
+                                        var _response = body;
+                                        if (_response === 'ok') {
                                                 dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
                                                         if (result.length > 0) {
                                                                 var _id = _custom_uid;
@@ -1678,13 +1721,13 @@ io.on('connection', function (socket) {
                 var corJson = {
                         'mobile': payload.mobile,
                         'type': payload.type,
-                        'message': 'Até 90% de desconto em Genéricos Medley! Sildenafila até 90% e Levofloxacino até 84%. Aproveite.'
+                        'message': 'BLACK NOVEMBER: DORFLEX com até 17% de desconto?! Retorne essa mensagem para aproveitar a condição.'
                 }
                 sendFirstTextMsg(payload);
                 socket.broadcast.emit('receive_picture', corJson);
                 var _mobile = payload.mobile;
                 var _type = payload.type;
-                var _message = 'Até 90% de desconto em Genéricos Medley! Sildenafila até 90% e Levofloxacino até 84%. Aproveite.';
+                var _message = 'BLACK NOVEMBER: DORFLEX com até 17% de desconto?! Retorne essa mensagem para aproveitar a condição.';
                 dbcc.query("SELECT uuid() as UUID;", function (err, id) {
                         var _custom_uid = id[0].UUID;
                         dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
@@ -1697,7 +1740,7 @@ io.on('connection', function (socket) {
                                         var _toname = result[0].name;
                                         var _msgdir = "o";
                                         var _msgtype = 'image';
-                                        var _msgurl = "https://cdn.ubicuacloud.com/file/ae015eb022d697bd4006adbc52c28a4b.png";
+                                        var _msgurl = "https://cdn.ubicuacloud.com/file/2f7b4a7133fb8c5c327421632ae91308.jpg";
                                         var _msgcaption = _message;
                                         dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgurl, _msgcaption], function (err, result) {
                                                 log("Novo Registro LOG Inserido", _id);
