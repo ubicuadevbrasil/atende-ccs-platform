@@ -31,8 +31,8 @@ var dbcc = require('ubc/dbcc.js');
 };*/
 
 var options = {
-        key: fs.readFileSync('/etc/letsencrypt/live/react.ubicuacloud.com.br/privkey.pem'),
-        cert: fs.readFileSync('/etc/letsencrypt/live/react.ubicuacloud.com.br/fullchain.pem')
+        key: fs.readFileSync('/etc/letsencrypt/live/ccs.sanofi-mobile.com.br/privkey.pem'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/ccs.sanofi-mobile.com.br/fullchain.pem')
 };
 
 // Config App Express
@@ -58,10 +58,6 @@ app.use(cors());
 app.get('/.well-known/acme-challenge/GXWwzwd5XBYsP0nuC-_b_sblfG-aaKG3BAIsbX3tc94', function (req, res) {
         res.send('GXWwzwd5XBYsP0nuC-_b_sblfG-aaKG3BAIsbX3tc94.WJdCUT79yCG6vkn1fZDc6qfJm78Ksc0SohKQIFQfIhM');
 });
-
-app.get('/', function (req, res) {
-        res.redirect('/atendente');
-})
 
 app.get('/alive', function (req, res) {
         console.log(req.ip);
@@ -342,7 +338,7 @@ function onrefusegroup(admin) {
         dbcc.query("SELECT uuid() as UUID;", function (err, id) {
                 var _custom_uid = id[0].UUID;
                 let teste = {
-                        infra: '5511944919944@c.us',
+                        infra: '5511995518459@c.us',
                         id: _mobile + '@c.us',
                         msg: _message,
                         media: 'chat'
@@ -406,7 +402,7 @@ io.on('connection', function (socket) {
                 dbcc.query("SELECT uuid() as UUID;", function (err, id) {
                         var _custom_uid = id[0].UUID;
                         let teste = {
-                                infra: '5511944919944@c.us',
+                                infra: '5511995518459@c.us',
                                 id: _mobile + '@c.us',
                                 msg: _message,
                                 media: 'chat'
@@ -431,7 +427,7 @@ io.on('connection', function (socket) {
                         var _custom_uid = id[0].UUID;
                         if (_host == "LON") {
                                 let teste = {
-                                        infra: '5511944919944@c.us',
+                                        infra: '5511995518459@c.us',
                                         id: _mobile + '@c.us',
                                         msg: _message,
                                         media: 'chat'
@@ -495,7 +491,7 @@ io.on('connection', function (socket) {
                         var _custom_uid = id[0].UUID;
                         if (_host == "LON") {
                                 let teste = {
-                                        infra: '5511944919944@c.us',
+                                        infra: '5511995518459@c.us',
                                         id: _mobile + '@c.us',
                                         msg: _message,
                                         media: 'chat'
@@ -679,7 +675,7 @@ io.on('connection', function (socket) {
                                 var teste;
                                 if (_type != 'document' && _type != 'video') {
                                         teste = {
-                                                infra: '5511944919944@c.us',
+                                                infra: '5511995518459@c.us',
                                                 id: _mobile + '@c.us',
                                                 msg: '',
                                                 media: _type,
@@ -687,7 +683,7 @@ io.on('connection', function (socket) {
                                         }
                                 } else {
                                         teste = {
-                                                infra: '5511944919944@c.us',
+                                                infra: '5511995518459@c.us',
                                                 id: _mobile + '@c.us',
                                                 msg: cdn + _hashfile,
                                                 media: 'chat',
@@ -1077,7 +1073,7 @@ io.on('connection', function (socket) {
                                         } catch (err) {
                                                 log("Error writing to file ", err);
                                         }
-                                        var payload = { url: "https://react.ubicuacloud.com.br//supervisor/report/" + _namexlsx };
+                                        var payload = { url: "https://ccs.sanofi-mobile.com.br/supervisor/report/" + _namexlsx };
                                         socket.emit('bi-report1toxlsx', payload);
                                 });
                         }
@@ -1170,7 +1166,7 @@ io.on('connection', function (socket) {
                                         } catch (err) {
                                                 log("Error writing to file ", err);
                                         }
-                                        var payload = { url: "https://react.ubicuacloud.com.br/supervisor/report/" + _namexlsx };
+                                        var payload = { url: "https://ccs.sanofi-mobile.com.br/supervisor/report/" + _namexlsx };
                                         socket.emit('bi-report1toxlsx', payload);
                                 });
                         }
@@ -1570,7 +1566,7 @@ io.on('connection', function (socket) {
                 dbcc.query("SELECT uuid() as UUID;", function (err, id) {
                         var _custom_uid = id[0].UUID;
                         let teste = {
-                                infra: '5511944919944@c.us',
+                                infra: '5511995518459@c.us',
                                 id: '5511949122854@c.us',
                                 msg: payload,
                                 media: 'chat'
@@ -1715,7 +1711,7 @@ io.on('connection', function (socket) {
                         var _custom_uid = id[0].UUID;
                         if (_host == "LON") {
                                 let teste = {
-                                        infra: '5511944919944@c.us',
+                                        infra: '5511995518459@c.us',
                                         id: _mobile + '@c.us',
                                         msg: _message,
                                         media: 'chat'
