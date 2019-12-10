@@ -257,7 +257,7 @@
     /********************************************************************************************************************************************************/
 
     var json;
-    var socket = io.connect('https://ccs.sanofi-mobile.com.br');
+    var socket = io.connect();
     var idcontato = 0;
     var operador = sessionStorage.getItem('fkname');
     $('#lboperador').text(operador);

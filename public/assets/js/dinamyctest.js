@@ -194,7 +194,8 @@ function previewimgtxr(pvimg, lname, ltime, caption) {
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text far fa-images' style='background-color: #dcf8c6; word-wrap: break-word'>";
-    msg += "<span class='step size-21'><i class='icon ion-image'></i></span><a target='_blank' href='" + pvimg + "'> Enviou uma Imagem</a></i><br>";
+    msg += "<a target='_blank' href='" + pvimg + "'><img src='" + pvimg + "' alt='Smiley face' style='max-width: 15vw;'></a><br>";
+    //msg += "<span class='step size-21'><i class='icon ion-image'></i></span><a target='_blank' href='" + pvimg + "'> Enviou uma Imagem</a></i><br>";
     msg += "<span class='blahspan' style='padding: 5px'>" + caption + "</span>";
     msg += "</div>";
     msg += "</div>";
@@ -207,7 +208,8 @@ function previewimgr(pvimg, lname, ltime) {
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text far fa-images' style='background-color: #dcf8c6; word-wrap: break-word'>";
-    msg += "<span class='step size-21'><i class='icon ion-image'></i></span><a target='_blank' href='" + pvimg + "'> Enviou uma Imagem</a></i><br>";
+    msg += "<a target='_blank' href='" + pvimg + "'><img src='" + pvimg + "' alt='Smiley face' style='max-width: 15vw;'></a><br>";
+    //msg += "<span class='step size-21'><i class='icon ion-image'></i></span><a target='_blank' href='" + pvimg + "'> Enviou uma Imagem</a></i><br>";
     msg += "</div>";
     msg += "</div>";
 

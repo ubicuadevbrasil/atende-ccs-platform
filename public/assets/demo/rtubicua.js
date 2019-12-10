@@ -35,7 +35,7 @@
 
     function initialize() {
 
-      socket = io.connect('https://ccs.sanofi-mobile.com.br');
+      socket = io.connect();
 
       socket.on('connect', function () {
         console.log("Conectado ao RT Ubicua Platform !");

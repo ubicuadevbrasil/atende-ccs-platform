@@ -2,6 +2,7 @@
 
 $(document).ready(function () {
   var ob = document.getElementById('contatos');
+  var ob2 = document.getElementById('contatos2');
   var cb = document.getElementById('chatbox');
   var barhei = document.getElementById('contactbar');
   var cbox = document.getElementById('chat11');
@@ -12,7 +13,8 @@ $(document).ready(function () {
   var bar2 = document.getElementById('chatbar').clientHeight;
   var finalheight = pheight - nb;
   var cboxheight = pheight / 4 + pheight / 9;
-  ob.style.height = '80vh';
+  ob.style.height = '35vh';
+  ob2.style.height = '35vh';
   cb.style.height = '80vh';
   barhei.style.height = '' + bar2 + 'px';
   cbox.style.height = '55vh';
@@ -118,8 +120,8 @@ function histmsg(contacts, logs) {
             var menu = '';
             menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
             $('#chat' + contacts[i].mobile).append(menu);
-	  } else if (logs[a].msgtype === 'transfer') {
-	    var btime2 = conversor_remessa(logs[a].dt);
+          } else if (logs[a].msgtype === 'transfer') {
+            var btime2 = conversor_remessa(logs[a].dt);
             var menu = '';
             menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
             $('#chat' + contacts[i].mobile).append(menu);
@@ -174,7 +176,7 @@ function histmsg(contacts, logs) {
             }
           }
         }
-      } else {}
+      } else { }
     }
   }
 }
@@ -255,8 +257,8 @@ function onchatmsg(contacts, logs, area) {
             var menu = '';
             menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
             $('#' + area).append(menu);
-	  } else if (logs[a].msgtype === 'transfer') {
-	    var btime2 = conversor_remessa(logs[a].dt);
+          } else if (logs[a].msgtype === 'transfer') {
+            var btime2 = conversor_remessa(logs[a].dt);
             var menu = '';
             menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
             $('#' + area).append(menu);
@@ -311,7 +313,7 @@ function onchatmsg(contacts, logs, area) {
             }
           }
         }
-      } else {}
+      } else { }
     }
   }
 }
@@ -329,11 +331,11 @@ function hidedivs() {
 
 /*********************************************************************************************************************************************************/
 
-function isNumberKey(evt){
-    var charCode = (evt.which) ? evt.which : event.keyCode
-    if (charCode > 31 && charCode > 44 && (charCode < 48 || charCode > 57))
-        return false;
-    return true;
+function isNumberKey(evt) {
+  var charCode = (evt.which) ? evt.which : event.keyCode
+  if (charCode > 31 && charCode > 44 && (charCode < 48 || charCode > 57))
+    return false;
+  return true;
 }
 
 /********************************************************************************************************************************************************/
@@ -390,7 +392,7 @@ function gettime() {
 function convertDate(inputFormat) {
   function pad(s) { return (s < 10) ? '0' + s : s; }
   var d = new Date(inputFormat);
-  return [pad(d.getDate()), pad(d.getMonth()+1), d.getFullYear()].join('/');
+  return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/');
 }
 
 /********************************************************************************************************************************************************/

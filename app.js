@@ -667,15 +667,27 @@ io.on('connection', function (socket) {
                 var _type = payload.type;
                 var _hashfile = payload.hashfile;
                 var _descfile = payload.descfile;
+                var _base64 = payload.base64;
                 var _urlbox = false;
-                dbcc.query("SELECT uuid() as UUID;", function (err, id) {
+                dbcc.query("SELECT uuid() as UUID;", async function (err, id) {
                         var _custom_uid = id[0].UUID;
                         if (_host == "LON") {
-                                let teste = {
-                                        infra: '5511995518459@c.us',
-                                        id: _mobile + '@c.us',
-                                        msg: cdn + _hashfile,
-                                        media: 'chat'
+                                var teste;
+                                if (_type != 'document' && _type != 'video') {
+                                        teste = {
+                                                infra: '5511995518459@c.us',
+                                                id: _mobile + '@c.us',
+                                                msg: '',
+                                                media: _type,
+                                                image: await loadBase64(_hashfile, _type)
+                                        }
+                                } else {
+                                        teste = {
+                                                infra: '5511995518459@c.us',
+                                                id: _mobile + '@c.us',
+                                                msg: cdn + _hashfile,
+                                                media: 'chat',
+                                        }
                                 }
                                 request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
                                         console.log(teste)
@@ -729,6 +741,24 @@ io.on('connection', function (socket) {
                         }
                 });
         });
+
+        function loadBase64(hashFile, fileType) {
+                return new Promise(function (resolve, reject) {
+                        request.get({ url: "https://cdn.ubicuacloud.com/base64/" + hashFile }, function (err, httpResponse, body) {
+                                if (err) {
+                                        console.log(err)
+                                        //reject(err)
+                                }
+                                if (fileType == 'image') {
+                                        resolve('data:image/jpeg;base64,' + body)
+                                } else if (fileType == 'video') {
+                                        resolve('data:video/mp4;base64,' + body)
+                                } else if (fileType == 'audio') {
+                                        resolve('data:audio/mp3;base64,' + body)
+                                }
+                        })
+                })
+        }
 
         socket.on('send_register', function (payload) {
                 console.log(payload);
@@ -1596,7 +1626,7 @@ io.on('connection', function (socket) {
                                                                         type: "chat",
                                                                         message: "Olá, sou o " + _fkname + " do Grupo Sanofi/Medley, temos uma oferta para você."
                                                                 };
-                                                                sendMyChat(dataSet);
+                                                                //sendMyChat(dataSet);
                                                                 updateMailing(_mobile);
                                                                 socket.emit('bi-atendemail', {
                                                                         status: '200'
@@ -1739,10 +1769,10 @@ io.on('connection', function (socket) {
                                         var _toid = result[0].mobile;
                                         var _toname = result[0].name;
                                         var _msgdir = "o";
-                                        var _msgtype = 'image';
-                                        var _msgurl = "https://cdn.ubicuacloud.com/file/2f7b4a7133fb8c5c327421632ae91308.jpg";
+                                        var _msgtype = 'chat';
+                                        //var _msgurl = "https://cdn.ubicuacloud.com/file/2f7b4a7133fb8c5c327421632ae91308.jpg";
                                         var _msgcaption = _message;
-                                        dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgurl, _msgcaption], function (err, result) {
+                                        dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype], function (err, result) {
                                                 log("Novo Registro LOG Inserido", _id);
                                                 socket.emit('bi-atendemail', {
                                                         status: '200'
