@@ -1,4 +1,4 @@
-var socket = io.connect('https://ccs.sanofi-mobile.com.br');
+var socket = io.connect();
 var _tipoCliente, fileName, limitemail;
 var jsonData = [];
 

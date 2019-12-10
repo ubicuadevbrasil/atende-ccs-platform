@@ -29,6 +29,12 @@
   <script src="assets/js/socket.io.js"></script>
   <script src="assets/pace/pace.min.js"></script>
   <script src="assets/js/wppjs.js"></script>
+
+  <style>
+    .html2canvas-container {
+      height: 3000px !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -283,11 +289,16 @@
       <div class="modal-content">
         <div class="modal-header">
           <button id="fecharhis" type="button" class="close" data-dismiss="modal">×</button>
-          <h4 class="modal-title">Histórico de Interação</h4>
+          <h4 class="modal-title">
+            Histórico de Interação
+            <button id="printToPdf" type="button" style="">
+              <i class="ion-android-print"></i>
+            </button>
+          </h4>
         </div>
         <div class="modal-body"
           style="padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
-          <div id="chathistory" class="panel scrollstyle" style="overflow-y: auto; height: 400px;">
+          <div id="chathistory" class="panel scrollstyle" style="overflow-y: auto; height: 500px;">
           </div>
         </div>
       </div>
@@ -301,6 +312,10 @@
   <script src="assets/js/app.js"></script>
   <script src="assets/js/dinamyctest.js"></script>
   <script src="assets/js/ubicua.js"></script>
+  <script src="assets/js/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
+    integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
+    crossorigin="anonymous"></script>
 
   <script type="text/javascript">
 
@@ -327,7 +342,7 @@
     /********************************************************************************************************************************************************/
 
     var json;
-    var socket = io.connect('https://ccs.sanofi-mobile.com.br');
+    var socket = io.connect();
     var idcontato = 0;
     var operador = sessionStorage.getItem('fkname');
     $('#lboperador').text(operador);
@@ -398,6 +413,47 @@
       }
 
     });
+
+    $('#printToPdf').on('click', function () {
+      print(1)
+    })
+
+
+    function print(quality) {
+      var log = document.getElementById('chathistory');
+      var wnd = window.open("", "_blank", "resizable=no, scrollbars=yes, titlebar=no, width=600, height=600, top=10, left=10");
+      var fileName = new Date;
+      fileName = fileName.toISOString();
+      wnd.document.write(
+        "<!doctype html>" +
+        "<html><head>" +
+        "<meta charset='appropriate charset here'>" +
+        "<title>Ubicua</title>" +
+        "<link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin' rel='stylesheet' type='text/css'>" +
+        "<link href='assets/css/ionicons.min.css' rel='stylesheet' type='text/css' media='all'>" +
+        "<link href='assets/css/font-awesome.min.css' rel='stylesheet' type='text/css' media='all'>" +
+        "<link href='assets/css/bootstrap.min.css' rel='stylesheet' type='text/css' media='all'>" +
+        "<link href='assets/css/pixeladmin.min.css' rel='stylesheet' type='text/css' media='all'>" +
+        "<link href='assets/css/widgets.min.css' rel='stylesheet' type='text/css' media='all'>" +
+        "<link href='assets/css/ubicua.css' rel='stylesheet' type='text/css' media='all'>" +
+        "<link href='assets/css/themes/adminflare.min.css' rel='stylesheet' type='text/css' media='all'>" +
+        "<link href='assets/css/print.css' rel='stylesheet' type='text/css' media='all'>" +
+        "</head><body>" +
+        "<div id='printPDF' style='max-width: 800px'>" + log.innerHTML + "</div>" +
+        "<script src='assets/js/jquery.min.js'></" +
+        "script>" +
+        "<script src='assets/js/html2canvas.min.js'></" +
+        "script>" +
+        "<script src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js'></" +
+        "script>" +
+        "<script>" +
+        "function print(quality) {const filename  = '" + fileName + ".pdf';html2canvas(document.querySelector('#printPDF'), {scale: quality,useCORS : true}).then(canvas => {let pdf = new jsPDF('p', 'mm', 'a4');pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 200, 220);pdf.save(filename);});}</" +
+        "script>" +
+        "</body></html>"
+      );
+      wnd.document.close();
+      return false; //
+    }
 
     var globalqry
     var globalqry2 = "";
@@ -687,6 +743,7 @@
       if (payload.contacts.length != 0) {
         var logs = JSON.parse(payload.logs);
         var contacts = JSON.parse(payload.contacts);
+        console.log(logs);
         $('#chathistory').empty();
         onchatmsg(contacts, logs, 'chathistory');
         $('#modalHistorico').modal();
