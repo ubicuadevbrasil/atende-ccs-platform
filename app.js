@@ -1026,7 +1026,7 @@ io.on('connection', function (socket) {
                 qry += "DATE_FORMAT(dtin, '%d/%m/%Y') as data, (tab_statusen.descricao) as status, tab_pedidos.pedido, tab_pedidos.segmento, tab_pedidos.valor FROM tab_encerrain ";
                 qry += "LEFT JOIN tab_usuarios ON (tab_encerrain.fkto = tab_usuarios.id) LEFT JOIN tab_statusen ON (tab_encerrain.status = tab_statusen.id) LEFT JOIN tab_pedidos ";
                 qry += "ON (tab_encerrain.sessionid = tab_pedidos.sessionid) WHERE " + _params + " ORDER BY dtin, sessionid;";*/
-                var qry = "select ativ.filename,a.sessionid, a.cnpj, atendir, u.nome as atendente, substr(a.mobile, 3, 11) as mobile, DATE_FORMAT(a.dtin, '%H:%i') as hora, DATE_FORMAT(a.dtin, '%d/%m/%Y') as data, (b.descricao) as status, p.pedido, p.segmento, p.valor from tab_encerrain as a LEFT JOIN tab_statusen as b ON(a.status = b.id) LEFT JOIN tab_pedidos as p ON(a.sessionid = p.sessionid) LEFT JOIN tab_usuarios as u ON(a.fkto = u.id) LEFT JOIN tab_ativo as ativ on (a.mobile = ativ.mobile) WHERE " + _params + " ORDER BY a.dtin, a.sessionid desc;";
+                var qry = "select ativ.filename,a.sessionid, a.cnpj, atendir, u.nome as atendente, substr(a.mobile, 3, 11) as mobile, DATE_FORMAT(a.dtin, '%H:%i') as hora, DATE_FORMAT(a.dtin, '%d/%m/%Y') as data, (b.descricao) as status, p.pedido, p.segmento, p.valor from tab_encerrain as a LEFT JOIN tab_statusen as b ON(a.status = b.id) LEFT JOIN tab_pedidos as p ON(a.sessionid = p.sessionid) LEFT JOIN tab_usuarios as u ON(a.fkto = u.id) LEFT JOIN tab_ativo as ativ on (a.mobile = ativ.mobile) WHERE " + _params + " GROUP BY a.sessionid ORDER BY a.dtin, a.sessionid desc;";
                 console.log(qry)
                 dbcc.query(qry, [], function (err, result) {
                         if (err) {
@@ -1178,7 +1178,7 @@ io.on('connection', function (socket) {
                 console.log('Request Report 1, Parameters: ' + payload.params + '...');
                 var _params = payload.params;
                 var _limit = payload.limit;
-                var qry = "SELECT count(*) as total from tab_encerrain as a LEFT JOIN tab_statusen as b ON(a.status = b.id) LEFT JOIN tab_pedidos as p ON(a.sessionid = p.sessionid) LEFT JOIN tab_usuarios as u ON(a.fkto = u.id) LEFT JOIN tab_ativo as ativ on (a.mobile = ativ.mobile) WHERE " + _params;
+                var qry = "SELECT count(*) as total from tab_encerrain as a LEFT JOIN tab_statusen as b ON(a.status = b.id) LEFT JOIN tab_pedidos as p ON(a.sessionid = p.sessionid) LEFT JOIN tab_usuarios as u ON(a.fkto = u.id) WHERE " + _params;
                 dbcc.query(qry, [], function (err, result) {
                         if (err) {
                                 log("Erro: " + err);
@@ -1189,7 +1189,7 @@ io.on('connection', function (socket) {
                                         socket.emit('bi-report1', payload);
                                 } else {
                                         //var qry = "SELECT sessionid, cnpj, atendir, tab_usuarios.nome as atendente, substr(mobile, 3, 11) as mobile, DATE_FORMAT(dtin, '%H:%i') as hora, DATE_FORMAT(dtin, '%d/%m/%Y') as data, (tab_statusen.descricao) as status FROM tab_encerrain LEFT JOIN tab_usuarios ON (tab_encerrain.fkto = tab_usuarios.id) LEFT JOIN tab_statusen ON (tab_encerrain.status = tab_statusen.id) WHERE " + _params + " ORDER BY dtin LIMIT " + _limit + ", 20;";
-                                        var qry = "select ativ.filename,a.sessionid, a.cnpj, atendir, u.nome as atendente, substr(a.mobile, 3, 11) as mobile, DATE_FORMAT(a.dtin, '%H:%i') as hora, DATE_FORMAT(a.dtin, '%d/%m/%Y') as data, (b.descricao) as status, p.pedido, p.segmento, p.valor from tab_encerrain as a LEFT JOIN tab_statusen as b ON(a.status = b.id) LEFT JOIN tab_pedidos as p ON(a.sessionid = p.sessionid) LEFT JOIN tab_usuarios as u ON(a.fkto = u.id) LEFT JOIN tab_ativo as ativ on (a.mobile = ativ.mobile) WHERE " + _params + " ORDER BY a.dtin, a.sessionid desc LIMIT " + _limit + ", 20;";
+                                        var qry = "select ativ.filename,a.sessionid, a.cnpj, atendir, u.nome as atendente, substr(a.mobile, 3, 11) as mobile, DATE_FORMAT(a.dtin, '%H:%i') as hora, DATE_FORMAT(a.dtin, '%d/%m/%Y') as data, (b.descricao) as status, p.pedido, p.segmento, p.valor from tab_encerrain as a LEFT JOIN tab_statusen as b ON(a.status = b.id) LEFT JOIN tab_pedidos as p ON(a.sessionid = p.sessionid) LEFT JOIN tab_usuarios as u ON(a.fkto = u.id) LEFT JOIN tab_ativo as ativ on (a.mobile = ativ.mobile) WHERE " + _params + " GROUP BY a.sessionid ORDER BY a.dtin, a.sessionid desc LIMIT " + _limit + ", 20;";
                                         dbcc.query(qry, [], function (err, result) {
                                                 if (err) {
                                                         log("Erro: " + err);
