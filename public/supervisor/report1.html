@@ -494,9 +494,9 @@
       }
       if (v_direction != "") {
         if (globalqry2 != "") {
-          globalqry2 += " and atendir= '" + v_direction + "'";
+          globalqry2 += " and a.atendir= '" + v_direction + "'";
         } else {
-          globalqry2 += "atendir= '" + v_direction + "'";
+          globalqry2 += "a.atendir= '" + v_direction + "'";
         }
       }
       testsock();

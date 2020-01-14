@@ -134,7 +134,7 @@ function onformataperiodo(dt) {
     var mesf = dt.substr(16, 2);
     var anof = dt.substr(19, 4);
 
-    return " dtin BETWEEN '" + anoi + "-" + mesi + "-" + diai + " 00:00:00' AND '" + anof + "-" + mesf + "-" + diaf + " 23:59:59'";
+    return " a.dtin BETWEEN '" + anoi + "-" + mesi + "-" + diai + " 00:00:00' AND '" + anof + "-" + mesf + "-" + diaf + " 23:59:59'";
 }
 
 var parametrosetas = 0;

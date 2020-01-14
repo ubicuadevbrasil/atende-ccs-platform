@@ -258,6 +258,7 @@
     }
 
     socket.on('sentinel_clients_queue', function (payload) {
+      console.log(payload)
       $("#EmAtendimento").text(payload[0].total);
       $("#aguardando").text(payload[1].total);
       $("#AtendimentoEncerrados").text(payload[2].total);
@@ -290,7 +291,7 @@
     });
 
     socket.on('sentinel_clients_alive', function (payload) {
-
+      //console.log(payload)
       var tt = JSON.parse(payload);
       var _addtr;
       var _count = 1;
@@ -318,7 +319,7 @@
     });
 
     socket.on('view_agents', function (payload) {
-
+      console.log(payload)
       var ta = JSON.parse(payload);
       for (i = 0; i < ta.length; i++) {
         $('#' + ta[i].atendimentos + ta[i].fkto).text(ta[i].total);
