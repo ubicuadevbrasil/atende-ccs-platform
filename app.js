@@ -15,7 +15,7 @@ const port = process.env.PORT || 443;
 
 // Constantes
 const cdn = "https://cdn.ubicuacloud.com/file/";
-const _mobileUid = "5511941497894@c.us";
+const _mobileUid = "5511969009126@c.us";
 
 // Function Platforma Ubicua
 require('ubc/tools.js')();
@@ -336,7 +336,7 @@ app.post('/api/bot/message', function (req, res, next) {
                                                         });
                                                 } else {
                                                         var _hostin = "LON";
-                                                        var _uid = '5511944919944';
+                                                        var _uid = '5511969009126';
                                                         var _dtin = getTimestamp();
                                                         var _contact_uid = _cnpj;
                                                         var _contact_name = '';
@@ -367,7 +367,7 @@ app.post('/api/bot/message', function (req, res, next) {
                                         });
                                 } else {
                                         var _hostin = "LON";
-                                        var _uid = '5511944919944';
+                                        var _uid = '5511969009126';
                                         var _dtin = getTimestamp();
                                         var _contact_uid = _cnpj;
                                         var _contact_name = '';
@@ -823,7 +823,7 @@ io.on('connection', function (socket) {
                                 var _message = "";
                                 if (result[0].training == 'true') {
                                         _message = _treinamento
-                                } else if (new Date().getHours() >= 20 || new Date().getHours() <= 9) {
+                                } else if (new Date().getHours() > 21 || new Date().getHours() < 10) {
                                         _message = _feriado
                                 } else {
                                         _message = _ok_message
@@ -1771,10 +1771,12 @@ io.on('connection', function (socket) {
                                 var _msgcaption = payload.body_caption;
                                 if (payload.message_type == "chat") {
                                         dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
+                                                if (err) { console.log(err) }
                                                 log("Novo Registro LOG Inserido", _id);
                                         });
                                 } else {
                                         dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgurl, _msgcaption], function (err, result) {
+                                                if (err) { console.log(err) }
                                                 log("Novo Registro LOG Inserido", _id);
                                         });
                                 }
@@ -2006,7 +2008,7 @@ io.on('connection', function (socket) {
                         var _custom_uid = id[0].UUID;
                         let teste = {
                                 infra: _mobileUid,
-                                id: '5511949122854@c.us',
+                                id: '5511969009126@c.us',
                                 msg: payload,
                                 media: 'chat'
                         }
