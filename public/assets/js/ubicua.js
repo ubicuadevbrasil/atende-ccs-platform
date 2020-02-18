@@ -61,55 +61,55 @@ function histmsg(contacts, logs) {
           if (logs[a].msgtype === 'chat') {
             var btime2 = conversor_remessa(logs[a].dt);
             var menu = '';
-            menu += msgtxtl(logs[a].msgtext, contacts[i].mobile, btime2);
+            menu += msgtxtl(logs[a].msgtext, contacts[i].mobile);
             $('#chat' + contacts[i].mobile).append(menu);
           } else if (logs[a].msgtype === 'image') {
             var btime2 = conversor_remessa(logs[a].dt);
             if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
               var menu = '';
-              menu += previewimgtx(logs[a].msgurl, contacts[i].mobile, btime2, logs[a].msgcaption);
+              menu += previewimgtx(logs[a].msgurl, contacts[i].mobile, btime2, logs[a].msgcaption, logs[a].dt);
               $('#chat' + contacts[i].mobile).append(menu);
             } else {
               var menu = '';
-              menu += previewimg(logs[a].msgurl, contacts[i].mobile, btime2);
+              menu += previewimg(logs[a].msgurl, contacts[i].mobile);
               $('#chat' + contacts[i].mobile).append(menu);
             }
           } else if (logs[a].msgtype === 'video') {
             var btime2 = conversor_remessa(logs[a].dt);
             if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
               var menu = '';
-              menu += previewvidtx(logs[a].msgurl, logs[a].msgcaption, contacts[i].mobile, btime2);
+              menu += previewvidtx(logs[a].msgurl, logs[a].msgcaption, contacts[i].mobile);
               $('#chat' + contacts[i].mobile).append(menu);
             } else {
               var menu = '';
-              menu += previewvid(logs[a].msgurl, contacts[i].mobile, btime2);
+              menu += previewvid(logs[a].msgurl, contacts[i].mobile);
               $('#chat' + contacts[i].mobile).append(menu);
             }
           } else if (logs[a].msgtype === 'ptt') {
             var btime2 = conversor_remessa(logs[a].dt);
             var menu = '';
-            menu += previewaud(logs[a].msgurl, contacts[i].mobile, btime2);
+            menu += previewaud(logs[a].msgurl, contacts[i].mobile);
             $('#chat' + contacts[i].mobile).append(menu);
           } else if (logs[a].msgtype === 'audio') {
             var btime2 = conversor_remessa(logs[a].dt);
             if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
               var menu = '';
-              menu += previewaudtx(logs[a].msgurl, logs[a].msgcaption, contacts[i].mobile, btime2);
+              menu += previewaudtx(logs[a].msgurl, logs[a].msgcaption, contacts[i].mobile);
               $('#chat' + contacts[i].mobile).append(menu);
             } else {
               var menu = '';
-              menu += previewaud(logs[a].msgurl, contacts[i].mobile, btime2);
+              menu += previewaud(logs[a].msgurl, contacts[i].mobile);
               $('#chat' + contacts[i].mobile).append(menu);
             }
           } else if (logs[a].msgtype === 'document') {
             var btime2 = conversor_remessa(logs[a].dt);
             if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
               var menu = '';
-              menu += previewdoctx(logs[a].msgurl, logs[a].msgcaption, contacts[i].mobile, btime2);
+              menu += previewdoctx(logs[a].msgurl, logs[a].msgcaption, contacts[i].mobile);
               $('#chat' + contacts[i].mobile).append(menu);
             } else {
               var menu = '';
-              menu += previewdoc(logs[a].msgurl, contacts[i].mobile, btime2);
+              menu += previewdoc(logs[a].msgurl, contacts[i].mobile);
               $('#chat' + contacts[i].mobile).append(menu);
             }
           }
@@ -118,7 +118,7 @@ function histmsg(contacts, logs) {
           if (logs[a].msgtype === 'chat') {
             var btime2 = conversor_remessa(logs[a].dt);
             var menu = '';
-            menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
+            menu += msgtxtr(logs[a].msgtext, logs[a].fromname);
             $('#chat' + contacts[i].mobile).append(menu);
           } else if (logs[a].msgtype === 'transfer') {
             var btime2 = conversor_remessa(logs[a].dt);
@@ -129,49 +129,49 @@ function histmsg(contacts, logs) {
             var btime2 = conversor_remessa(logs[a].dt);
             if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
               var menu = '';
-              menu += previewimgtxr(logs[a].msgurl, logs[a].fromname, btime2, logs[a].msgcaption);
+              menu += previewimgtxr(logs[a].msgurl, logs[a].fromname, btime2, logs[a].msgcaption, logs[a].dt);
               $('#chat' + contacts[i].mobile).append(menu);
             } else {
               var menu = '';
-              menu += previewimgr(logs[a].msgurl, logs[a].fromname, btime2);
+              menu += previewimgr(logs[a].msgurl, logs[a].fromname);
               $('#chat' + contacts[i].mobile).append(menu);
             }
           } else if (logs[a].msgtype === 'video') {
             var btime2 = conversor_remessa(logs[a].dt);
             if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
               var menu = '';
-              menu += previewvidtxr(logs[a].msgurl, logs[a].msgcaption, logs[a].fromname, btime2);
+              menu += previewvidtxr(logs[a].msgurl, logs[a].msgcaption, logs[a].fromname);
               $('#chat' + contacts[i].mobile).append(menu);
             } else {
               var menu = '';
-              menu += previewvidr(logs[a].msgurl, logs[a].fromname, btime2);
+              menu += previewvidr(logs[a].msgurl, logs[a].fromname);
               $('#chat' + contacts[i].mobile).append(menu);
             }
           } else if (logs[a].msgtype === 'ptt') {
             var btime2 = conversor_remessa(logs[a].dt);
             var menu = '';
-            menu += previewaudr(logs[a].msgurl, logs[a].fromname, btime2);
+            menu += previewaudr(logs[a].msgurl, logs[a].fromname);
             $('#chat' + contacts[i].mobile).append(menu);
           } else if (logs[a].msgtype === 'audio') {
             var btime2 = conversor_remessa(logs[a].dt);
             if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
               var menu = '';
-              menu += previewaudrtx(logs[a].msgurl, logs[a].msgcaption, logs[a].fromname, btime2);
+              menu += previewaudrtx(logs[a].msgurl, logs[a].msgcaption, logs[a].fromname);
               $('#chat' + contacts[i].mobile).append(menu);
             } else {
               var menu = '';
-              menu += previewaudr(logs[a].msgurl, logs[a].fromname, btime2);
+              menu += previewaudr(logs[a].msgurl, logs[a].fromname);
               $('#chat' + contacts[i].mobile).append(menu);
             }
           } else if (logs[a].msgtype === 'document') {
             var btime2 = conversor_remessa(logs[a].dt);
             if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
               var menu = '';
-              menu += previewdoctxr(logs[a].msgurl, logs[a].msgcaption, logs[a].fromname, btime2);
+              menu += previewdoctxr(logs[a].msgurl, logs[a].msgcaption, logs[a].fromname);
               $('#chat' + contacts[i].mobile).append(menu);
             } else {
               var menu = '';
-              menu += previewdocr(logs[a].msgurl, logs[a].fromname, btime2);
+              menu += previewdocr(logs[a].msgurl, logs[a].fromname);
               $('#chat' + contacts[i].mobile).append(menu);
             }
           }
@@ -181,9 +181,173 @@ function histmsg(contacts, logs) {
   }
 }
 
-/********************************************************************************************************************************************************/
+function histmsgBot(contacts, logs) {
 
-function onchatmsg(contacts, logs, area) {
+  var cx = contacts.length;
+  var lx = logs.length;
+  for (a = 0; a < lx; a++) {
+    for (i = 0; i < cx; i++) {
+      if (contacts[i].sessionBot == logs[a].sessionid) {
+        if (logs[a].msgdir === 'i') {
+          if (logs[a].msgtype === 'chat') {
+            var btime2 = conversor_remessa(logs[a].dt);
+            var menu = '';
+            menu += msgtxtl(logs[a].msgtext, contacts[i].mobile, btime2);
+            $('#chat' + contacts[i].mobile).append(menu);
+          }
+          //----------------------------------------------------------------------------------------------------------------------------------------
+        } else if (logs[a].msgdir === 'o') {
+          if (logs[a].msgtype === 'chat') {
+            var btime2 = conversor_remessa(logs[a].dt);
+            var menu = '';
+            menu += msgtxtr2(logs[a].msgtext, logs[a].fromname, btime2);
+            $('#chat' + contacts[i].mobile).append(menu);
+          }
+        }
+      } else { }
+    }
+  }
+}
+
+function histmsgWebb(contacts, logs) {
+  //console.log(contacts, logs);
+  var manyContacts = contacts.length;
+  var manyLogs = logs.length;
+
+  for (a = 0; a < manyLogs; a++) {
+
+    var chatBot = logs[a].chatbot;
+    chatBot = JSON.parse(chatBot);
+    chatBot = decodeURIComponent(escape(chatBot));
+    chatBot = JSON.parse(chatBot);
+
+    console.log(chatBot)
+
+    for (u = 0; u < chatBot.length; u++) {
+      for (i = 0; i < manyContacts; i++) {
+        if (contacts[i].sessionBot == chatBot[u].sessionid) {
+          var bot_msg = chatBot[u].msgtext;
+          bot_msg = bot_msg.replace(/\\n/g, "<br />")
+          if (chatBot[u].msgdir === 'i') {
+            //var btime2 = conversor_remessa(chatBot[u].date);
+
+            var date = chatBot[u].date.split(' ')[0]
+            date = date.split('-')
+            date = date[2] + "-" + date[1] + "-" + date[0]
+            var hour = chatBot[u].date.split(' ')[1]
+            var data = date + "T" + hour + ".000Z"
+            var btime2 = conversor_remessa(data);
+
+            var menu = '';
+            menu += msgtxtl(bot_msg, contacts[i].mobile, btime2);
+            $('#chat' + contacts[i].mobile).append(menu);
+            //----------------------------------------------------------------------------------------------------------------------------------------
+          } else if (chatBot[u].msgdir === 'o') {
+            //var btime2 = conversor_remessa(chatBot[u].date);
+
+            var date = chatBot[u].date.split(' ')[0]
+            date = date.split('-')
+            date = date[2] + "-" + date[1] + "-" + date[0]
+            var hour = chatBot[u].date.split(' ')[1]
+            var data = date + "T" + hour + ".000Z"
+            var btime2 = conversor_remessa(data);
+
+            var menu = '';
+            menu += msgtxtr2(bot_msg, chatBot[u].fromname, btime2);
+            $('#chat' + contacts[i].mobile).append(menu);
+          }
+        }
+      }
+    }
+  }
+}
+
+/********************************************************************************************************************************************************/
+function createTime2(myTime) {
+  var date = myTime.split(' ')[0];
+  date = date.split('-');
+  date = date[2] + "-" + date[1] + "-" + date[0];
+  var hour = myTime.split(' ')[1];
+  var data = date + "T" + hour + ".000Z";
+  data = new Date(data).toISOString()
+  var btime2 = conversor_remessa(data);
+  return data;
+}
+
+
+function onchatmsg(contacts, logs, area, bot) {
+
+  /*var manyContacts = contacts.length;
+
+  for (i = 0; i < bot.length; i++) {
+    if (bot != null && bot != "" && bot[i].origem == 'bot') {
+      var chatBot = JSON.parse(bot[i].chatBot);
+      chatBot = decodeURIComponent(escape(chatBot));
+      chatBot = JSON.parse(chatBot);
+
+      var dtin = new Date(chatBot[0].date);
+      var dtprint = convertDate(dtin);
+      var menu = '';
+      menu += msgtxtc(dtprint);
+      $('#' + area).append(menu);
+
+
+      for (u = 0; u < chatBot.length; u++) {
+        var bot_msg = chatBot[u].msgtext;
+        bot_msg = bot_msg.replace(/\\n/g, "<br />")
+        if (chatBot[u].msgdir === 'i') {
+          var btime2 = conversor_remessa(chatBot[u].date);
+          var menu = '';
+          menu += msgtxtl(bot_msg, contacts[0].mobile, btime2, new Date(chatBot[u].date).toISOString());
+          $('#' + area).append(menu);
+          //----------------------------------------------------------------------------------------------------------------------------------------
+        } else if (chatBot[u].msgdir === 'o') {
+          var btime2 = conversor_remessa(chatBot[u].date);
+          var menu = '';
+          menu += msgtxtr2(bot_msg, chatBot[u].fromname, btime2, new Date(chatBot[u].date).toISOString());
+          $('#' + area).append(menu);
+        }
+      }
+    } else if (bot[i].origem == 'wbot') {
+      var chatBot;
+      try {
+        chatBot = JSON.parse(bot[i].chatBot);
+        chatBot = decodeURIComponent(escape(chatBot));
+        chatBot = chatBot.replace(/"/g, "");
+        chatBot = chatBot.replace(/'/g, '"');
+        chatBot = chatBot.replace(/"msgtext": None,/g, '"msgtext": "None",')
+        chatBot = JSON.parse(chatBot);
+        console.log('Decode')
+      } catch {
+        chatBot = bot[i].chatBot
+        chatBot = decodeURIComponent(escape(chatBot));
+        console.log('No Decode')
+      }
+      console.log(chatBot)
+      var dtin = new Date(chatBot[0].date);
+      var dtprint = convertDate(dtin);
+      var menu = '';
+      menu += msgtxtc(dtprint);
+      $('#' + area).append(menu);
+
+      for (u = 0; u < chatBot.length; u++) {
+        var bot_msg = chatBot[u].msgtext;
+        if (chatBot[u].msgdir === 'i') {
+          var btime2 = conversor_remessa(chatBot[u].date);
+          var menu = '';
+          menu += msgtxtl(bot_msg, contacts[0].mobile, btime2, new Date(chatBot[u].date).toISOString());
+          $('#' + area).append(menu);
+          //----------------------------------------------------------------------------------------------------------------------------------------
+        } else if (chatBot[u].msgdir === 'o') {
+          var btime2 = conversor_remessa(chatBot[u].date);
+          var menu = '';
+          menu += msgtxtr2(bot_msg, chatBot[u].fromname, btime2, new Date(chatBot[u].date).toISOString());
+          $('#' + area).append(menu);
+        }
+      }
+
+    }
+  }*/
 
   var cx = contacts.length;
   var lx = logs.length;
@@ -194,126 +358,139 @@ function onchatmsg(contacts, logs, area) {
   $('#' + area).append(menu);
   for (a = 0; a < lx; a++) {
     for (i = 0; i < cx; i++) {
-      if (contacts[i].sessionid == logs[a].sessionid) {
-        if (logs[a].msgdir === 'i') {
-          if (logs[a].msgtype === 'chat') {
-            var btime2 = conversor_remessa(logs[a].dt);
-            var menu = '';
-            menu += msgtxtl(logs[a].msgtext, contacts[i].mobile, btime2);
-            $('#' + area).append(menu);
-          } else if (logs[a].msgtype === 'image') {
-            var btime2 = conversor_remessa(logs[a].dt);
-            if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
+      try {
+        if (contacts[i].sessionid == logs[a].sessionid || contacts[i].sessionBot == logs[a].sessionid) {
+          if (logs[a].msgdir === 'i') {
+            if (logs[a].msgtype === 'chat') {
+              var btime2 = conversor_remessa(logs[a].dt);
               var menu = '';
-              menu += previewimgtx(logs[a].msgurl, contacts[i].mobile, btime2, logs[a].msgcaption);
+              menu += msgtxtl(logs[a].msgtext, contacts[i].mobile, btime2);
               $('#' + area).append(menu);
-            } else {
+            } else if (logs[a].msgtype === 'image') {
+              var btime2 = conversor_remessa(logs[a].dt);
+              if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
+                var menu = '';
+                menu += previewimgtx(logs[a].msgurl, contacts[i].mobile, btime2, logs[a].msgcaption);
+                $('#' + area).append(menu);
+              } else {
+                var menu = '';
+                menu += previewimg(logs[a].msgurl, contacts[i].mobile);
+                $('#' + area).append(menu);
+              }
+            } else if (logs[a].msgtype === 'video') {
+              var btime2 = conversor_remessa(logs[a].dt);
+              if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
+                var menu = '';
+                menu += previewvidtx(logs[a].msgurl, logs[a].msgcaption, contacts[i].mobile);
+                $('#' + area).append(menu);
+              } else {
+                var menu = '';
+                menu += previewvid(logs[a].msgurl, contacts[i].mobile);
+                $('#' + area).append(menu);
+              }
+            } else if (logs[a].msgtype === 'ptt') {
+              var btime2 = conversor_remessa(logs[a].dt);
               var menu = '';
-              menu += previewimg(logs[a].msgurl, contacts[i].mobile, btime2);
+              menu += previewaud(logs[a].msgurl, contacts[i].mobile);
               $('#' + area).append(menu);
+            } else if (logs[a].msgtype === 'audio') {
+              var btime2 = conversor_remessa(logs[a].dt);
+              if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
+                var menu = '';
+                menu += previewaudtx(logs[a].msgurl, logs[a].msgcaption, contacts[i].mobile);
+                $('#' + area).append(menu);
+              } else {
+                var menu = '';
+                menu += previewaud(logs[a].msgurl, contacts[i].mobile);
+                $('#' + area).append(menu);
+              }
+            } else if (logs[a].msgtype === 'document') {
+              var btime2 = conversor_remessa(logs[a].dt);
+              if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
+                var menu = '';
+                menu += previewdoctx(logs[a].msgurl, logs[a].msgcaption, contacts[i].mobile);
+                $('#' + area).append(menu);
+              } else {
+                var menu = '';
+                menu += previewdoc(logs[a].msgurl, contacts[i].mobile);
+                $('#' + area).append(menu);
+              }
             }
-          } else if (logs[a].msgtype === 'video') {
-            var btime2 = conversor_remessa(logs[a].dt);
-            if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
+          } else if (logs[a].msgdir === 'o') {
+            if (logs[a].msgtype === 'chat') {
+              if (logs[a].fromname == 'Bot') {
+                var btime2 = conversor_remessa(logs[a].dt);
+                var menu = '';
+                menu += msgtxtr2(logs[a].msgtext, logs[a].fromname, btime2);
+                $('#' + area).append(menu);
+              } else {
+                var btime2 = conversor_remessa(logs[a].dt);
+                var menu = '';
+                menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
+                $('#' + area).append(menu);
+              }
+            } else if (logs[a].msgtype === 'transfer') {
+              var btime2 = conversor_remessa(logs[a].dt);
               var menu = '';
-              menu += previewvidtx(logs[a].msgurl, logs[a].msgcaption, contacts[i].mobile, btime2);
+              menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
               $('#' + area).append(menu);
-            } else {
+            } else if (logs[a].msgtype === 'image') {
+              var btime2 = conversor_remessa(logs[a].dt);
+              if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
+                var menu = '';
+                menu += previewimgtxr(logs[a].msgurl, logs[a].fromname, btime2);
+                $('#' + area).append(menu);
+              } else {
+                var menu = '';
+                menu += previewimgr(logs[a].msgurl, logs[a].fromname);
+                $('#' + area).append(menu);
+              }
+            } else if (logs[a].msgtype === 'video') {
+              var btime2 = conversor_remessa(logs[a].dt);
+              if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
+                var menu = '';
+                menu += previewvidtxr(logs[a].msgurl, logs[a].msgcaption, logs[a].fromname);
+                $('#' + area).append(menu);
+              } else {
+                var menu = '';
+                menu += previewvidr(logs[a].msgurl, logs[a].fromname);
+                $('#' + area).append(menu);
+              }
+            } else if (logs[a].msgtype === 'ptt') {
+              var btime2 = conversor_remessa(logs[a].dt);
               var menu = '';
-              menu += previewvid(logs[a].msgurl, contacts[i].mobile, btime2);
+              menu += previewaudr(logs[a].msgurl, logs[a].fromname);
               $('#' + area).append(menu);
-            }
-          } else if (logs[a].msgtype === 'ptt') {
-            var btime2 = conversor_remessa(logs[a].dt);
-            var menu = '';
-            menu += previewaud(logs[a].msgurl, contacts[i].mobile, btime2);
-            $('#' + area).append(menu);
-          } else if (logs[a].msgtype === 'audio') {
-            var btime2 = conversor_remessa(logs[a].dt);
-            if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
-              var menu = '';
-              menu += previewaudtx(logs[a].msgurl, logs[a].msgcaption, contacts[i].mobile, btime2);
-              $('#' + area).append(menu);
-            } else {
-              var menu = '';
-              menu += previewaud(logs[a].msgurl, contacts[i].mobile, btime2);
-              $('#' + area).append(menu);
-            }
-          } else if (logs[a].msgtype === 'document') {
-            var btime2 = conversor_remessa(logs[a].dt);
-            if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
-              var menu = '';
-              menu += previewdoctx(logs[a].msgurl, logs[a].msgcaption, contacts[i].mobile, btime2);
-              $('#' + area).append(menu);
-            } else {
-              var menu = '';
-              menu += previewdoc(logs[a].msgurl, contacts[i].mobile, btime2);
-              $('#' + area).append(menu);
+            } else if (logs[a].msgtype === 'audio') {
+              var btime2 = conversor_remessa(logs[a].dt);
+              if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
+                var menu = '';
+                menu += previewaudrtx(logs[a].msgurl, logs[a].msgcaption, logs[a].fromname);
+                $('#' + area).append(menu);
+              } else {
+                var menu = '';
+                menu += previewaudr(logs[a].msgurl, logs[a].fromname);
+                $('#' + area).append(menu);
+              }
+            } else if (logs[a].msgtype === 'document') {
+              var btime2 = conversor_remessa(logs[a].dt);
+              if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
+                var menu = '';
+                menu += previewdoctxr(logs[a].msgurl, logs[a].msgcaption, logs[a].fromname);
+                $('#' + area).append(menu);
+              } else {
+                var menu = '';
+                menu += previewdocr(logs[a].msgurl, logs[a].fromname);
+                $('#' + area).append(menu);
+              }
             }
           }
-        } else if (logs[a].msgdir === 'o') {
-          if (logs[a].msgtype === 'chat') {
-            var btime2 = conversor_remessa(logs[a].dt);
-            var menu = '';
-            menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
-            $('#' + area).append(menu);
-          } else if (logs[a].msgtype === 'transfer') {
-            var btime2 = conversor_remessa(logs[a].dt);
-            var menu = '';
-            menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
-            $('#' + area).append(menu);
-          } else if (logs[a].msgtype === 'image') {
-            var btime2 = conversor_remessa(logs[a].dt);
-            if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
-              var menu = '';
-              menu += previewimgtxr(logs[a].msgurl, logs[a].fromname, btime2, logs[a].msgcaption);
-              $('#' + area).append(menu);
-            } else {
-              var menu = '';
-              menu += previewimgr(logs[a].msgurl, logs[a].fromname, btime2);
-              $('#' + area).append(menu);
-            }
-          } else if (logs[a].msgtype === 'video') {
-            var btime2 = conversor_remessa(logs[a].dt);
-            if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
-              var menu = '';
-              menu += previewvidtxr(logs[a].msgurl, logs[a].msgcaption, logs[a].fromname, btime2);
-              $('#' + area).append(menu);
-            } else {
-              var menu = '';
-              menu += previewvidr(logs[a].msgurl, logs[a].fromname, btime2);
-              $('#' + area).append(menu);
-            }
-          } else if (logs[a].msgtype === 'ptt') {
-            var btime2 = conversor_remessa(logs[a].dt);
-            var menu = '';
-            menu += previewaudr(logs[a].msgurl, logs[a].fromname, btime2);
-            $('#' + area).append(menu);
-          } else if (logs[a].msgtype === 'audio') {
-            var btime2 = conversor_remessa(logs[a].dt);
-            if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
-              var menu = '';
-              menu += previewaudrtx(logs[a].msgurl, logs[a].msgcaption, logs[a].fromname, btime2);
-              $('#' + area).append(menu);
-            } else {
-              var menu = '';
-              menu += previewaudr(logs[a].msgurl, logs[a].fromname, btime2);
-              $('#' + area).append(menu);
-            }
-          } else if (logs[a].msgtype === 'document') {
-            var btime2 = conversor_remessa(logs[a].dt);
-            if (logs[a].msgcaption != null && logs[a].msgcaption != "") {
-              var menu = '';
-              menu += previewdoctxr(logs[a].msgurl, logs[a].msgcaption, logs[a].fromname, btime2);
-              $('#' + area).append(menu);
-            } else {
-              var menu = '';
-              menu += previewdocr(logs[a].msgurl, logs[a].fromname, btime2);
-              $('#' + area).append(menu);
-            }
-          }
+        } else {
+          console.log('Dont Macth')
         }
-      } else { }
+      } catch (e) {
+        console.log('Erro: ' + e)
+      }
     }
   }
 }

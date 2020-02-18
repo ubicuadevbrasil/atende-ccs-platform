@@ -1,5 +1,5 @@
-function modalpis(info, mobile, account, imageuser, atendir, atendircolor, direction, tipo, cnpj, flagcamp) {
-
+function modalpis(info, mobile, account, imageuser, atendir, atendircolor, direction, tipo, cnpj, flagcamp, origem) {
+    //console.log(info, mobile, account, imageuser, atendir, atendircolor, direction, tipo, cnpj, flagcamp, origem);
     var texto = "<li id='id" + mobile + "' class='onhoverli'>";
     texto += "<div id='sid" + mobile + "' class='widget-followers-item onhoverli' onclick='openbox1(" + mobile + ")'>";
     if (direction == "foward") {
@@ -21,6 +21,12 @@ function modalpis(info, mobile, account, imageuser, atendir, atendircolor, direc
         texto += "<a href='#' class='widget-followers-name'>" + mobile + "</a>";
     }
     texto += "<a id='a" + mobile + "' href='#' class='widget-followers-username'>" + mobile + "</a>";
+    if (origem == 'wbot') {
+        texto += "<a id='origem" + mobile + "' href='#' class='widget-followers-username'>WhatsApp</a>";
+    } else if (origem == 'bot') {
+        texto += "<a id='origem" + mobile + "' href='#' class='widget-followers-username'>Webb</a>";
+    }
+
     texto += "</div>";
     texto += "</li>";
     return texto;
@@ -32,8 +38,8 @@ function chatbox1(numcl) {
     return (msg);
 }
 
-function msgtxtr(teste, lname, ltime) {
-    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px'>";
+function msgtxtr(teste, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style='word-wrap: break-word'>";
@@ -44,8 +50,20 @@ function msgtxtr(teste, lname, ltime) {
     return (msg);
 }
 
-function msgtxtl(teste, lname, ltime) {
-    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px;'>";
+function msgtxtr2(teste, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px' data-ordering = " + ldate + ">";
+    msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
+    msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
+    msg += "<div class='widget-chat-text' style='word-wrap: break-word; background-color: #FFF2CC'>";
+    msg += "" + teste + "";
+    msg += "</div>";
+    msg += "</div>";
+
+    return (msg);
+}
+
+function msgtxtl(teste, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px;' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style='background-color: #dcf8c6; word-wrap: break-word'>";
@@ -67,8 +85,8 @@ function msgtxtc(teste) {
 
 //******************************************************************************************************************************
 
-function previewimgtx(pvimg, lname, ltime, caption) {
-    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px'>";
+function previewimgtx(pvimg, lname, ltime, caption, ldate) {
+    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style='background-color: #dcf8c6; word-wrap: break-word'>";
@@ -81,8 +99,8 @@ function previewimgtx(pvimg, lname, ltime, caption) {
     return (msg);
 }
 
-function previewimg(pvimg, lname, ltime) {
-    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px'>";
+function previewimg(pvimg, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style='background-color: #dcf8c6; word-wrap: break-word'>";
@@ -96,8 +114,8 @@ function previewimg(pvimg, lname, ltime) {
 
 //******************************************************************************************************************************
 
-function previewvid(pvvid, lname, ltime) {
-    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px'>";
+function previewvid(pvvid, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style='background-color: #dcf8c6; word-wrap: break-word'>";
@@ -108,8 +126,8 @@ function previewvid(pvvid, lname, ltime) {
     return (msg);
 }
 
-function previewvidtx(pvvid, caption, lname, ltime) {
-    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px'>";
+function previewvidtx(pvvid, caption, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style='background-color: #dcf8c6; word-wrap: break-word'>";
@@ -123,8 +141,8 @@ function previewvidtx(pvvid, caption, lname, ltime) {
 
 //******************************************************************************************************************************
 
-function previewaud(pvaud, lname, ltime) {
-    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px'>";
+function previewaud(pvaud, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style='background-color: #dcf8c6; word-wrap: break-word'>";
@@ -135,8 +153,8 @@ function previewaud(pvaud, lname, ltime) {
     return (msg);
 }
 
-function previewaudtx(pvaud, caption, lname, ltime) {
-    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px'>";
+function previewaudtx(pvaud, caption, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style='background-color: #FFFFFF; word-wrap: break-word'>";
@@ -150,8 +168,8 @@ function previewaudtx(pvaud, caption, lname, ltime) {
 
 //******************************************************************************************************************************
 
-function previewdoc(pvdoc, lname, ltime) {
-    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px;'>";
+function previewdoc(pvdoc, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px;' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style='background-color: #dcf8c6;'>";
@@ -162,8 +180,8 @@ function previewdoc(pvdoc, lname, ltime) {
     return (msg);
 }
 
-function previewdoctx(pvdoc, caption, lname, ltime) {
-    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px;'>";
+function previewdoctx(pvdoc, caption, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px;' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style='background-color: #dcf8c6;'>";
@@ -189,8 +207,8 @@ function previewdoctx(pvdoc, caption, lname, ltime) {
 //*********|****\*********|*****************************************************************************************************
 //******************************************************************************************************************************
 
-function previewimgtxr(pvimg, lname, ltime, caption) {
-    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px'>";
+function previewimgtxr(pvimg, lname, ltime, caption, ldate) {
+    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text far fa-images' style='background-color: #dcf8c6; word-wrap: break-word'>";
@@ -203,8 +221,8 @@ function previewimgtxr(pvimg, lname, ltime, caption) {
     return (msg);
 }
 
-function previewimgr(pvimg, lname, ltime) {
-    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px'>";
+function previewimgr(pvimg, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text far fa-images' style='background-color: #dcf8c6; word-wrap: break-word'>";
@@ -221,8 +239,8 @@ function previewimgr(pvimg, lname, ltime) {
 
 //******************************************************************************************************************************
 
-function previewvidtx(pvvid, caption, lname, ltime) {
-    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px'>";
+function previewvidtx(pvvid, caption, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style='background-color: #f4f4f4; word-wrap: break-word'>";
@@ -234,8 +252,8 @@ function previewvidtx(pvvid, caption, lname, ltime) {
     return (msg);
 }
 
-function previewvidr(pvvid, lname, ltime) {
-    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px'>";
+function previewvidr(pvvid, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style='background-color: #f4f4f4; word-wrap: break-word'>";
@@ -248,8 +266,8 @@ function previewvidr(pvvid, lname, ltime) {
 
 //******************************************************************************************************************************
 
-function previewaudr(pvaud, lname, ltime) {
-    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px'>";
+function previewaudr(pvaud, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style='background-color: #dcf8c6; word-wrap: break-word'>";
@@ -259,8 +277,8 @@ function previewaudr(pvaud, lname, ltime) {
     return (msg);
 }
 
-function previewaudtxr(pvaud, caption, lname, ltime) {
-    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px'>";
+function previewaudtxr(pvaud, caption, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style='background-color: #dcf8c6; word-wrap: break-word'>";
@@ -272,8 +290,8 @@ function previewaudtxr(pvaud, caption, lname, ltime) {
     return (msg);
 }
 
-function previewdocr(pvdoc, lname, ltime) {
-    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px;'>";
+function previewdocr(pvdoc, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px;' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style=''>";
@@ -284,8 +302,8 @@ function previewdocr(pvdoc, lname, ltime) {
     return (msg);
 }
 
-function previewdoctxr(pvdoc, caption, lname, ltime) {
-    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px;'>";
+function previewdoctxr(pvdoc, caption, lname, ltime, ldate) {
+    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px;' data-ordering = " + ldate + ">";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
     msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
     msg += "<div class='widget-chat-text' style=''>";

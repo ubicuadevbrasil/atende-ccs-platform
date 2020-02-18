@@ -35,6 +35,18 @@ function msgtxtr(teste, lname, ltime) {
     return (msg);
 }
 
+function msgtxtr2(teste, lname, ltime) {
+    var msg = "<div class='widget-chat-item right' style='margin-right: 0px; margin-left: 55px'>";
+    msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";
+    msg += "<div class='widget-chat-heading'><a href='#' title=''>" + lname + "</a></div>";
+    msg += "<div class='widget-chat-text' style='word-wrap: break-word; background-color: #FFF2CC'>";
+    msg += "" + teste + "";
+    msg += "</div>";
+    msg += "</div>";
+
+    return (msg);
+}
+
 function msgtxtl(teste, lname, ltime) {
     var msg = "<div class='widget-chat-item left' style='margin-left: 0px; margin-right: 55px;'>";
     msg += "<span class='widget-chat-date pull-right'>" + ltime + "</span>";

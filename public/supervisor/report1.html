@@ -128,6 +128,17 @@
   <div class="px-content">
     <div class="page-header">
       <h1 class="ion-ios-paper"> Relatório Analítico de Atendimento</h1>
+      <div class="box-cell pull-right" style="width: 150px; border-style: none;">
+        <a id="btnbusca" class="btn btn-block btn-primary">
+          <span class="btn btn-primary btn-label-icon left ion-search"></span>Busca
+        </a>
+      </div>
+      <div id="btnexcel" class="box-cell pull-right text-center"
+        style="width: 150px; border-style: none; display: none; margin-right: 1vw;">
+        <a class="btn btn-block btn-primary">
+          <span class="btn btn-primary btn-label-icon left ion-ios-grid-view-outline"></span>Exportar Excel
+        </a>
+      </div>
     </div>
     <div>
       <h5 style="margin-top: 0px;" class="pull-left">
@@ -167,12 +178,7 @@
             <input type="text" id="daterange-1" class="form-control" placeholder="Período">
           </div>
           <div></div>
-          <div id="btnexcel" class="box-cell pull-right text-center"
-            style="width: 150px; border-style: none; display: none">
-            <a class="btn btn-block btn-primary">
-              <span class="btn btn-primary btn-label-icon left ion-ios-grid-view-outline"></span>Exportar Excel
-            </a>
-          </div>
+          <div></div>
         </div>
         <div class="gridnv1" style="margin-top: 1vh">
           <div class="input-group" style="width: 220px;">
@@ -186,15 +192,23 @@
               <option value="out">Out</option>
             </select>
           </div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div class="box-cell pull-right" style="width: 150px; border-style: none;">
-            <a id="btnbusca" class="btn btn-block btn-primary">
-              <span class="btn btn-primary btn-label-icon left ion-search"></span>Busca
-            </a>
+          <div class="input-group" style="width: 220px;">
+            <span class="input-group-addon">
+              <i class="fa fa-building-o"></i>
+            </span>
+            <select id="iOrigem" type="text" class="form-control" placeholder="Origem">
+              <option value="">Origem</option>
+              <option value="">Todas</option>
+              <option value="bot">Bot - Webb</option>
+              <option value="wbot">Bot - WS</option>
+              <option value="botHum">Bot/Sercom - Webb</option>
+              <option value="wbotHum">Bot/Sercom - WS</option>
+            </select>
           </div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
       </div>
     </div>
@@ -225,6 +239,7 @@
                   <th style="width: 378px;">Status</th>
                   <th style="width: 126px;">Interação</th>
                   <th style="width: 126px;">Nome do Arquivo</th>
+                  <th style="width: 126px;">Origem</th>
                   <th style="width: 126px;">Histórico</th>
                 </tr>
               </thead>
@@ -353,11 +368,7 @@
     /********************************************************************************************************************************************************/
 
     socket.on('connect', function () {
-      console.log('-----------------------------------------------------------------------------------');
-      console.log('-----------------------------------------------------------------------------------');
-      console.log('------------------------CONECTADO-----CONECTADO------------------------------------');
-      console.log('-----------------------------------------------------------------------------------');
-      console.log('-----------------------------------------------------------------------------------');
+      console.log('CONECTADO');
 
       socket.emit('bi-liststa', { fkid: 'a05c3708-32b3-11e8-9d7a-000c29369337' });
 
@@ -390,11 +401,7 @@
     /********************************************************************************************************************************************************/
 
     socket.on('disconnect', function () {
-      console.log('-----------------------------------------------------------------------------------');
-      console.log('-----------------------------------------------------------------------------------');
-      console.log('------------------------DISCONECTADO-----DISCONECTADO------------------------------');
-      console.log('-----------------------------------------------------------------------------------');
-      console.log('-----------------------------------------------------------------------------------');
+      console.log('Desconectado');
     });
 
     /********************************************************************************************************************************************************/
@@ -462,7 +469,7 @@
       var str = $('#daterange-1').val();
       if (str != "") {
         globalqry = onformataperiodo(str);
-        console.log("g - " + globalqry);
+        //console.log("g - " + globalqry);
 
       }
 
@@ -470,6 +477,7 @@
       var v_cnpj = $('#iCNPJ').val();
       var v_nped = $('#iNPED').val();
       var v_direction = $('#iDirection').val();
+      var v_origem = $('#iOrigem').val();
 
       globalqry2 = "";
 
@@ -497,6 +505,21 @@
           globalqry2 += " and atendir= '" + v_direction + "'";
         } else {
           globalqry2 += "atendir= '" + v_direction + "'";
+        }
+      }
+      if (v_origem != "") {
+        if (v_origem == "wbot" || v_origem == "bot") {
+          if (globalqry2 != "") {
+            globalqry2 += " and trans.origem= '" + v_origem + "' and trans.destino= '" + v_origem + "'";
+          } else {
+            globalqry2 += "trans.origem= '" + v_origem + "'  and trans.destino= '" + v_origem + "'";
+          }
+        } else {
+          if (globalqry2 != "") {
+            globalqry2 += " and trans.origem= '" + v_origem.replace('Hum', '') + "' and trans.destino= 'human'";
+          } else {
+            globalqry2 += "trans.origem= '" + v_origem.replace('Hum', '') + "'  and trans.destino= 'human'";
+          }
         }
       }
       testsock();
@@ -538,7 +561,7 @@
     var checkNext;
 
     socket.on('bi-report1', function (payload) {
-      console.log(payload);
+      //console.log(payload);
       if (payload.count > 0) {
         contadorglobal = payload.count;
         $('#contatotal2').text(payload.count);
@@ -556,7 +579,7 @@
 
         for (i = 0; i < qnt; i++) {
           var table = '';
-          table += tabsup(tbres[i].sessionid, tbres[i].mobile, tbres[i].cnpj, tbres[i].atendente, tbres[i].hora, tbres[i].data, tbres[i].status, tbres[i].atendir, tbres[i].filename);
+          table += tabsup(tbres[i].sessionid, tbres[i].mobile, tbres[i].cnpj, tbres[i].atendente, tbres[i].hora, tbres[i].data, tbres[i].status, tbres[i].atendir, tbres[i].filename, tbres[i].origem);
           $('#tableresult').append(table);
 
 
@@ -621,14 +644,14 @@
     });
 
     $('#btnexcel').on('click', function () {
-      console.log(toExcelParams);
+      //console.log(toExcelParams);
 
       tableToExcel(toExcelParams);
     });
 
     function tableToExcel(data) {
       var payload = data;
-      console.log(payload);
+      //console.log(payload);
 
       socket.emit('bi-report1toxlsx', payload);
     }
@@ -659,7 +682,7 @@
       } else {
         var payload = { params: "" + globalqry2 + "", limit: data };
       }
-      console.log(payload);
+      //console.log(payload);
       checkNext = "False";
       socket.emit('bi-report1', payload);
     }
@@ -740,11 +763,14 @@
     }
 
     socket.on('bi-historyone', function (payload) {
+      console.log(payload)
       if (payload.contacts.length != 0) {
         var logs = JSON.parse(payload.logs);
         var contacts = JSON.parse(payload.contacts);
-        console.log(logs);
+        //var bot = JSON.parse(payload.bot);
+        //console.log(logs);
         $('#chathistory').empty();
+        //onchatmsg(contacts, logs, 'chathistory', bot);
         onchatmsg(contacts, logs, 'chathistory');
         $('#modalHistorico').modal();
       } else {

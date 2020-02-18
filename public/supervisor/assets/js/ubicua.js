@@ -81,8 +81,8 @@ function histmsg(contacts, logs) {
             var menu = '';
             menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
             $('#chat' + contacts[i].mobile).append(menu);
-	  } else if (logs[a].msgtype === 'transfer') {
-	    var btime2 = conversor_remessa(logs[a].dt);
+          } else if (logs[a].msgtype === 'transfer') {
+            var btime2 = conversor_remessa(logs[a].dt);
             var menu = '';
             menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
             $('#chat' + contacts[i].mobile).append(menu);
@@ -137,14 +137,86 @@ function histmsg(contacts, logs) {
             }
           }
         }
-      } else {}
+      } else { }
     }
   }
 }
 
 /********************************************************************************************************************************************************/
 
-function onchatmsg(contacts, logs, area) {
+function custom_sort(a, b) {
+  return new Date(a.date).getTime() - new Date(b.date).getTime();
+}
+
+function onchatmsg(contacts, logs, area, bot) {
+
+  /*var manyContacts = contacts.length;
+
+  if (bot != null && bot != "" && bot[0].origem == 'bot') {
+    var chatBot = JSON.parse(bot[0].chatBot);
+    chatBot = decodeURIComponent(escape(chatBot));
+    chatBot = JSON.parse(chatBot);
+    console.log(chatBot);
+    chatBot.sort(custom_sort);
+    console.log(chatBot);
+
+    var dtin = new Date(chatBot[0].date);
+    var dtprint = convertDate(dtin);
+    var menu = '';
+    menu += msgtxtc(dtprint);
+    $('#' + area).append(menu);
+
+
+    for (u = 0; u < chatBot.length; u++) {
+      var bot_msg = chatBot[u].msgtext;
+      bot_msg = bot_msg.replace(/\\n/g, "<br />")
+      if (chatBot[u].msgdir === 'i') {
+        var btime2 = conversor_remessa(chatBot[u].date);
+        var menu = '';
+        menu += msgtxtl(bot_msg, contacts[0].mobile, btime2);
+        $('#' + area).append(menu);
+        //----------------------------------------------------------------------------------------------------------------------------------------
+      } else if (chatBot[u].msgdir === 'o') {
+        var btime2 = conversor_remessa(chatBot[u].date);
+        var menu = '';
+        menu += msgtxtr2(bot_msg, chatBot[u].fromname, btime2);
+        $('#' + area).append(menu);
+      }
+    }
+  } else if (bot[0].origem == 'wbot') {
+    var chatBot = JSON.stringify(bot[0].chatBot);
+    chatBot = chatBot.replace(/"/g, "");
+    chatBot = chatBot.replace(/'/g, '"');
+    chatBot = chatBot.replace(/"msgtext": None,/g, '"msgtext": "None",')
+    chatBot = JSON.parse(chatBot);
+    console.log(chatBot);
+    chatBot.sort(custom_sort);
+    console.log(chatBot);
+
+    var dtin = new Date(chatBot[0].date);
+    var dtprint = convertDate(dtin);
+    var menu = '';
+    menu += msgtxtc(dtprint);
+    $('#' + area).append(menu);
+
+    for (u = 0; u < chatBot.length; u++) {
+      var bot_msg = chatBot[u].msgtext;
+      bot_msg = bot_msg.toString().replace(/\\n/g, "<br />")
+      if (chatBot[u].msgdir === 'i') {
+        var btime2 = conversor_remessa(chatBot[u].date);
+        var menu = '';
+        menu += msgtxtl(bot_msg, contacts[0].mobile, btime2);
+        $('#' + area).append(menu);
+        //----------------------------------------------------------------------------------------------------------------------------------------
+      } else if (chatBot[u].msgdir === 'o') {
+        var btime2 = conversor_remessa(chatBot[u].date);
+        var menu = '';
+        menu += msgtxtr2(bot_msg, chatBot[u].fromname, btime2);
+        $('#' + area).append(menu);
+      }
+    }
+
+  }*/
 
   var cx = contacts.length;
   var lx = logs.length;
@@ -155,7 +227,7 @@ function onchatmsg(contacts, logs, area) {
   $('#' + area).append(menu);
   for (a = 0; a < lx; a++) {
     for (i = 0; i < cx; i++) {
-      if (contacts[i].sessionid == logs[a].sessionid) {
+      if (contacts[i].sessionid == logs[a].sessionid || contacts[i].sessionBot == logs[a].sessionid) {
         if (logs[a].msgdir === 'i') {
           if (logs[a].msgtype === 'chat') {
             var btime2 = conversor_remessa(logs[a].dt);
@@ -214,12 +286,19 @@ function onchatmsg(contacts, logs, area) {
           }
         } else if (logs[a].msgdir === 'o') {
           if (logs[a].msgtype === 'chat') {
+            if (logs[a].fromname == 'Bot') {
+              var btime2 = conversor_remessa(logs[a].dt);
+              var menu = '';
+              menu += msgtxtr2(logs[a].msgtext, logs[a].fromname, btime2);
+              $('#' + area).append(menu);
+            } else {
+              var btime2 = conversor_remessa(logs[a].dt);
+              var menu = '';
+              menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
+              $('#' + area).append(menu);
+            }
+          } else if (logs[a].msgtype === 'transfer') {
             var btime2 = conversor_remessa(logs[a].dt);
-            var menu = '';
-            menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
-            $('#' + area).append(menu);
-	  } else if (logs[a].msgtype === 'transfer') {
-	    var btime2 = conversor_remessa(logs[a].dt);
             var menu = '';
             menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
             $('#' + area).append(menu);
@@ -274,7 +353,7 @@ function onchatmsg(contacts, logs, area) {
             }
           }
         }
-      } else {}
+      } else { }
     }
   }
 }
@@ -292,11 +371,11 @@ function hidedivs() {
 
 /*********************************************************************************************************************************************************/
 
-function isNumberKey(evt){
-    var charCode = (evt.which) ? evt.which : event.keyCode
-    if (charCode > 31 && (charCode < 48 || charCode > 57))
-        return false;
-    return true;
+function isNumberKey(evt) {
+  var charCode = (evt.which) ? evt.which : event.keyCode
+  if (charCode > 31 && (charCode < 48 || charCode > 57))
+    return false;
+  return true;
 }
 
 /********************************************************************************************************************************************************/
@@ -353,7 +432,7 @@ function gettime() {
 function convertDate(inputFormat) {
   function pad(s) { return (s < 10) ? '0' + s : s; }
   var d = new Date(inputFormat);
-  return [pad(d.getDate()), pad(d.getMonth()+1), d.getFullYear()].join('/');
+  return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/');
 }
 
 /********************************************************************************************************************************************************/
