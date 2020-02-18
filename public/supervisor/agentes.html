@@ -123,7 +123,13 @@
     <div class="page-header">
       <h1 class="ion-ios-people"> Atendentes</h1>
 
-      <div id="atendenv" class="box-cell pull-right" style="width: 150px; border-style: none;">
+      <div id="btntreinamento" class="box-cell pull-right" style="width: 150px; border-style: none;">
+        <a id="nvtreinamento" class="btn btn-block btn-primary">
+          <span class="btn btn-primary btn-label-icon left ion-email"></span>Treinamento
+        </a>
+      </div>
+
+      <div id="atendenv" class="box-cell pull-right" style="width: 150px; border-style: none; margin-right: 20px;">
         <a id="nvatend" class="btn btn-block btn-primary">
           <span class="btn btn-primary btn-label-icon left ion-person-add"></span>Novo
         </a>
@@ -303,6 +309,43 @@
     </div>
   </div>
 
+  <div class="modal fade" id="modalDflt2" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">×</button>
+          <h4 class="modal-title" id="myModalLabel">Cadastro</h4>
+        </div>
+        <div class="modal-body">
+          <div class="text-xs-center bigtext">
+            <span>Mensagem de Treinamento</span>
+          </div>
+          <br><br>
+          <div class="gridmodal2" style="grid-template-columns: 50% 50%;">
+            <div>
+              <span id="stitulo" class="font-size-14"> Ativar Mensagem de Treinamento</span>
+            </div>
+            <div>
+              <div>
+                <label for="switcher-basic2" class="switcher switcher-success" style="margin:0">
+                  <input type="checkbox" id="switcher-basic2" checked="">
+                  <div id="switchEdit" class="switcher-indicator">
+                    <div id="editOnTest" class="switcher-yes">SIM</div>
+                    <div id="editOffTest" class="switcher-no">NÃO</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="margin-top: 5vh;">
+          <button type="button" class="btn" data-dismiss="modal" style="width: 90px;">Cancelar</button>
+          <button id='btnsaveedt' type="button" class="btn btn-primary" style="width: 90px;">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="px-footer px-footer-bottom">© 2018 Ubicua Cloud</footer>
 
@@ -392,6 +435,8 @@
 
       socket.emit('bi-listagents', { fkid: 'a05c3708-32b3-11e8-9d7a-000c29369337' });
 
+      socket.emit('bi-training');
+
       socket.on('bi-listagents', function (payload) {
         var json = JSON.parse(payload);
         var cx = json.length;
@@ -446,9 +491,25 @@
         socket.emit('upd_agent', { id: ida, pwd: false, perfil: perfil, nome: nome, usuario: user });
         ida = 0;
 
-        $('#modal-default2').modal('toggle');
+        $('#modal-default2').modal();
       }
 
+    });
+
+    $("#btntreinamento").on('click', function () {
+      $("#modalDflt2").modal();
+    })
+
+    $("#btnsaveedt").on('click', function () {
+      socket.emit('upd_training', { bool: $("#switcher-basic2")[0].checked })
+      $("#modalDflt2").modal('hide');
+    })
+
+    socket.on('bi-training', function (payload) {
+      console.log(payload);
+      if (payload[0].training == "false") {
+        $('#switchEdit').trigger("click")
+      }
     });
 
     function openbox1(box) {

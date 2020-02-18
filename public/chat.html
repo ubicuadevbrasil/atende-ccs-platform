@@ -442,14 +442,12 @@
                 <br>
                 <div class="input-group">
                   <span class="input-group-addon"><i class="fa fa-pencil-square-o"></i></span>
-                  <input id="iPedido" type="text" onkeypress="return isNumberKey(event)" class="form-control"
-                    placeholder="Número do Pedido">
+                  <input id="iPedido" type="number" class="form-control" placeholder="Número do Pedido">
                 </div>
                 <br>
                 <div class="input-group">
                   <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                  <input id="iValor" type="text" onkeypress="return isNumberKey(event)" class="form-control"
-                    placeholder="Valor R$">
+                  <input id="iValor" type="number" class="form-control" placeholder="Valor R$">
                 </div>
                 <br>
                 <button id="addPedido" type="button" class="btn btn-success">Adcionar</button>
@@ -515,7 +513,7 @@
             <button id="fecharhis" type="button" class="close" data-dismiss="modal">×</button>
             <h4 class="modal-title">Histórico da Última Interação</h4>
           </div>
-          <div class="modal-body"
+          <div id="orderModalHist" class="modal-body"
             style="padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
             <div id="chathistory" class="panel scrollstyle" style="overflow-y: auto; height: 400px;">
             </div>
@@ -859,6 +857,7 @@
     <script>
       /********************************************************************************************************************************************************/
 
+
       var json;
       var aton = 0;
       var socket = io.connect();
@@ -1006,7 +1005,9 @@
         idcontato = idcontato + 1;
         var numac = payload.mobile;
         var atendir;
-        var menu = modalpis('', payload.mobile, payload.account, payload.photo, 'ion-reply', 'color:red');
+        console.log(payload);
+        console.log('', payload.mobile, payload.account, payload.photo, 'ion-reply', 'color:red', '', '', '', payload.fonte);
+        var menu = modalpis('', payload.mobile, payload.account, payload.photo, 'ion-reply', 'color:red', '', '', '', '', payload.fonte);
         $('#ulConversation').append(menu);
         var menu2 = '';
         menu2 += chatbox1(payload.mobile);
@@ -1018,6 +1019,9 @@
         } else {
           $('#ac' + numac).hide();
         }
+
+        socket.emit('bi-atendein', { fkid: sessionStorage.getItem('fkid') });
+
       });
 
       socket.on('bi-atendein', function (payload) {
@@ -1026,6 +1030,8 @@
         if (payload.logs.length > 0 && payload.contacts.length > 0) {
           var logs = JSON.parse(payload.logs);
           var contacts = JSON.parse(payload.contacts);
+          var bot = JSON.parse(payload.bot);
+          var webb = JSON.parse(payload.webb);
           var direction;
           var cx = contacts.length;
           var lx = logs.length;
@@ -1033,8 +1039,9 @@
             var _flagcamp = contacts[i].flagcampanha;
             var _cnpj = contacts[i].cnpj;
             var _tipo = contacts[i].tipo;
+            var _origem = contacts[i].origem;
             var atendir;
-            console.log(_tipo)
+            //console.log(_origem)
             if (_tipo == 1) {
               _tipo = "Multi";
             } else if (_tipo == 2) {
@@ -1054,7 +1061,7 @@
             if (contacts[i].account != null) {
               if (document.getElementById("id" + contacts[i].mobile) == null) {
                 var menu = '';
-                menu += modalpis('', contacts[i].mobile, contacts[i].account, contacts[i].photo, atendir, atendircolor, direction, _tipo, _cnpj, _flagcamp);
+                menu += modalpis('', contacts[i].mobile, contacts[i].account, contacts[i].photo, atendir, atendircolor, direction, _tipo, _cnpj, _flagcamp, _origem);
                 if (contacts[i].atendir == 'in') {
                   $('#ulConversation').append(menu);
                 } else if (contacts[i].atendir == 'out') {
@@ -1069,7 +1076,7 @@
             } else {
               if (document.getElementById("id" + contacts[i].mobile) == null) {
                 var menu = '';
-                menu += modalpis('', contacts[i].mobile, '', contacts[i].photo, atendir, atendircolor, direction, _tipo, _cnpj, _flagcamp);
+                menu += modalpis('', contacts[i].mobile, '', contacts[i].photo, atendir, atendircolor, direction, _tipo, _cnpj, _flagcamp, _origem);
                 if (contacts[i].atendir == 'in') {
                   $('#ulConversation').append(menu);
                 } else if (contacts[i].atendir == 'out') {
@@ -1089,8 +1096,9 @@
               $('#ac' + contacts[i].mobile).hide();
             }
           }
+          histmsgBot(contacts, bot);
+          histmsgWebb(contacts, webb);
           histmsg(contacts, logs);
-
         }
         socket.emit('add user', { fkid: sessionStorage.getItem('fkid'), fkname: sessionStorage.getItem('fkname') });
       });
@@ -1112,12 +1120,73 @@
 
       /********************************************************************************************************************************************************/
 
+
+      function createTime(myTime) {
+        var date = myTime.split(' ')[0];
+        date = date.split('-');
+        date = date[2] + "-" + date[1] + "-" + date[0];
+        var hour = myTime.split(' ')[1];
+        var data = date + "T" + hour + ".000Z";
+        data = new Date(data).toISOString()
+        //var btime2 = conversor_remessa(data);
+        return data;
+      }
+
+      function custom_sort(a, b) {
+        return new Date(a.date) - new Date(b.date);
+      }
+
       socket.on('bi-lasthistory', function (payload) {
+        console.log(payload)
         if (payload.contacts.length != 0) {
           var logs = JSON.parse(payload.logs);
           var contacts = JSON.parse(payload.contacts);
-          console.log(logs);
-          onchatmsg(contacts, logs, 'chathistory');
+          var bot = JSON.parse(payload.bot);
+          var origem = payload.origem;
+          var histBot = [];
+          if (origem == 'bot') {
+            for (a = 0; a < bot.length; a++) {
+              var chat = bot[a].chatBot;
+              chat = JSON.parse(chat);
+              chat = chat.replace(/"/g, "'");
+              chat = chat.replace(/'/g, '"');
+              chat = JSON.parse(chat);
+              for (b = 0; b < chat.length; b++) {
+                logs.push(chat[a]);
+              }
+            }
+
+            for (a = 0; a < logs.length; a++) {
+              try {
+                var ret = createTime(logs[a].date);
+                logs[a].date = ret;
+              } catch {
+                console.log('Already OK')
+              }
+            }
+
+            for (a = 0; a < logs.length; a++) {
+              try {
+                var oldDate = logs[a].dt;
+                if (oldDate != "" && oldDate != null) {
+                  logs[a].date = oldDate
+                  delete logs[a].dt;
+                }
+              } catch {
+                console.log('Error')
+              }
+            }
+
+            logs = logs.filter(function (el) {
+              return el != null;
+            });
+
+            logs = logs.sort(custom_sort)
+
+            console.log(logs)
+            console.log(contacts)
+          }
+          onchatmsg(contacts, logs, 'chathistory', bot);
           $('#modalHistorico').modal();
         } else {
           $('#myModal9').modal();
@@ -1853,6 +1922,7 @@
         var _segmento = $('#icbSegmento').val();
         var _pedido = $('#iPedido').val();
         var _valor = $('#iValor').val();
+        _valor = parseFloat(_valor).toLocaleString('en-US', { style: 'currency', currency: 'BRL' });
 
         if (_segmento != "" && _pedido != "" && _valor != "") {
           document.getElementById("fillWarning").style.display = "none";

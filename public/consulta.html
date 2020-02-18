@@ -152,15 +152,17 @@
               aria-describedby="datatables_info" style="display: none">
               <thead>
                 <tr role="row0">
-                  <th style="width: 213px;">Número do Cliente</th>
-                  <th style="width: 213px;">CNPJ</th>
-                  <th style="width: 213px;">Nome do Atendente</th>
-                  <th style="width: 180px;">Hora</th>
-                  <th style="width: 126px;">Data</th>
-                  <th style="width: 126px;">No. Pedido</th>
-                  <th style="width: 126px;">Segmento</th>
-                  <th style="width: 126px;">Valor</th>
-                  <th style="width: 126px;">Histórico</th>
+                  <th style="width: 10%">Número do Cliente</th>
+                  <th style="width: 10%">CNPJ</th>
+                  <th style="width: 10%">Nome do Atendente</th>
+                  <th style="width: 10%">Hora</th>
+                  <th style="width: 10%">Data</th>
+                  <th style="width: 10%">No. Pedido</th>
+                  <th style="width: 10%">Segmento</th>
+                  <th style="width: 10%">Valor</th>
+                  <th style="width: 10%">Status</th>
+                  <th style="width: 10%">Origem</th>
+                  <th style="width: 10%">Histórico</th>
                 </tr>
               </thead>
               <tbody id='tableresult'>
@@ -428,7 +430,7 @@
 
           }
 
-          table += tabsup(tbres[i].sessionid, tbres[i].mobile, tbres[i].cnpj, tbres[i].atendente, tbres[i].hora, tbres[i].data, __pedido, __segmento, __valor, tbres[i].status);
+          table += tabsup(tbres[i].sessionid, tbres[i].mobile, tbres[i].cnpj, tbres[i].atendente, tbres[i].hora, tbres[i].data, __pedido, __segmento, __valor, tbres[i].status, tbres[i].origem);
           $('#tableresult').append(table);
         }
         //Paginação botoes Começo ----------------------------------------------------------
@@ -454,6 +456,7 @@
         //$('#pagtab').append(pag2);
         $('#pagtab2').append(pag2);
         //Paginação botoes fim ----------------------------------------------------------
+        console.log(marcabtnpag)
         $("#" + marcabtnpag).addClass("active");
         marcabtnpag = '';
       } else {
@@ -575,6 +578,9 @@
         var logs = JSON.parse(payload.logs);
         var contacts = JSON.parse(payload.contacts);
         $('#chathistory').empty();
+        //var bot = JSON.parse(payload.bot);
+        //console.log(logs);
+        //onchatmsg(contacts, logs, 'chathistory', bot);
         onchatmsg(contacts, logs, 'chathistory');
         $('#modalHistorico').modal();
       } else {

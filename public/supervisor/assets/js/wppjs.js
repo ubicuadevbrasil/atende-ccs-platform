@@ -68,7 +68,7 @@ function getperfil(id) {
     return perfil;
 }
 
-function tabsup(id, numb, cnpj, name, hour, date, state, atendir, filename) {
+function tabsup(id, numb, cnpj, name, hour, date, state, atendir, filename, origem, origem2) {
 
     if (numb == null || numb == "") {
         numb = '-';
@@ -88,18 +88,56 @@ function tabsup(id, numb, cnpj, name, hour, date, state, atendir, filename) {
     if (state == null || state == "") {
         state = '-';
     }
+    if (atendir == null || atendir == "") {
+        atendir = '-';
+    }
+    if (filename == null || filename == "") {
+        filename = '-';
+    }
+    if (origem2 == null || origem2 == "") {
+        origem2 = '-';
+    } else if (origem2 == 'wbot') {
+        origem2 = 'WhatsApp'
+    } else if (origem2 == 'bot') {
+        origem2 = 'Fidelize'
+    }
 
-    var tab = "<tr id='count" + id + "' class='gradeA odd' role='row'>";
-    tab += "<td class='sorting_1'>" + numb + "</td>";
-    tab += "<td>" + cnpj + "</td>";
-    tab += "<td>" + name + "</td>";
-    tab += "<td>" + hour + "</td>";
-    tab += "<td>" + date + "</td>";
-    tab += "<td>" + state + "</td>";
-    tab += "<td>" + atendir + "</td>";
-    tab += "<td>" + filename + "</td>";
-    tab += "<td id='" + id + "' class='text-center' onclick='openhist(this.id)'><i class='fa fa-comments' style='cursor: pointer;'></i></td>";
-    tab += "</tr>";
+    if (origem == null || origem == "") {
+        origem = '-';
+    } else if (origem == 'wbot') {
+        origem = 'WhatsApp'
+    } else if (origem == 'bot') {
+        origem = 'Fidelize'
+    }
+    console.log(origem2)
+    if (origem2 == '-') {
+        var tab = "<tr id='count" + id + "' class='gradeA odd' role='row'>";
+        tab += "<td class='sorting_1'>" + numb + "</td>";
+        tab += "<td>" + cnpj + "</td>";
+        tab += "<td>" + name + "</td>";
+        tab += "<td>" + hour + "</td>";
+        tab += "<td>" + date + "</td>";
+        tab += "<td>" + state + "</td>";
+        tab += "<td>" + atendir + "</td>";
+        tab += "<td>" + filename + "</td>";
+        tab += "<td>" + origem + "</td>";
+        tab += "<td id='" + id + "' class='text-center' onclick='openhist(this.id)'><i class='fa fa-comments' style='cursor: pointer;'></i></td>";
+        tab += "</tr>";
+    } else {
+        var tab = "<tr id='count" + id + "' class='gradeA odd' role='row'>";
+        tab += "<td class='sorting_1'>" + numb + "</td>";
+        tab += "<td>" + cnpj + "</td>";
+        tab += "<td>" + name + "</td>";
+        tab += "<td>" + hour + "</td>";
+        tab += "<td>" + date + "</td>";
+        tab += "<td>" + state + "</td>";
+        tab += "<td>" + atendir + "</td>";
+        tab += "<td>" + filename + "</td>";
+        tab += "<td>" + origem + "</td>";
+        tab += "<td>" + origem2 + "</td>";
+        tab += "<td id='" + id + "' class='text-center' onclick='openhist(this.id)'><i class='fa fa-comments' style='cursor: pointer;'></i></td>";
+        tab += "</tr>";
+    }
 
     return (tab);
 }
@@ -113,7 +151,7 @@ function pagtab(contg, id) {
 }
 
 function pagtab2(data) {
-    console.log(data);
+    //console.log(data);
     if (data == 'next') {
         var tab = "<li class='paginate_button previous' id='datatables_previous' onclick='showbtns(0)'>";
         tab += "<span href='#'><i class='fa fa-angle-left'></i></span></li>";
@@ -142,18 +180,18 @@ var parametrosetas = 0;
 function showbtns(data) {
     var contador = $('li.goon').length;
     contador = contador - 5;
-    console.log(contador, parametrosetas);
+    //console.log(contador, parametrosetas);
 
     if (data == 1) {
         if (parametrosetas < contador) {
-            console.log(parametrosetas);
+            //console.log(parametrosetas);
             parametrosetas = parametrosetas + 5
             $('li.goon').slice(parametrosetas, parametrosetas + 5).show();
             $('li.goon').slice(parametrosetas - 5, parametrosetas).hide();
         }
     } else if (data == 0) {
         if (parametrosetas > 0) {
-            console.log(parametrosetas);
+            //console.log(parametrosetas);
             $('li.goon').slice(parametrosetas - 5, parametrosetas).show();
             $('li.goon').slice(parametrosetas, parametrosetas + 5).hide();
             parametrosetas = parametrosetas - 5;
