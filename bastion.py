@@ -38,7 +38,7 @@ def staticMessage(session,message,mobile):
         print(str(session))
         print(str(message))
         print(str(mobile))
-        url = "https://conecta-dsv-drdryl.appspot.com/api/intent/detect/{}/".format(session)
+        url = "https://ubicuacloud.appspot.com/api/intent/detect/{}/".format(session)
         token = login()
         hed = {'Authorization': 'Bearer ' + token}
         payload = {"query_input": {"text": str(message)}}
@@ -112,7 +112,7 @@ def endBot(session,mobile):
 
 def login():
     try:
-        url = "https://conecta-dsv-drdryl.appspot.com/api/login/"
+        url = "https://ubicuacloud.appspot.com/api/login/"
         payload = { "user_name": "ubicua", "password": "senha$00" }
 
         r = requests.post(url, json=payload)
