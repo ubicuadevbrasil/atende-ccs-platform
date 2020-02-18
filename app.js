@@ -22,8 +22,8 @@ require('ubc/tools.js')();
 var dbcc = require('ubc/dbcc.js');
 
 var options = {
-        key: fs.readFileSync('/etc/letsencrypt/live/ccslite.sanofi-mobile.com.br/privkey.pem'),
-        cert: fs.readFileSync('/etc/letsencrypt/live/ccslite.sanofi-mobile.com.br/fullchain.pem')
+        key: fs.readFileSync('/etc/letsencrypt/live/ccs.sanofi-mobile.com.br/privkey.pem'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/ccs.sanofi-mobile.com.br/fullchain.pem')
 };
 
 // Config App Express
