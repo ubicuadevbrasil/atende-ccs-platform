@@ -271,6 +271,7 @@ app.post('/api/bot/transbordo', function (req, res, next) {
                                                 if (result.length == 0) {
                                                         dbcc.query("INSERT INTO db_sanofi_ccs.tab_filain (mobile, sessionBot, status, origem) VALUES (?,?,1,'bot')", [_cnpj, req.body.sessionid], function (err, result) {
                                                                 if (err) {
+                                                                        console.log(err);
                                                                         res.json({ status: 'falha', resultado: 'err' });
                                                                 } else {
                                                                         // Necessario Mandar mensagem de boas vindas via API ATOS
@@ -475,6 +476,91 @@ app.post('/api/bot/chat', function (req, res, next) {
         }
 });
 
+app.post('/api/bot/status', function (req, res, next) {
+        var auth = req.headers['authorization'];
+        console.log("Authorization Header is: ", auth);
+        console.log(req.body);
+        if (!auth) {
+                res.statusCode = 401;
+                res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
+                res.end('Sorry! Invalid Authentication.');
+        } else if (auth) {
+                var tmp = auth.split(' ');
+                var buf = new Buffer(tmp[1], 'base64');
+                var plain_auth = buf.toString();
+                console.log("Decoded Authorization ", plain_auth);
+                var creds = plain_auth.split(':');
+                var username = creds[0];
+                var password = creds[1];
+                if ((username == 'atosBot') && (password == 'd8511353660467bb8e8c68016053bd9e')) {
+                        var _sessionBot = req.body.sessionid;
+                        var _consultar_pedido = req.body.consultar_pedido;
+                        var _orcamento = req.body.orcamento;
+                        var _novo_pedido = req.body.novo_pedido;
+                        var _vacina = req.body.vacina;
+                        var _convert_compra = req.body.convert_compra;
+                        var _pedidos = req.body.pedidos;
+                        var _transbordo_intent = req.body.transbordo_intent
+                        if (req.body.sessionid != null && req.body.sessionid != '') {
+                                dbcc.query(`
+                                UPDATE tab_transbordo SET 
+                                consultar_pedido = ?, 
+                                orcamento = ?, 
+                                novo_pedido = ?, 
+                                vacina = ?, 
+                                convert_compra = ?, 
+                                pedidos = ?,
+                                transbordo_intent = ?
+                                WHERE sessionBot = ?;`,
+                                        [_consultar_pedido, _orcamento, _novo_pedido, _vacina, _convert_compra, _pedidos, _transbordo_intent, _sessionBot], function (err, result) {
+                                                if (err) {
+                                                        console.log(err)
+                                                        res.json({ status: 'falha', resultado: err });
+                                                } else {
+                                                        res.json({ status: '200', resultado: 'Status atualizado com sucesso' });
+                                                }
+                                        });
+                        }
+                } else {
+                        res.statusCode = 401;
+                        res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
+                        res.end('Sorry! Unauthorized Access.');
+                }
+        }
+});
+
+app.get('/api/ubicua/report', function (req, res, next) {
+        var auth = req.headers['authorization'];
+        console.log("Authorization Header is: ", auth);
+        console.log(req.body);
+        if (!auth) {
+                res.statusCode = 401;
+                res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
+                res.end('Sorry! Invalid Authentication.');
+        } else if (auth) {
+                var tmp = auth.split(' ');
+                var buf = new Buffer(tmp[1], 'base64');
+                var plain_auth = buf.toString();
+                console.log("Decoded Authorization ", plain_auth);
+                var creds = plain_auth.split(':');
+                var username = creds[0];
+                var password = creds[1];
+                if ((username == 'ubicua') && (password == '1zvzrAFyIwKhWqIoyRU9whpdBYoK')) {
+                        dbcc.query('CALL rt_painelop();', function (err, result) {
+                                if (err) {
+                                        console.log(err)
+                                        res.json({ status: 'falha', resultado: err });
+                                } else {
+                                        res.json({ status: '200', resultado: result });
+                                }
+                        });
+                } else {
+                        res.statusCode = 401;
+                        res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
+                        res.end('Sorry! Unauthorized Access.');
+                }
+        }
+});
 // API Report Tracking
 app.get('/tracking/api/:dtini/:dtfim', function (req, res) {
 
@@ -565,7 +651,7 @@ function onrefusegroup(admin) {
 
 async function loginAtos() {
         return new Promise((resolve, reject) => {
-                var _url = 'https://conecta-dsv-drdryl.appspot.com/api/login/';
+                var _url = 'https://ubicuacloud.appspot.com/api/login/';
                 var _payload = {
                         "user_name": "ubicua",
                         "password": "senha$00"
@@ -587,7 +673,7 @@ function sendWelcome(sessionBot, mobile, message) {
                                 auth: {
                                         'bearer': _hashToken
                                 },
-                                uri: 'https://conecta-dsv-drdryl.appspot.com/api/transbordo/send-message/' + sessionBot + '/',
+                                uri: 'https://ubicuacloud.appspot.com/api/transbordo/send-message/' + sessionBot + '/',
                                 method: 'POST',
                                 json: {
                                         "text": message
@@ -596,7 +682,7 @@ function sendWelcome(sessionBot, mobile, message) {
                         console.log("> Options Configs");
                         await request(options, function (error, response, body) {
                                 console.log("statusCode" + response.statusCode);
-                                console.log("body" + response.body);
+                                //console.log("body" + response.body);
                                 if (!error && response.statusCode == 200) {
                                         console.log("> Bot OK");
                                         dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [mobile], function (err, result) {
@@ -743,7 +829,7 @@ io.on('connection', function (socket) {
                                                         auth: {
                                                                 'bearer': _hashToken
                                                         },
-                                                        uri: 'https://conecta-dsv-drdryl.appspot.com/api/transbordo/send-message/' + _sessionBot + '/',
+                                                        uri: 'https://ubicuacloud.appspot.com/api/transbordo/send-message/' + _sessionBot + '/',
                                                         method: 'POST',
                                                         json: {
                                                                 "text": _message
@@ -2006,7 +2092,7 @@ io.on('connection', function (socket) {
                         var _custom_uid = id[0].UUID;
                         let teste = {
                                 infra: _mobileUid,
-                                id: '5511949122854@c.us',
+                                id: '5511969009126@c.us',
                                 msg: payload,
                                 media: 'chat'
                         }
