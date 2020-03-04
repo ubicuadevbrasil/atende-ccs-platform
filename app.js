@@ -651,7 +651,7 @@ function onrefusegroup(admin) {
 
 async function loginAtos() {
         return new Promise((resolve, reject) => {
-                var _url = 'https://ubicuacloud.appspot.com/api/login/';
+                var _url = 'https://conecta-dsv-drdryl.appspot.com/api/login/';
                 var _payload = {
                         "user_name": "ubicua",
                         "password": "senha$00"
@@ -673,7 +673,7 @@ function sendWelcome(sessionBot, mobile, message) {
                                 auth: {
                                         'bearer': _hashToken
                                 },
-                                uri: 'https://ubicuacloud.appspot.com/api/transbordo/send-message/' + sessionBot + '/',
+                                uri: 'https://conecta-dsv-drdryl.appspot.com/api/transbordo/send-message/' + sessionBot + '/',
                                 method: 'POST',
                                 json: {
                                         "text": message
@@ -829,7 +829,7 @@ io.on('connection', function (socket) {
                                                         auth: {
                                                                 'bearer': _hashToken
                                                         },
-                                                        uri: 'https://ubicuacloud.appspot.com/api/transbordo/send-message/' + _sessionBot + '/',
+                                                        uri: 'https://conecta-dsv-drdryl.appspot.com/api/transbordo/send-message/' + _sessionBot + '/',
                                                         method: 'POST',
                                                         json: {
                                                                 "text": _message
