@@ -53,10 +53,6 @@ def staticMessage(session,message,mobile):
         response = r.json()
         fallback = r.json()
         print('> Resposta Completa:')
-        print(response['query_text'])
-        print(response['response_messages'])
-        print(response['fallback_counters'])
-        print(str(response['transbordo_intent']))
         response = response['response_messages']
         fallback = fallback['fallback_counters']
 
@@ -88,7 +84,7 @@ def insertLog(session,mobile,message):
 def sendMessage(mobile,message):
     try:
         url = "https://extensao.ubicuacloud.com.br/client"
-        payload = {'infra': '5511941497894@c.us', 'id': str(mobile) + '@c.us', 'msg': str(message), 'media': 'chat'}
+        payload = {'infra': '5511969009126@c.us', 'id': str(mobile) + '@c.us', 'msg': str(message), 'media': 'chat'}
 
         r = requests.post(url, json=payload)
         
@@ -188,7 +184,7 @@ def getHistoric(session):
 
 def socketConnect():
     try:
-        sio.connect('https://ccslite.sanofi-mobile.com.br/')
+        sio.connect('https://ccs.sanofi-mobile.com.br/')
         sio.wait()
         print('> Conectado ao socket')
     except:

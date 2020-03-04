@@ -15,15 +15,15 @@ const port = process.env.PORT || 443;
 
 // Constantes
 const cdn = "https://cdn.ubicuacloud.com/file/";
-const _mobileUid = "5511941497894@c.us";
+const _mobileUid = "5511969009126@c.us";
 
 // Function Platforma Ubicua
 require('ubc/tools.js')();
 var dbcc = require('ubc/dbcc.js');
 
 var options = {
-        key: fs.readFileSync('/etc/letsencrypt/live/ccslite.sanofi-mobile.com.br/privkey.pem'),
-        cert: fs.readFileSync('/etc/letsencrypt/live/ccslite.sanofi-mobile.com.br/fullchain.pem')
+        key: fs.readFileSync('/etc/letsencrypt/live/ccs.sanofi-mobile.com.br/privkey.pem'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/ccs.sanofi-mobile.com.br/fullchain.pem')
 };
 
 // Config App Express
@@ -337,7 +337,7 @@ app.post('/api/bot/message', function (req, res, next) {
                                                         });
                                                 } else {
                                                         var _hostin = "LON";
-                                                        var _uid = '5511944919944';
+                                                        var _uid = '5511969009126';
                                                         var _dtin = getTimestamp();
                                                         var _contact_uid = _cnpj;
                                                         var _contact_name = '';
@@ -368,7 +368,7 @@ app.post('/api/bot/message', function (req, res, next) {
                                         });
                                 } else {
                                         var _hostin = "LON";
-                                        var _uid = '5511944919944';
+                                        var _uid = '5511969009126';
                                         var _dtin = getTimestamp();
                                         var _contact_uid = _cnpj;
                                         var _contact_name = '';
@@ -909,7 +909,7 @@ io.on('connection', function (socket) {
                                 var _message = "";
                                 if (result[0].training == 'true') {
                                         _message = _treinamento
-                                } else if (new Date().getHours() >= 20 || new Date().getHours() <= 9) {
+                                } else if (new Date().getHours() > 21 || new Date().getHours() < 10) {
                                         _message = _feriado
                                 } else {
                                         _message = _ok_message
@@ -1544,7 +1544,7 @@ io.on('connection', function (socket) {
                 qry += "DATE_FORMAT(dtin, '%d/%m/%Y') as data, (tab_statusen.descricao) as status, tab_pedidos.pedido, tab_pedidos.segmento, tab_pedidos.valor FROM tab_encerrain ";
                 qry += "LEFT JOIN tab_usuarios ON (tab_encerrain.fkto = tab_usuarios.id) LEFT JOIN tab_statusen ON (tab_encerrain.status = tab_statusen.id) LEFT JOIN tab_pedidos ";
                 qry += "ON (tab_encerrain.sessionid = tab_pedidos.sessionid) WHERE " + _params + " ORDER BY dtin, sessionid;";*/
-                var qry = "select ativ.filename,a.sessionid, a.cnpj, atendir, u.nome as atendente, substr(a.mobile, 3, 11) as mobile, DATE_FORMAT(a.dtin, '%H:%i') as hora, DATE_FORMAT(a.dtin, '%d/%m/%Y') as data, (b.descricao) as status, p.pedido, p.segmento, p.valor from tab_encerrain as a LEFT JOIN tab_statusen as b ON(a.status = b.id) LEFT JOIN tab_pedidos as p ON(a.sessionid = p.sessionid) LEFT JOIN tab_usuarios as u ON(a.fkto = u.id) LEFT JOIN tab_ativo as ativ on (a.mobile = ativ.mobile) WHERE " + _params + " ORDER BY a.dtin, a.sessionid desc;";
+                var qry = "select ativ.filename,a.sessionid, a.cnpj, atendir, u.nome as atendente, substr(a.mobile, 3, 11) as mobile, DATE_FORMAT(a.dtin, '%H:%i') as hora, DATE_FORMAT(a.dtin, '%d/%m/%Y') as data, (b.descricao) as status, p.pedido, p.segmento, p.valor from tab_encerrain as a LEFT JOIN tab_statusen as b ON(a.status = b.id) LEFT JOIN tab_pedidos as p ON(a.sessionid = p.sessionid) LEFT JOIN tab_usuarios as u ON(a.fkto = u.id) LEFT JOIN tab_ativo as ativ on (a.mobile = ativ.mobile) WHERE " + _params + " GROUP BY a.sessionid ORDER BY a.dtin, a.sessionid desc;";
                 console.log(qry)
                 dbcc.query(qry, [], function (err, result) {
                         if (err) {
@@ -1857,10 +1857,12 @@ io.on('connection', function (socket) {
                                 var _msgcaption = payload.body_caption;
                                 if (payload.message_type == "chat") {
                                         dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
+                                                if (err) { console.log(err) }
                                                 log("Novo Registro LOG Inserido", _id);
                                         });
                                 } else {
                                         dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgurl, _msgcaption], function (err, result) {
+                                                if (err) { console.log(err) }
                                                 log("Novo Registro LOG Inserido", _id);
                                         });
                                 }

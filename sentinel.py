@@ -85,14 +85,14 @@ def sentinel_newmessages():
                                 _account = "B"
                             else:
                                 _account = "P"
-                        qryE = "INSERT INTO db_sanofi_ccs.tab_filain (mobile, account, photo, name, origem) VALUES(" + _mobile + ", '" + _account + "', '" + _photo + "', '" + _name + "', 'wpp');"
+                        qryE = "INSERT INTO db_sanofi_ccs.tab_filain (sessionBot, mobile, account, photo, name, origem) VALUES(UUID(), " + _mobile + ", '" + _account + "', '" + _photo + "', '" + _name + "', 'wpp');"
                         curE.execute(qryE)
                     else:
                         if ( _uid == "CHAT" ):
-                            qryE = "INSERT INTO db_sanofi_ccs.tab_filain (mobile, account, name, origem) VALUES(" + _mobile + ", 'C', '" + _name + "', 'wpp');"
+                            qryE = "INSERT INTO db_sanofi_ccs.tab_filain (sessionBot, mobile, account, name, origem) VALUES(UUID(), " + _mobile + ", 'C', '" + _name + "', 'wpp');"
                             curE.execute(qryE)
                         else:
-                            qryE = "INSERT INTO db_sanofi_ccs.tab_filain (mobile, name, origem) VALUES(" + _mobile + ", '" + _name + "', 'wpp');"
+                            qryE = "INSERT INTO db_sanofi_ccs.tab_filain (sessionBot, mobile, name, origem) VALUES(UUID(), " + _mobile + ", '" + _name + "', 'wpp');"
                             curE.execute(qryE)
                     # Enviando mensagem Welcome, se UID <> CHAT
                     if ( _uid != "CHAT" ):
@@ -103,7 +103,8 @@ def sentinel_newmessages():
                 else:
                     print(str(datetime.now()) + " >> Mobile em Fila, Aguardando Atendimento: " + _mobile)
                     status = curC.fetchall()
-                    if status[0][5] == 5:
+                    print(status)
+                    if status[0][6] == 5:
                         payload = {}
                         payload["id"]           = _id
                         payload["uid"]          = _uid
@@ -113,7 +114,7 @@ def sentinel_newmessages():
                         payload["body_text"]    = _body_text
                         payload["body_caption"] = _body_caption
                         payload["body_url"]     = _body_url
-                        payload["sessionid"]    = str(status[0][6])
+                        payload["sessionid"]    = str(status[0][7])
                         payload["fkto"]         = "491b9564-2d79-11ea-978f-2e728ce88125"
                         payload["fkname"]       = "Bot"
                         payload["name"]         = ''
