@@ -35,6 +35,9 @@ def persistenceDbcc():
 
 def staticMessage(session,message,mobile):
     try:
+        print(str(session))
+        print(str(message))
+        print(str(mobile))
         url = "https://ubicuacloud.appspot.com/api/intent/detect/{}/".format(session)
         token = login()
         hed = {'Authorization': 'Bearer ' + token}
@@ -103,6 +106,16 @@ def endBot(session,mobile):
         syslog.syslog(">> Exception: " + str(sys.exc_info()))
         print(sys.exc_info())
 
+def encerraBot(session,mobile):
+    try:
+        sql = "DELETE FROM db_sanofi_ccs.tab_filain WHERE mobile = '{}';".format(str(mobile))
+        cursor.execute(sql)
+        print('> Usuario removido do atendimento bot')
+        encerraTransbordo(session)
+    except:
+        syslog.syslog(">> Exception: " + str(sys.exc_info()))
+        print(sys.exc_info())
+
 def login():
     try:
         url = "https://ubicuacloud.appspot.com/api/login/"
@@ -127,6 +140,18 @@ def insertTransbordo(session, mobile):
             sql = "INSERT INTO db_sanofi_ccs.tab_transbordo (id,sessionBot,origem,telefone,cnpj,dtin) VALUES (uuid(),%s,%s,%s,%s,%s)"
             params = [session, 'wbot', mobile, 'null', datetime.now()]
             cursor.execute(sql,params)
+    except:
+        syslog.syslog(">> Exception: " + str(sys.exc_info()))
+        print(sys.exc_info())
+
+def encerraTransbordo(session):
+    try:
+        chatHist = getHistoric(session)
+        sql = "UPDATE db_sanofi_ccs.tab_transbordo SET destino = 'bot', chatbot = %s, dten = NOW() WHERE sessionBot = %s;"
+        params = [str(chatHist),str(session)]
+        cursor.execute(sql,params)
+        print('> Transbordo encerrado')
+
     except:
         syslog.syslog(">> Exception: " + str(sys.exc_info()))
         print(sys.exc_info())
@@ -181,36 +206,42 @@ def main():
     try:
         #print('> Rodando Main Def...')
         job_main.pause()
-        sql = "SELECT mobile, sessionBot FROM db_sanofi_ccs.tab_filain where status = 5;"
+        sql = "SELECT mobile, sessionBot, TIMESTAMPDIFF(MINUTE,dtin,NOW()) as tempo FROM db_sanofi_ccs.tab_filain where status = 5;"
         cursor.execute(sql)
         mobile = cursor.fetchall()
         for num in mobile:
-            #print('> Inserindo no transbordo')
-            insertTransbordo(num[1], num[0])
-            #print('> Scaneando num: ' + str(num[0]))
-            sql = "SELECT sessionid, msgtext, id, msgtype FROM db_sanofi_ccs.tab_logs where fromid = {} AND stread = 0  AND msgdir = 'i' ORDER BY dt DESC".format(num[0])
-            cursor.execute(sql)
-            messages = cursor.fetchall()
-            #print('> Total de ' + str(len(messages)) + ' mensagens encontradas para o numero: ' + str(num[0]))
-            for msg in messages:
-                print(msg)
-                if(msg[3] == 'chat'):
-                    print("> Session Id: " + str(msg[0]))
-                    print("> Pergunta: " + str(msg[1]))
-                    resposta = staticMessage(msg[0],msg[1],num[0])
-                    print("> Resposta: " + str(resposta))
+            if(num[2] < 20):
+                #print('> Inserindo no transbordo')
+                insertTransbordo(num[1], num[0])
+                #print('> Scaneando num: ' + str(num[0]))
+                sql = "SELECT sessionid, msgtext, id, msgtype FROM db_sanofi_ccs.tab_logs where fromid = {} AND stread = 0  AND msgdir = 'i' ORDER BY dt DESC".format(num[0])
+                cursor.execute(sql)
+                messages = cursor.fetchall()
+                #print('> Total de ' + str(len(messages)) + ' mensagens encontradas para o numero: ' + str(num[0]))
+                for msg in messages:
+                    if(msg[3] == 'chat'):
+                        print("> Session Id: " + str(msg[0]))
+                        print("> Pergunta: " + str(msg[1]))
+                        resposta = staticMessage(msg[0],msg[1],num[0])
+                        print("> Resposta: " + str(resposta))
 
-                    for res in resposta:
-                        if (res['text'] != "null"):
-                            insertLog(msg[0],num[0],res['text'])
-                            sendMessage(num[0],res['text'])
+                        for res in resposta:
+                            if (res['text'] != "null"):
+                                insertLog(msg[0],num[0],res['text'])
+                                sendMessage(num[0],res['text'])
 
-                    sql = "UPDATE db_sanofi_ccs.tab_logs SET stread = 1 WHERE id = '{}'".format(msg[2])
-                    cursor.execute(sql)
-                else:
-                    endBot(msg[0],num[0])
-                    sql = "UPDATE db_sanofi_ccs.tab_logs SET stread = 1 WHERE id = '{}'".format(msg[2])
-                    cursor.execute(sql)
+                        sql = "UPDATE db_sanofi_ccs.tab_logs SET stread = 1 WHERE id = '{}'".format(msg[2])
+                        cursor.execute(sql)
+                    else:
+                        endBot(msg[0],num[0])
+                        sql = "UPDATE db_sanofi_ccs.tab_logs SET stread = 1 WHERE id = '{}'".format(msg[2])
+                        cursor.execute(sql)
+            else:
+                print(">>> MAIS DE 20 MINUTOS NA FILA")
+                encerraBot(num[1],num[0])
+                sql = "UPDATE db_sanofi_ccs.tab_logs SET stread = 1 WHERE sessionid = '{}'".format(num[1])
+                cursor.execute(sql)
+
 
     except:
         syslog.syslog(">> Exception: " + str(sys.exc_info()))
