@@ -48,19 +48,23 @@ def staticMessage(session,message,mobile):
 
         r = requests.post(url, json=payload, headers=hed)
 
-        print(r)
+        if(r.status_code == 200):
+            response = r.json()
+            fallback = r.json()
+            print('> Resposta Completa:')
+            response = response['response_messages']
+            fallback = fallback['fallback_counters']
 
-        response = r.json()
-        fallback = r.json()
-        print('> Resposta Completa:')
-        response = response['response_messages']
-        fallback = fallback['fallback_counters']
+            if(fallback > 2):
+                endBot(str(session),str(mobile))
+                return response
+            else:
+                return response
 
-        if(fallback >= 3):
-            endBot(str(session),str(mobile))
-            return response
         else:
-            return response
+            endBot(str(session),str(mobile))
+            return 'null'
+
 
     except:
         syslog.syslog(">> Exception: " + str(sys.exc_info()))
@@ -101,7 +105,7 @@ def endBot(session,mobile):
         print('> Usuario removido do atendimento bot')
         endTransbordo(session)
         print('> Mensagem de Bem Vindo enviada')
-        sendWelcome(mobile)
+        sendWelcome(mobile,session)
     except:
         syslog.syslog(">> Exception: " + str(sys.exc_info()))
         print(sys.exc_info())
@@ -191,12 +195,13 @@ def socketConnect():
         syslog.syslog(">> Exception: " + str(sys.exc_info()))
         print(sys.exc_info())
 
-def sendWelcome(mobile):
+def sendWelcome(mobile,session):
     try:
         print('> Mandando Welcome')
         payload = {}
         payload["mobile"] = mobile
         payload["type"] = "chat"
+        payload["sessionid"] = session
         sio.emit("send_welcome", payload)
     except:
         syslog.syslog(">> Exception: " + str(sys.exc_info()))
