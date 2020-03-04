@@ -810,6 +810,7 @@ io.on('connection', function (socket) {
                 log("Nova Mensagem Enviada Welcome", payload);
                 var _mobile = payload.mobile;
                 var _type = payload.type;
+                var _sessionid = payload.sessionid;
                 //var _message = payload.message;
                 var _normal = "Seja bem vindo ao novo canal exclusivo para Clientes Conecta PDV. Adicione esse número de telefone e faça seus pedidos via WhatsApp de segunda a sexta das 09h às 20h.\n\nPara agilizar seu atendimento, por favor informe seu nome e CNPJ.";
                 var _feriado = "Nosso time de analistas está em horário de descanso. Mas fique tranquilo, retornamos no próximo dia útil a partir das 9h pronto para te auxiliar ok?! Fique a vontade para entrar em contato novamente ou aguarde nosso contato. Até mais!";
@@ -823,7 +824,7 @@ io.on('connection', function (socket) {
                                 var _message = "";
                                 if (result[0].training == 'true') {
                                         _message = _treinamento
-                                } else if (new Date().getHours() > 21 || new Date().getHours() < 10) {
+                                } else if ((new Date().getHours() + 3) > 20 || (new Date().getHours() + 3) < 9) {
                                         _message = _feriado
                                 } else {
                                         _message = _ok_message
@@ -850,7 +851,7 @@ io.on('connection', function (socket) {
                                                                 var _msgdir = "o";
                                                                 var _msgtype = _type;
                                                                 var _msgtext = _message;
-                                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, fromid, fromname, toid, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?)", [_id, _fromid, _fromname, _toid, _msgdir, _msgtype, _msgtext], function (err, result) {
+                                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, fromid, fromname, toid, msgdir, msgtype, msgtext, sessionid) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [_id, _fromid, _fromname, _toid, _msgdir, _msgtype, _msgtext, _sessionid], function (err, result) {
                                                                         log("Novo Registro LOG Inserido", _id);
                                                                 });
                                                         }
@@ -1610,7 +1611,7 @@ io.on('connection', function (socket) {
                 console.log('Request Report 1, Parameters: ' + payload.params + '...');
                 var _params = payload.params;
                 var _limit = payload.limit;
-                var qry = "SELECT count(*) as total from tab_encerrain as a LEFT JOIN tab_statusen as b ON(a.status = b.id) LEFT JOIN tab_pedidos as p ON(a.sessionid = p.sessionid) LEFT JOIN tab_usuarios as u ON(a.fkto = u.id) LEFT JOIN tab_ativo as ativ on (a.mobile = ativ.mobile) LEFT JOIN tab_transbordo AS trans ON (a.sessionBot = trans.sessionBot) WHERE " + _params + "GROUP BY a.sessionid LIMIT 1";
+                var qry = "SELECT count(*) as total from tab_encerrain as a LEFT JOIN tab_statusen as b ON(a.status = b.id) LEFT JOIN tab_pedidos as p ON(a.sessionid = p.sessionid) LEFT JOIN tab_usuarios as u ON(a.fkto = u.id) LEFT JOIN tab_ativo as ativ on (a.mobile = ativ.mobile) LEFT JOIN tab_transbordo AS trans ON (a.sessionBot = trans.sessionBot) WHERE " + _params + " LIMIT 1";
                 dbcc.query(qry, [], function (err, result) {
                         if (err) {
                                 log("Erro: " + err);
@@ -2244,6 +2245,7 @@ function onalive(fkid) {
 
 server.listen(port, function () {
         log('Chat Core - Ubicua Cloud Platform - Listening at Port ' + port);
+        console.log(new Date().getHours())
 });
 
 process.on('uncaughtException', function (err) {

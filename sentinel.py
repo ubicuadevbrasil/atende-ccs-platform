@@ -53,7 +53,7 @@ def selUuid():
 def sentinel_newmessages():
     try:
         job_sentinel_newmessage.pause()
-        qryA = "SELECT id, uid, contact_uid, contact_name, message_uid, message_type, body_text, body_caption, body_url FROM db_sanofi_ccs.tab_waboxappin WHERE message_dir='i' AND status=0 ORDER by dtin;"
+        qryA = "SELECT id, uid, contact_uid, contact_name, message_uid, message_type, body_text, body_caption, body_url FROM db_sanofi_ccs.tab_waboxappin WHERE message_dir='i' AND status=0 AND contact_type = 'User' ORDER by dtin;"
         curA.execute(qryA)
         for rs in curA:
             _id           = str(rs[0])
