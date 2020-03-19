@@ -910,7 +910,7 @@ io.on('connection', function (socket) {
                                 var _message = "";
                                 if (result[0].training == 'true') {
                                         _message = _treinamento
-                                } else if ((new Date().getHours() + 3) > 20 || (new Date().getHours() + 3) < 9) {
+                                } else if ((new Date().getHours()) > 20 || (new Date().getHours()) < 9) {
                                         _message = _feriado
                                 } else {
                                         _message = _ok_message
@@ -937,7 +937,51 @@ io.on('connection', function (socket) {
                                                                 var _msgdir = "o";
                                                                 var _msgtype = _type;
                                                                 var _msgtext = _message;
-                                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, fromid, fromname, toid, msgdir, msgtype, msgtext, sessionid) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [_id, _fromid, _fromname, _toid, _msgdir, _msgtype, _msgtext, _sessionid], function (err, result) {
+                                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, fromid, fromname, toid, msgdir, msgtype, msgtext, sessionid, dt) VALUES(?, ?, ?, ?, ?, ?, ?, ?, TIMESTAMPADD(MINUTE, 1, NOW()))", [_id, _fromid, _fromname, _toid, _msgdir, _msgtype, _msgtext, _sessionid], function (err, result) {
+                                                                        log("Novo Registro LOG Inserido", _id);
+                                                                });
+                                                        }
+                                                });
+                                        }
+                                });
+                        }
+                });
+        });
+
+        socket.on('send_timeout', function (payload) {
+                log("Nova Mensagem Enviada Welcome", payload);
+                var _mobile = payload.mobile;
+                var _type = payload.type;
+                var _sessionid = payload.sessionid;
+                var _message = "Agradecemos o seu contato! Estamos encerrando a comunicação e ficaremos a disposição para um novo contato.";
+
+                dbcc.query('SELECT training from tab_treinamento where id="c102ba05-422c-11ea-8db1-000c290cc03d"', function (err, result) {
+                        if (err) {
+                                log(err)
+                        } else {
+                                dbcc.query("SELECT uuid() as UUID;", function (err, id) {
+                                        var _custom_uid = id[0].UUID;
+                                        if (_host == "LON") {
+                                                let teste = {
+                                                        infra: _mobileUid,
+                                                        id: _mobile + '@c.us',
+                                                        msg: _message,
+                                                        media: 'chat'
+                                                }
+                                                request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                                                        console.log(teste)
+                                                        log("Response WABOXAPP", body);
+                                                        var _response = body;
+                                                        if (_response === 'ok') {
+                                                                // Armazenando Log da Conversa
+                                                                var _id = _custom_uid;
+                                                                var _fromid = 1;
+                                                                var _fromname = "Sistema";
+                                                                var _toid = _mobile;
+                                                                var _msgdir = "o";
+                                                                var _msgtype = _type;
+                                                                var _msgtext = _message;
+                                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, fromid, fromname, toid, msgdir, msgtype, msgtext, sessionid, dt) VALUES(?, ?, ?, ?, ?, ?, ?, ?, TIMESTAMPADD(MINUTE, 1, NOW()))", [_id, _fromid, _fromname, _toid, _msgdir, _msgtype, _msgtext, _sessionid], function (err, result) {
                                                                         log("Novo Registro LOG Inserido", _id);
                                                                 });
                                                         }
@@ -1489,7 +1533,34 @@ io.on('connection', function (socket) {
                                         });*/
                                 });
                         } else {
-                                socket.emit('bi-historyone', { contacts: [], logs: [] });
+                                //socket.emit('bi-historyone', { contacts: [], logs: [] });
+                                dbcc.query("SELECT sessionBot, dtin, telefone FROM tab_transbordo WHERE sessionBot=? and destino in ('bot','wbot') ORDER BY dtin DESC LIMIT 1", [payload.sessionid], function (err, result) {
+                                        if (result.length > 0) {
+                                                var _contacts = JSON.stringify(result);
+                                                var _sessionlist = "";
+                                                var _sessionbotlist = "";
+                                                console.log(result.length);
+                                                for (i = 0; i < result.length; i++) {
+                                                        if (result.length - 1 == i) {
+                                                                console.log('opa');
+                                                                _sessionlist += "'" + result[i].sessionBot + "'";
+                                                        } else {
+                                                                _sessionlist += "'" + result[i].sessionBot + "',";
+                                                        }
+                                                }
+                                                console.log("SESSIONLIST [" + _sessionlist + "]");
+                                                dbcc.query("SELECT a.sessionid, a.dt, a.fromname, a.msgdir, a.msgtype, a.msgtext, a.msgurl, a.msgcaption FROM tab_logs AS a WHERE a.sessionid IN (" + _sessionlist + ") ORDER BY a.dt;", function (err, result) {
+                                                        var _logs = JSON.stringify(result);
+                                                        socket.emit('bi-historyone', { contacts: _contacts, logs: _logs });
+                                                        /*dbcc.query("SELECT chatBot, origem FROM tab_transbordo WHERE sessionBot IN (" + _sessionbotlist + ");", function (err, result) {
+                                                                        var _bot = JSON.stringify(result);
+                                                                        socket.emit('bi-historyone', { contacts: _contacts, logs: _logs, bot: _bot });
+                                                        });*/
+                                                });
+                                        } else {
+                                                socket.emit('bi-historyone', { contacts: [], logs: [] });
+                                        }
+                                });
                         }
                 });
         });
@@ -1538,14 +1609,10 @@ io.on('connection', function (socket) {
         });
 
         socket.on('bi-report1toxlsx', function (payload) {
-
                 console.log('Request Report 1 to XLSX, Parameters: ' + payload.params + '...');
                 var _params = payload.params;
-                /*var qry = "SELECT tab_encerrain.sessionid, cnpj, atendir, tab_usuarios.nome as atendente, substr(mobile, 3, 11) as mobile, DATE_FORMAT(dtin, '%H:%i') as hora, ";
-                qry += "DATE_FORMAT(dtin, '%d/%m/%Y') as data, (tab_statusen.descricao) as status, tab_pedidos.pedido, tab_pedidos.segmento, tab_pedidos.valor FROM tab_encerrain ";
-                qry += "LEFT JOIN tab_usuarios ON (tab_encerrain.fkto = tab_usuarios.id) LEFT JOIN tab_statusen ON (tab_encerrain.status = tab_statusen.id) LEFT JOIN tab_pedidos ";
-                qry += "ON (tab_encerrain.sessionid = tab_pedidos.sessionid) WHERE " + _params + " ORDER BY dtin, sessionid;";*/
-                var qry = "select ativ.filename,a.sessionid, a.cnpj, atendir, u.nome as atendente, substr(a.mobile, 3, 11) as mobile, DATE_FORMAT(a.dtin, '%H:%i') as hora, DATE_FORMAT(a.dtin, '%d/%m/%Y') as data, (b.descricao) as status, p.pedido, p.segmento, p.valor from tab_encerrain as a LEFT JOIN tab_statusen as b ON(a.status = b.id) LEFT JOIN tab_pedidos as p ON(a.sessionid = p.sessionid) LEFT JOIN tab_usuarios as u ON(a.fkto = u.id) LEFT JOIN tab_ativo as ativ on (a.mobile = ativ.mobile) WHERE " + _params + " GROUP BY a.sessionid ORDER BY a.dtin, a.sessionid desc;";
+                var _transbordoDt = payload.transbordoDt;
+                var qry = 'CALL css_report_excel("MAX","' + _transbordoDt + '","' + _params + '", "*");';
                 console.log(qry)
                 dbcc.query(qry, [], function (err, result) {
                         if (err) {
@@ -1571,7 +1638,7 @@ io.on('connection', function (socket) {
                                 ws.getCell('K1').value = "FileName";
                                 // Data
                                 var _sessionlast;
-                                foreachasync(result, function (element, index) {
+                                foreachasync(result[1], function (element, index) {
                                         console.log(element)
                                         ws.getCell('A' + _line).value = element.mobile;
                                         ws.getCell('B' + _line).value = element.atendir;
@@ -1600,13 +1667,11 @@ io.on('connection', function (socket) {
         });
 
         socket.on('old_bi-report1toxlsx', function (payload) {
-
                 console.log('Request Report 1 to XLSX, Parameters: ' + payload.params + '...');
                 var _params = payload.params;
-                var qry = "SELECT tab_encerrain.sessionid, cnpj, tab_usuarios.nome as atendente, substr(mobile, 3, 11) as mobile, DATE_FORMAT(dtin, '%H:%i') as hora, ";
-                qry += "DATE_FORMAT(dtin, '%d/%m/%Y') as data, (tab_statusen.descricao) as status, tab_pedidos.pedido, tab_pedidos.segmento, tab_pedidos.valor FROM tab_encerrain ";
-                qry += "LEFT JOIN tab_usuarios ON (tab_encerrain.fkto = tab_usuarios.id) LEFT JOIN tab_statusen ON (tab_encerrain.status = tab_statusen.id) LEFT JOIN tab_pedidos ";
-                qry += "ON (tab_encerrain.sessionid = tab_pedidos.sessionid) WHERE " + _params + " ORDER BY dtin, sessionid;";
+                var _transbordoDt = payload.transbordoDt;
+                var qry = 'CALL css_report_excel("MAX","' + _transbordoDt + '","' + _params + '", "*");';
+                console.log(qry)
                 dbcc.query(qry, [], function (err, result) {
                         if (err) {
                                 log("Erro: " + err);
@@ -1619,62 +1684,71 @@ io.on('connection', function (socket) {
                                 var _path = "/home/ubicua/chatcore/public/supervisor/report/";
                                 var _namexlsx = "report" + Date.now() + ".xlsx";
                                 ws.getCell('A1').value = "Número do Cliente";
-                                ws.getCell('B1').value = "CNPJ";
-                                ws.getCell('C1').value = "Nome do Antendente";
-                                ws.getCell('D1').value = "Hora";
-                                ws.getCell('E1').value = "Data";
-                                ws.getCell('F1').value = "Status";
+                                ws.getCell('B1').value = "Interação";
+                                ws.getCell('C1').value = "CNPJ";
+                                ws.getCell('D1').value = "Nome do Antendente";
+                                ws.getCell('E1').value = "Hora";
+                                ws.getCell('F1').value = "Data";
+                                ws.getCell('G1').value = "Status";
+                                ws.getCell('H1').value = "No. Pedido";
+                                ws.getCell('I1').value = "Segmento";
+                                ws.getCell('J1').value = "Valor";
+                                ws.getCell('K1').value = "FileName";
                                 // Data
                                 var _sessionlast;
-                                foreachasync(result, function (element, index) {
+                                foreachasync(result[1], function (element, index) {
                                         var _sessionid = element.sessionid;
                                         if (index == 0) {
                                                 _sessionlast = _sessionid;
                                                 ws.getCell('A' + _line).value = element.mobile;
-                                                ws.getCell('B' + _line).value = element.cnpj;
-                                                ws.getCell('C' + _line).value = element.atendente;
-                                                ws.getCell('D' + _line).value = element.hora;
-                                                ws.getCell('E' + _line).value = element.data;
-                                                ws.getCell('F' + _line).value = element.status;
+                                                ws.getCell('B' + _line).value = element.atendir;
+                                                ws.getCell('C' + _line).value = element.cnpj;
+                                                ws.getCell('D' + _line).value = element.atendente;
+                                                ws.getCell('E' + _line).value = element.hora;
+                                                ws.getCell('F' + _line).value = element.data;
+                                                ws.getCell('G' + _line).value = element.status;
+                                                ws.getCell('K' + _line).value = element.filename;
                                                 var _elsegmento = element.segmento;
                                                 if (_elsegmento != null) {
                                                         _line = _line + 1;
-                                                        ws.getCell('D' + _line).value = "No. Pedido";
-                                                        ws.getCell('E' + _line).value = "Segmento";
-                                                        ws.getCell('F' + _line).value = "Valor";
+                                                        ws.getCell('H' + _line).value = "No. Pedido";
+                                                        ws.getCell('I' + _line).value = "Segmento";
+                                                        ws.getCell('J' + _line).value = "Valor";
                                                         _line = _line + 1;
-                                                        ws.getCell('D' + _line).value = element.pedido;
-                                                        ws.getCell('E' + _line).value = element.segmento;
-                                                        ws.getCell('F' + _line).value = element.valor;
+                                                        ws.getCell('H' + _line).value = element.pedido;
+                                                        ws.getCell('I' + _line).value = element.segmento;
+                                                        ws.getCell('J' + _line).value = element.valor;
                                                 }
                                         } else {
                                                 if (_sessionid == _sessionlast) {
                                                         var _elsegmento = element.segmento;
                                                         if (_elsegmento != null) {
                                                                 _line = _line + 1;
-                                                                ws.getCell('D' + _line).value = element.pedido;
-                                                                ws.getCell('E' + _line).value = element.segmento;
-                                                                ws.getCell('F' + _line).value = element.valor;
+                                                                ws.getCell('H' + _line).value = element.pedido;
+                                                                ws.getCell('I' + _line).value = element.segmento;
+                                                                ws.getCell('J' + _line).value = element.valor;
                                                         }
                                                 } else {
                                                         _sessionlast = _sessionid;
                                                         _line = _line + 1;
                                                         ws.getCell('A' + _line).value = element.mobile;
-                                                        ws.getCell('B' + _line).value = element.cnpj;
-                                                        ws.getCell('C' + _line).value = element.atendente;
-                                                        ws.getCell('D' + _line).value = element.hora;
-                                                        ws.getCell('E' + _line).value = element.data;
-                                                        ws.getCell('F' + _line).value = element.status;
+                                                        ws.getCell('B' + _line).value = element.atendir;
+                                                        ws.getCell('C' + _line).value = element.cnpj;
+                                                        ws.getCell('D' + _line).value = element.atendente;
+                                                        ws.getCell('E' + _line).value = element.hora;
+                                                        ws.getCell('F' + _line).value = element.data;
+                                                        ws.getCell('G' + _line).value = element.status;
+                                                        ws.getCell('K' + _line).value = element.filename;
                                                         var _elsegmento = element.segmento;
                                                         if (_elsegmento != null) {
                                                                 _line = _line + 1;
-                                                                ws.getCell('D' + _line).value = "No. Pedido";
-                                                                ws.getCell('E' + _line).value = "Segmento";
-                                                                ws.getCell('F' + _line).value = "Valor";
+                                                                ws.getCell('H' + _line).value = "No. Pedido";
+                                                                ws.getCell('I' + _line).value = "Segmento";
+                                                                ws.getCell('J' + _line).value = "Valor";
                                                                 _line = _line + 1;
-                                                                ws.getCell('D' + _line).value = element.pedido;
-                                                                ws.getCell('E' + _line).value = element.segmento;
-                                                                ws.getCell('F' + _line).value = element.valor;
+                                                                ws.getCell('H' + _line).value = element.pedido;
+                                                                ws.getCell('I' + _line).value = element.segmento;
+                                                                ws.getCell('J' + _line).value = element.valor;
                                                         }
                                                 }
                                         }
@@ -1697,25 +1771,27 @@ io.on('connection', function (socket) {
                 console.log('Request Report 1, Parameters: ' + payload.params + '...');
                 var _params = payload.params;
                 var _limit = payload.limit;
-                var qry = "SELECT count(*) as total from tab_encerrain as a LEFT JOIN tab_statusen as b ON(a.status = b.id) LEFT JOIN tab_pedidos as p ON(a.sessionid = p.sessionid) LEFT JOIN tab_usuarios as u ON(a.fkto = u.id) LEFT JOIN tab_ativo as ativ on (a.mobile = ativ.mobile) LEFT JOIN tab_transbordo AS trans ON (a.sessionBot = trans.sessionBot) WHERE " + _params + " LIMIT 1";
+                var _transbordoDt = payload.transbordoDt;
+                var qry = 'CALL css_report("0","' + _transbordoDt + '","' + _params + '", "COUNT(*) as total");';
+                console.log("COUNT", qry)
                 dbcc.query(qry, [], function (err, result) {
                         if (err) {
                                 log("Erro: " + err);
                         } else {
-                                var _count = result[0].total;
+                                var _count = result[1][0].total;
                                 if (_count == 0) {
                                         var payload = { count: 0, reportadata: '' };
                                         socket.emit('bi-report1', payload);
                                 } else {
-                                        //var qry = "SELECT sessionid, cnpj, atendir, tab_usuarios.nome as atendente, substr(mobile, 3, 11) as mobile, DATE_FORMAT(dtin, '%H:%i') as hora, DATE_FORMAT(dtin, '%d/%m/%Y') as data, (tab_statusen.descricao) as status FROM tab_encerrain LEFT JOIN tab_usuarios ON (tab_encerrain.fkto = tab_usuarios.id) LEFT JOIN tab_statusen ON (tab_encerrain.status = tab_statusen.id) WHERE " + _params + " ORDER BY dtin LIMIT " + _limit + ", 20;";
-                                        var qry = "select ativ.filename,a.sessionid, a.cnpj, atendir, u.nome as atendente, substr(a.mobile, 3, 11) as mobile, DATE_FORMAT(a.dtin, '%H:%i') as hora, DATE_FORMAT(a.dtin, '%d/%m/%Y') as data, (b.descricao) as status, p.pedido, p.segmento, p.valor, trans.origem, trans.destino from tab_encerrain as a LEFT JOIN tab_statusen as b ON(a.status = b.id) LEFT JOIN tab_pedidos as p ON(a.sessionid = p.sessionid) LEFT JOIN tab_usuarios as u ON(a.fkto = u.id) LEFT JOIN tab_ativo as ativ on (a.mobile = ativ.mobile) LEFT JOIN tab_transbordo AS trans ON (a.sessionBot = trans.sessionBot) WHERE " + _params + " GROUP BY a.sessionid ORDER BY a.dtin, a.sessionid desc LIMIT " + _limit + ", 20;";
+                                        var qry = 'CALL css_report("' + _limit + '","' + _transbordoDt + '","' + _params + '", "*");';
+                                        console.log("TESTE" + qry)
                                         dbcc.query(qry, [], function (err, result) {
                                                 if (err) {
                                                         log("Erro: " + err);
                                                 } else {
                                                         var _reportdata = [];
-                                                        var _lenchat = result.length - 1;
-                                                        foreachasync(result, function (element, index) {
+                                                        var _lenchat = result[1].length - 1;
+                                                        foreachasync(result[1], function (element, index) {
                                                                 var _sessionid = element.sessionid;
                                                                 var _serialized = {
                                                                         sessionid: element.sessionid,

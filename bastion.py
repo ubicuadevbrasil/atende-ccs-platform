@@ -55,7 +55,7 @@ def staticMessage(session,message,mobile):
             response = response['response_messages']
             fallback = fallback['fallback_counters']
 
-            if(fallback > 2):
+            if(fallback >= 2):
                 endBot(str(session),str(mobile))
                 return response
             else:
@@ -116,6 +116,8 @@ def encerraBot(session,mobile):
         cursor.execute(sql)
         print('> Usuario removido do atendimento bot')
         encerraTransbordo(session)
+        print('> Mensagem de TimeOut enviada')
+        sendTimeout(mobile,session)
     except:
         syslog.syslog(">> Exception: " + str(sys.exc_info()))
         print(sys.exc_info())
@@ -151,7 +153,7 @@ def insertTransbordo(session, mobile):
 def encerraTransbordo(session):
     try:
         chatHist = getHistoric(session)
-        sql = "UPDATE db_sanofi_ccs.tab_transbordo SET destino = 'bot', chatbot = %s, dten = NOW() WHERE sessionBot = %s;"
+        sql = "UPDATE db_sanofi_ccs.tab_transbordo SET destino = 'wbot', chatbot = %s, dten = NOW() WHERE sessionBot = %s;"
         params = [str(chatHist),str(session)]
         cursor.execute(sql,params)
         print('> Transbordo encerrado')
@@ -203,6 +205,18 @@ def sendWelcome(mobile,session):
         payload["type"] = "chat"
         payload["sessionid"] = session
         sio.emit("send_welcome", payload)
+    except:
+        syslog.syslog(">> Exception: " + str(sys.exc_info()))
+        print(sys.exc_info())
+
+def sendTimeout(mobile,session):
+    try:
+        print('> Mandando Timeout')
+        payload = {}
+        payload["mobile"] = mobile
+        payload["type"] = "chat"
+        payload["sessionid"] = session
+        sio.emit("send_timeout", payload)
     except:
         syslog.syslog(">> Exception: " + str(sys.exc_info()))
         print(sys.exc_info())
