@@ -70,31 +70,31 @@ function getperfil(id) {
 
 function tabsup(id, numb, cnpj, name, hour, date, state, atendir, filename, origem, origem2) {
 
-    if (numb == null || numb == "") {
+    if (numb == null || numb == "" || numb == "null") {
         numb = '-';
     }
-    if (cnpj == null || cnpj == "") {
+    if (cnpj == null || cnpj == "" || cnpj == "null") {
         cnpj = '-';
     }
-    if (name == null || name == "") {
+    if (name == null || name == "" || name == "null") {
         name = '-';
     }
-    if (hour == null || hour == "") {
+    if (hour == null || hour == "" || hour == "null") {
         hour = '-';
     }
-    if (date == null || date == "") {
+    if (date == null || date == "" || date == "null") {
         date = '-';
     }
-    if (state == null || state == "") {
+    if (state == null || state == "" || state == "null") {
         state = '-';
     }
-    if (atendir == null || atendir == "") {
+    if (atendir == null || atendir == "" || atendir == "null") {
         atendir = '-';
     }
-    if (filename == null || filename == "") {
+    if (filename == null || filename == "" || filename == "null") {
         filename = '-';
     }
-    if (origem2 == null || origem2 == "") {
+    if (origem2 == null || origem2 == "" || origem2 == "null") {
         origem2 = '-';
     } else if (origem2 == 'wbot') {
         origem2 = 'WhatsApp'
@@ -173,6 +173,18 @@ function onformataperiodo(dt) {
     var anof = dt.substr(19, 4);
 
     return " a.dtin BETWEEN '" + anoi + "-" + mesi + "-" + diai + " 00:00:00' AND '" + anof + "-" + mesf + "-" + diaf + " 23:59:59'";
+}
+
+function onformataperiodoTrans(dt) {
+
+    var diai = dt.substr(0, 2);
+    var mesi = dt.substr(3, 2);
+    var anoi = dt.substr(6, 4);
+    var diaf = dt.substr(13, 2);
+    var mesf = dt.substr(16, 2);
+    var anof = dt.substr(19, 4);
+
+    return "" + anoi + "-" + mesi + "-" + diai + " 00:00:00," + anof + "-" + mesf + "-" + diaf + " 23:59:59";
 }
 
 var parametrosetas = 0;

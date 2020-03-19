@@ -464,11 +464,13 @@
 
     var globalqry
     var globalqry2 = "";
+    var globalqry3 = "";
 
     function testsock2() {
       var str = $('#daterange-1').val();
       if (str != "") {
         globalqry = onformataperiodo(str);
+        globalqry3 = onformataperiodoTrans(str);
         //console.log("g - " + globalqry);
 
       }
@@ -482,43 +484,43 @@
       globalqry2 = "";
 
       if (v_cnpj != "") {
-        globalqry2 += "a.cnpj= '" + v_cnpj + "'";
+        globalqry2 += "cnpj= '" + v_cnpj + "'";
       }
 
       if (v_number != "") {
         if (globalqry2 != "") {
-          globalqry2 += " and a.mobile= '55" + v_number + "'";
+          globalqry2 += " and mobile= '55" + v_number + "'";
         } else {
-          globalqry2 += "a.mobile= '55" + v_number + "'";
+          globalqry2 += "mobile= '55" + v_number + "'";
         }
       }
 
       if (v_nped != "") {
         if (globalqry2 != "") {
-          globalqry2 += " and p.pedido= '" + v_nped + "'";
+          globalqry2 += " and pedido= '" + v_nped + "'";
         } else {
-          globalqry2 += "p.pedido= '" + v_nped + "'";
+          globalqry2 += "pedido= '" + v_nped + "'";
         }
       }
       if (v_direction != "") {
         if (globalqry2 != "") {
-          globalqry2 += " and a.atendir= '" + v_direction + "'";
+          globalqry2 += " and atendir= '" + v_direction + "'";
         } else {
-          globalqry2 += "a.atendir= '" + v_direction + "'";
+          globalqry2 += "atendir= '" + v_direction + "'";
         }
       }
       if (v_origem != "") {
         if (v_origem == "wbot" || v_origem == "bot") {
           if (globalqry2 != "") {
-            globalqry2 += " and trans.origem= '" + v_origem + "' and trans.destino= '" + v_origem + "'";
+            globalqry2 += " and origem= '" + v_origem + "' and destino= '" + v_origem + "'";
           } else {
-            globalqry2 += "trans.origem= '" + v_origem + "'  and trans.destino= '" + v_origem + "'";
+            globalqry2 += "origem= '" + v_origem + "'  and destino= '" + v_origem + "'";
           }
         } else {
           if (globalqry2 != "") {
-            globalqry2 += " and trans.origem= '" + v_origem.replace('Hum', '') + "' and trans.destino= 'human'";
+            globalqry2 += " and origem= '" + v_origem.replace('Hum', '') + "' and destino= 'human'";
           } else {
-            globalqry2 += "trans.origem= '" + v_origem.replace('Hum', '') + "'  and trans.destino= 'human'";
+            globalqry2 += "origem= '" + v_origem.replace('Hum', '') + "'  and destino= 'human'";
           }
         }
       }
@@ -528,14 +530,19 @@
     var toExcelParams;
 
     function testsock() {
+      console.log(globalqry3)
       if (globalqry != null) {
         if (globalqry2 == "") {
-          var payload = { params: "" + globalqry2 + "" + globalqry + "", limit: 0 };
+          var payload = { params: globalqry2, limit: 0, transbordoDt: globalqry3 };
         } else {
-          var payload = { params: "" + globalqry2 + " AND " + globalqry + "", limit: 0 };
+          var payload = { params: "WHERE " + globalqry2, limit: 0, transbordoDt: globalqry3 };
         }
       } else {
-        var payload = { params: "" + globalqry2 + "", limit: 0 };
+        if (globalqry2 == "") {
+          var payload = { params: globalqry2, limit: 0, transbordoDt: globalqry3 };
+        } else {
+          var payload = { params: "WHERE " + globalqry2, limit: 0, transbordoDt: globalqry3 };
+        }
       }
       console.log(payload);
       socket.emit('bi-report1', payload);
@@ -561,7 +568,7 @@
     var checkNext;
 
     socket.on('bi-report1', function (payload) {
-      //console.log(payload);
+      console.log(payload);
       if (payload.count > 0) {
         contadorglobal = payload.count;
         $('#contatotal2').text(payload.count);
@@ -585,7 +592,7 @@
 
           var _pedidos = tbres[i].pedidos;
           if (_pedidos.length > 0) {
-            var tab = "<tr><td <td colspan='5'></td><td colspan='2'>";
+            var tab = "<tr><td <td colspan='8'></td><td colspan='2'>";
             tab += "<table class='table' id='datatables' role='grid' aria-describedby='datatables_info'>";
             tab += "<thead class='myTablebg'><tr><th>No. Pedido</th><th>Segmento</th><th>Valor</th>";
             tab += "</tr></thead><tbody id='tableresult'>";
@@ -678,11 +685,19 @@
 
     function testsock3(data) {
       if (globalqry != null) {
-        var payload = { params: "" + globalqry2 + "" + globalqry + "", limit: data };
+        if (globalqry2 == "") {
+          var payload = { params: globalqry2, limit: data, transbordoDt: globalqry3 };
+        } else {
+          var payload = { params: "WHERE " + globalqry2, limit: data, transbordoDt: globalqry3 };
+        }
       } else {
-        var payload = { params: "" + globalqry2 + "", limit: data };
+        if (globalqry2 == "") {
+          var payload = { params: globalqry2, limit: data, transbordoDt: globalqry3 };
+        } else {
+          var payload = { params: "WHERE " + globalqry2, limit: data, transbordoDt: globalqry3 };
+        }
       }
-      //console.log(payload);
+      console.log(payload);
       checkNext = "False";
       socket.emit('bi-report1', payload);
     }
