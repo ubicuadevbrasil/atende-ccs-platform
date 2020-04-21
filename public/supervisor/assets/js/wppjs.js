@@ -68,13 +68,13 @@ function getperfil(id) {
     return perfil;
 }
 
-function tabsup(id, numb, cnpj, name, hour, date, state, atendir, filename, origem, origem2) {
+function tabsup(id, numb, cpf, name, hour, date, state, atendir, filename, rgm, nome) {
 
     if (numb == null || numb == "" || numb == "null") {
         numb = '-';
     }
-    if (cnpj == null || cnpj == "" || cnpj == "null") {
-        cnpj = '-';
+    if (cpf == null || cpf == "" || cpf == "null") {
+        cpf = '-';
     }
     if (name == null || name == "" || name == "null") {
         name = '-';
@@ -94,50 +94,26 @@ function tabsup(id, numb, cnpj, name, hour, date, state, atendir, filename, orig
     if (filename == null || filename == "" || filename == "null") {
         filename = '-';
     }
-    if (origem2 == null || origem2 == "" || origem2 == "null") {
-        origem2 = '-';
-    } else if (origem2 == 'wbot') {
-        origem2 = 'WhatsApp'
-    } else if (origem2 == 'bot') {
-        origem2 = 'Fidelize'
+    if (nome == null || nome == "" || nome == "null") {
+        nome = '-';
+    }
+    if (rgm == null || rgm == "" || nome == "null") {
+        rgm = '-';
     }
 
-    if (origem == null || origem == "") {
-        origem = '-';
-    } else if (origem == 'wbot') {
-        origem = 'WhatsApp'
-    } else if (origem == 'bot') {
-        origem = 'Fidelize'
-    }
-    console.log(origem2)
-    if (origem2 == '-') {
-        var tab = "<tr id='count" + id + "' class='gradeA odd' role='row'>";
-        tab += "<td class='sorting_1'>" + numb + "</td>";
-        tab += "<td>" + cnpj + "</td>";
-        tab += "<td>" + name + "</td>";
-        tab += "<td>" + hour + "</td>";
-        tab += "<td>" + date + "</td>";
-        tab += "<td>" + state + "</td>";
-        tab += "<td>" + atendir + "</td>";
-        tab += "<td>" + filename + "</td>";
-        tab += "<td>" + origem + "</td>";
-        tab += "<td id='" + id + "' class='text-center' onclick='openhist(this.id)'><i class='fa fa-comments' style='cursor: pointer;'></i></td>";
-        tab += "</tr>";
-    } else {
-        var tab = "<tr id='count" + id + "' class='gradeA odd' role='row'>";
-        tab += "<td class='sorting_1'>" + numb + "</td>";
-        tab += "<td>" + cnpj + "</td>";
-        tab += "<td>" + name + "</td>";
-        tab += "<td>" + hour + "</td>";
-        tab += "<td>" + date + "</td>";
-        tab += "<td>" + state + "</td>";
-        tab += "<td>" + atendir + "</td>";
-        tab += "<td>" + filename + "</td>";
-        tab += "<td>" + origem + "</td>";
-        tab += "<td>" + origem2 + "</td>";
-        tab += "<td id='" + id + "' class='text-center' onclick='openhist(this.id)'><i class='fa fa-comments' style='cursor: pointer;'></i></td>";
-        tab += "</tr>";
-    }
+    var tab = "<tr id='count" + id + "' class='gradeA odd' role='row'>";
+    tab += "<td class='sorting_1'>" + nome + "</td>";
+    tab += "<td>" + rgm + "</td>";
+    tab += "<td>" + cpf + "</td>";
+    tab += "<td>" + numb + "</td>";
+    tab += "<td>" + name + "</td>";
+    tab += "<td>" + hour + "</td>";
+    tab += "<td>" + date + "</td>";
+    tab += "<td>" + state + "</td>";
+    tab += "<td>" + atendir + "</td>";
+    tab += "<td>" + filename + "</td>";
+    tab += "<td id='" + id + "' class='text-center' onclick='openhist(this.id)'><i class='fa fa-comments' style='cursor: pointer;'></i></td>";
+    tab += "</tr>";
 
     return (tab);
 }

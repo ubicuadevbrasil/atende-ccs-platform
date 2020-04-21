@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="pt-br">
+<html>
 
 <head>
   <meta charset="utf-8">
@@ -20,7 +20,7 @@
   <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
   <link href="assets/css/pixeladmin.min.css" rel="stylesheet" type="text/css">
   <link href="assets/css/widgets.min.css" rel="stylesheet" type="text/css">
-  <link href="assets/css/ubicua.css" rel="stylesheet" type="text/css">
+  <link href="../supervisor/assets/css/ubicua.css" rel="stylesheet" type="text/css">
 
   <!-- Theme -->
   <link href="assets/css/themes/adminflare.min.css" rel="stylesheet" type="text/css">
@@ -28,70 +28,15 @@
   <!-- Scripts -->
   <script src="assets/js/socket.io.js"></script>
   <script src="assets/pace/pace.min.js"></script>
-  <script src="assets/js/wppjs.js"></script>
-
-  <style>
-    .html2canvas-container {
-      height: 3000px !important;
-    }
-  </style>
+  <script src="../supervisor/assets/js/wppjs.js"></script>
 </head>
 
 <body>
-  <!-- Nav -->
-  <nav class="px-nav px-nav-left">
-    <button type="button" class="px-nav-toggle" data-toggle="px-nav">
-      <span class="px-nav-toggle-arrow"></span>
-      <span class="navbar-toggle-icon"></span>
-      <span class="px-nav-toggle-label font-size-11">HIDE MENU</span>
-    </button>
-
-    <ul class="px-nav-content">
-      <li class="px-nav-item">
-        <a href="dashboard.html">
-          <i class="px-nav-icon ion-ios-pulse"></i>
-          <span class="px-nav-label">Dashboard</span>
-        </a>
-      </li>
-      <li class="px-nav-item">
-        <a href="agentes.html">
-          <i class="px-nav-icon ion-ios-people"></i>
-          <span class="px-nav-label">Atendentes</span>
-        </a>
-      </li>
-      <li class="px-nav-item">
-        <a href="cadsta.html">
-          <i class="px-nav-icon ion-android-checkbox-outline"></i>
-          <span class="px-nav-label">Status de Atendimento</span>
-        </a>
-      </li>
-      <li class="px-nav-item">
-        <a href="mailing.html">
-          <i class="px-nav-icon ion-clipboard"></i>
-          <span class="px-nav-label">Cadastro de Mailing</span>
-        </a>
-      </li>
-      <li class="px-nav-item px-nav-dropdown px-open active">
-        <a href="#">
-          <i class="px-nav-icon ion-ios-paper"></i>
-          <span class="px-nav-label">Relatórios</span>
-        </a>
-        <ul class="px-nav-dropdown-menu">
-          <li class="px-nav-item active">
-            <a href="report1.html">
-              <span class="px-nav-label">Analítico de Atendimentos</span>
-            </a>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </nav>
-
   <!-- Navbar -->
   <nav class="navbar px-navbar">
     <div class="navbar-header">
       <a class="navbar-brand px-demo-brand">
-        <n class="page-header-icon" style="color: white">Atendimento WhatsApp</n>
+        <n class="page-header-icon" style="color: white">Consulta Atendimentos</n>
       </a>
     </div>
 
@@ -127,16 +72,10 @@
   <!-- Content -->
   <div class="px-content">
     <div class="page-header">
-      <h1 class="ion-ios-paper"> Relatório Analítico de Atendimento</h1>
+      <h1 class="ion-ios-paper"> Consulta</h1>
       <div class="box-cell pull-right" style="width: 150px; border-style: none;">
         <a id="btnbusca" class="btn btn-block btn-primary">
           <span class="btn btn-primary btn-label-icon left ion-search"></span>Busca
-        </a>
-      </div>
-      <div id="btnexcel" class="box-cell pull-right text-center"
-        style="width: 150px; border-style: none; display: none; margin-right: 1vw;">
-        <a class="btn btn-block btn-primary">
-          <span class="btn btn-primary btn-label-icon left ion-ios-grid-view-outline"></span>Exportar Excel
         </a>
       </div>
     </div>
@@ -171,27 +110,12 @@
             </span>
             <input id="iRGM" type="text" class="form-control" placeholder="Rgm Aluno">
           </div>
-          <div class="input-group" style="width: 220px;">
-            <span class="input-group-addon">
-              <i class="fa fa-calendar"></i>
-            </span>
-            <input type="text" id="daterange-1" class="form-control" placeholder="Período">
-          </div>
+          <div></div>
           <div></div>
           <div></div>
         </div>
         <div class="gridnv1" style="margin-top: 1vh">
-          <div class="input-group" style="width: 220px;">
-            <span class="input-group-addon">
-              <i class="fa fa-building-o"></i>
-            </span>
-            <select id="iDirection" type="text" class="form-control" placeholder="Interação">
-              <option value="">Interação</option>
-              <option value="">Todas</option>
-              <option value="in">In</option>
-              <option value="out">Out</option>
-            </select>
-          </div>
+          <div></div>
           <div></div>
           <div></div>
           <div></div>
@@ -276,33 +200,17 @@
       </div>
     </div>
   </div>
-  <div id="modalubc2" class="modal fade modal-alert modal-info" style="display: none;">
-    <div class="modal-dialog" style="width: 30vw">
-      <div class="modal-content">
-        <div class="modal-header"><i class="font-size-52 ion-ios-cloud-download-outline"></i></div>
-        <div class="modal-body"><a href="#" id="modaltitle4" class="font-size-14 font-weight-bold">Clique Aqui para
-            Fazer o Download do Arquivo Excel</a></div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-info" data-dismiss="modal">OK</button>
-        </div>
-      </div>
-    </div>
-  </div>
+
   <div class="modal fade" id="modalHistorico" tabindex="-1" style="height: 600px;">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <button id="fecharhis" type="button" class="close" data-dismiss="modal">×</button>
-          <h4 class="modal-title">
-            Histórico de Interação
-            <button id="printToPdf" type="button" style="">
-              <i class="ion-android-print"></i>
-            </button>
-          </h4>
+          <h4 class="modal-title">Histórico de Interação</h4>
         </div>
         <div class="modal-body"
           style="padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
-          <div id="chathistory" class="panel scrollstyle" style="overflow-y: auto; height: 500px;">
+          <div id="chathistory" class="panel scrollstyle" style="overflow-y: auto; height: 400px;">
           </div>
         </div>
       </div>
@@ -313,14 +221,10 @@
   <script src="assets/js/jquery.min.js"></script>
   <script src="assets/js/bootstrap.min.js"></script>
   <script src="assets/js/pixeladmin.min.js"></script>
-  <script src="assets/js/app.js"></script>
+  <script src="../supervisor/assets/js/app.js"></script>
   <script src="assets/js/dinamyctest.js"></script>
-  <script src="assets/js/ubicua.js"></script>
-  <script src="assets/js/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
-    integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
-    crossorigin="anonymous"></script>
-  <script src="assets/js/report1.js"></script>
+  <script src="../supervisor/assets/js/ubicua.js"></script>
+  <script src="assets/js/consulta.js"></script>
 
 </body>
 

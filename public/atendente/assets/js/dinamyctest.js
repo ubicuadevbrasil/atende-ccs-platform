@@ -1,4 +1,4 @@
-function modalpis(info, mobile, account, imageuser, atendir, atendircolor, direction, tipo, cnpj, flagcamp, origem) {
+function modalpis(info, mobile, account, imageuser, atendir, atendircolor, direction, tipo, cnpj, flagcamp) {
     //console.log(info, mobile, account, imageuser, atendir, atendircolor, direction, tipo, cnpj, flagcamp, origem);
     var texto = "<li id='id" + mobile + "' class='onhoverli'>";
     texto += "<div id='sid" + mobile + "' class='widget-followers-item onhoverli' onclick='openbox1(" + mobile + ")'>";
@@ -14,19 +14,11 @@ function modalpis(info, mobile, account, imageuser, atendir, atendircolor, direc
     texto += "</a>";
     texto += "<i id='reply" + mobile + "' class='" + atendir + "' style='font-size:25px; " + atendircolor + "'></i>";
     texto += "</div>";
-    if (direction == "foward") {
-        texto += "<a href='#' class='widget-followers-name'>" + cnpj + "</a>";
-        texto += "<a href='#' class='widget-followers-name'>" + tipo + " / " + flagcamp + "</a>";
-    } else {
-        texto += "<a href='#' class='widget-followers-name'>" + mobile + "</a>";
-    }
-    texto += "<a id='a" + mobile + "' href='#' class='widget-followers-username'>" + mobile + "</a>";
-    if (origem == 'wbot') {
-        texto += "<a id='origem" + mobile + "' href='#' class='widget-followers-username'>WhatsApp</a>";
-    } else if (origem == 'bot') {
-        texto += "<a id='origem" + mobile + "' href='#' class='widget-followers-username'>Webb</a>";
-    }
 
+    texto += "<a href='#' class='widget-followers-name'>" + mobile + "</a>";
+
+
+    texto += "<a id='a" + mobile + "' href='#' class='widget-followers-username'>" + mobile + "</a>";
     texto += "</div>";
     texto += "</li>";
     return texto;

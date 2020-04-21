@@ -61,11 +61,6 @@ $('#regCSV').on('click', function () {
     $('#modal-csv').modal('toggle');
 });
 
-$("#goCSV").on('click', function () {
-    $("#modal-tipo-texto").html("Por Favor selecione o tipo de clientes neste mailing.");
-    $('#modal-tipo').modal('toggle');
-});
-
 $("#csvFile").on('change', function (e) {
     var newArray = [];
     var file = e.target.files[0];
@@ -120,7 +115,7 @@ function parseMe(url, callBack) {
 
 async function doStuff(data) {
     var newArray = data;
-    if (newArray.length > 300) {
+    if (newArray.length > 3000000) {
         $("#modal-aviso-texto").html("O arquivo CSV ultrapassa o limite de 300 registros!");
         $('#modal-aviso').modal('toggle');
     } else {
@@ -140,46 +135,46 @@ function isNumber(event) {
 
 async function insertCSV(data) {
     var headers = data[0];
+    var arrPayload = [];
     limitemail = 0;
     console.log(headers);
-    if (headers.length != 7 || headers[0].toLowerCase() != "cnpj" || headers[1].toLowerCase() != "numero" || headers[2].toLowerCase() != "bandeira" || headers[3].toLowerCase() != "razao social" || headers[4].toLowerCase() != "nome fantasia" || headers[5].toLowerCase() != "uf" || headers[6].toLowerCase() != "flag campanha") {
+    if (headers.length != 4 || headers[0].toLowerCase() != "nome" || headers[1].toLowerCase() != "rgm_aluno" || headers[2].toLowerCase() != "cpf" || headers[3].toLowerCase() != "celular") {
         $("#modal-aviso-texto").text("Mailing invalido!");
         $('#modal-aviso').modal();
         document.getElementById("csvFile").value = "";
     } else {
+        console.log(data)
+        $("#modal-aviso-texto").text("Carregando Mailing");
+        $('#modal-aviso').modal();
         for (i = 1; i < data.length; i++) {
-            var _fantasia = data[i][4];
-            var _nome = data[i][3];
-            var _mobile = data[i][1];
-            var _cnpj = data[i][0];
-            var _bandeira = data[i][2];
-            var _uf = data[i][5];
-            var _flag = data[i][6];
+            var _nome = data[i][0];
+            var _rgm_aluno = data[i][1];
+            var _cpf = data[i][2];
+            var _celular = data[i][3];
+            var _quantidade = data.length - 1;
             var payload = {
                 'nome': _nome,
-                'fantasia': _fantasia,
-                'mobile': _mobile,
-                'tipo': _tipoCliente,
-                'cnpj': _cnpj,
-                'bandeira': _bandeira,
-                'uf': _uf,
+                'rgm_aluno': _rgm_aluno,
+                'cpf': _cpf,
+                'celular': _celular,
                 'filename': fileName,
-                'flagcampanha': _flag
+                'quantidade': _quantidade
             };
-            console.log(payload);
-            await socket.emit('bi-addativo', payload);
-            if (limitemail == 1) {
-                break;
-            }
+            //console.log(payload);
+            arrPayload.push(payload);
+            //await socket.emit('bi-addativo', payload);
+            //if (limitemail == 1) { break }
         }
+        console.log(arrPayload)
+        await socket.emit('bi-addativo', arrPayload);
+        $("#modal-mailing-texto").text("Mailing Finalizado");
+        $('#modal-mailing').modal();
         document.getElementById("csvFile").value = "";
     }
 }
 
 
-function selTipo(tipo) {
-    _tipoCliente = tipo;
-    $('#modal-tipo').modal('toggle');
+function selTipo() {
     $("#csvFile").click();
 }
 
@@ -193,21 +188,14 @@ function createTable(payload) {
             var _tipo;
             var _dtcadastro = new Date(data[i].dtcadastro);
             _dtcadastro = _dtcadastro.toLocaleDateString("pt-BR");
-            if (data[i].tipo == 1) {
-                _tipo = "CHC/ONE";
-            } else if (data[i].tipo == 2) {
-                _tipo = "CEM";
-            }
             var elmt = [
                 data[i].filename,
                 data[i].mobile,
                 data[i].nome,
-                data[i].nomefantasia,
-                data[i].bandeira,
-                data[i].cnpj,
-                _dtcadastro,
-                data[i].flagcampanha,
-                _tipo
+                data[i].cpf,
+                data[i].rgm_aluno,
+                data[i].quantidade,
+                _dtcadastro
             ]
             dataSet.push(elmt);
         }
@@ -242,9 +230,9 @@ function createTable(payload) {
             },
         });
     } else {
-        $("#mailtable").hide();
-        $("#modal-aviso-texto").html("Nenhum registro encontrado!");
-        $('#modal-aviso').modal('toggle');
+        //$("#mailtable").hide();
+        //$("#modal-aviso-texto").html("Nenhum registro encontrado!");
+        //$('#modal-aviso').modal('toggle');
     }
 }
 

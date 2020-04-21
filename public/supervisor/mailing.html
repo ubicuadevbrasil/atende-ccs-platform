@@ -146,11 +146,10 @@
                     <th>Nome do Mailing</th>
                     <th>Numero</th>
                     <th>Nome</th>
-                    <th>Nome Fantasia</th>
-                    <th>Bandeira</th>
-                    <th>Base</th>
+                    <th>CPF</th>
+                    <th>Rgm Aluno</th>
+                    <th>Quantidade</th>
                     <th>Data de Cadastro</th>
-                    <th>Tipo Cliente</th>
                 </tr>
             </thead>
             <tbody>
@@ -242,22 +241,20 @@
                 <div class="modal-title">Aviso</div>
                 <div class="modal-body"><span id="modal-csv-texto"></span></div>
                 <div class="modal-footer">
-                    <button id="goCSV" type="button" class="btn btn-warning" data-dismiss="modal">OK</button>
+                    <button id="goCSV" type="button" class="btn btn-warning" data-dismiss="modal"
+                        onclick="selTipo()">OK</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="modal-tipo" class="modal fade modal-alert modal-info">
+    <div id="modal-mailing" class="modal fade modal-alert modal-info">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header"><i class="fa ion-alert"></i></div>
                 <div class="modal-title">Aviso</div>
-                <div class="modal-body"><span id="modal-tipo-texto"></span></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="selTipo(1)">CHC/ONE</button>
-                    <button type="button" class="btn btn-primary" onclick="selTipo(2)">CEM</button>
-                </div>
+                <div class="modal-body"><span id="modal-mailing-texto"></span></div>
+                <div class="modal-footer"></div>
             </div>
         </div>
     </div>

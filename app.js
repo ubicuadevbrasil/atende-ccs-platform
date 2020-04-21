@@ -13,17 +13,20 @@ const helmet = require('helmet');
 
 const port = process.env.PORT || 443;
 
+process.env.TZ = 'Brazil/brt';
+//console.log(process.env)
+
 // Constantes
 const cdn = "https://cdn.ubicuacloud.com/file/";
-const _mobileUid = "5511969009126@c.us";
+const _mobileUid = "5511999991152@c.us";
 
 // Function Platforma Ubicua
 require('ubc/tools.js')();
 var dbcc = require('ubc/dbcc.js');
 
 var options = {
-        key: fs.readFileSync('/etc/letsencrypt/live/ccs.sanofi-mobile.com.br/privkey.pem'),
-        cert: fs.readFileSync('/etc/letsencrypt/live/ccs.sanofi-mobile.com.br/fullchain.pem')
+        key: fs.readFileSync('/etc/letsencrypt/live/ccs.cruzeirodosul-aluno.com.br/privkey.pem'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/ccs.cruzeirodosul-aluno.com.br/fullchain.pem')
 };
 
 // Config App Express
@@ -39,29 +42,33 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(cors());
 
+app.get('/', function (req, res) {
+        res.redirect('/atendente')
+})
+
 // Request HTTPS
 app.get('/.well-known/acme-challenge/GXWwzwd5XBYsP0nuC-_b_sblfG-aaKG3BAIsbX3tc94', function (req, res) {
         res.send('GXWwzwd5XBYsP0nuC-_b_sblfG-aaKG3BAIsbX3tc94.WJdCUT79yCG6vkn1fZDc6qfJm78Ksc0SohKQIFQfIhM');
 });
 
 app.get('/alive', function (req, res) {
-        console.log(req.ip);
+        ////console.log(req.ip);
         res.send('Sorry');
 });
 
 app.get('/v1/push/keys', function (req, res) {
-        console.log('====================================');
-        console.log('Push');
+        ////console.log('====================================');
+        ////console.log('Push');
         res.sendStatus(200);
-        console.log('====================================');
+        ////console.log('====================================');
 });
 
 app.post('/whatsapp', function (req, res) {
         res.setHeader("Access-Control-Allow-Origin", "*");
         var _mobile = req.body.mobile;
         var _msg = req.body.msg;
-        console.log(req);
-        console.log("Nova Mensagem From: " + _mobile + " >>> " + _msg);
+        ////console.log(req);
+        ////console.log("Nova Mensagem From: " + _mobile + " >>> " + _msg);
 });
 
 app.post('/api/v1/message', function (req, res, next) {
@@ -88,13 +95,17 @@ app.post('/api/v1/message', function (req, res, next) {
                                         onrefusegroup(_contact_uid.substring(0, _contact_uid.search("-")));
                                 } else {
                                         var _body_text = emoji.unifiedToHTML(req.body.message.body.text);
-                                        console.log('======================================\n');
-                                        console.log(_body_text);
-                                        console.log('======================================\n\n');
+                                        ////console.log('======================================\n');
+                                        ////console.log(_body_text);
+                                        ////console.log('======================================\n\n');
                                         var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_text, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
                                         var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_text";
                                         dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_text], function (err, rows, fields) {
-                                                if (err) { log("Erro ao Receber Mensagem do WABOXAPP: " + err); } else { log("Nova Mensagem Recebida WABOXAPP..."); }
+                                                if (err) {
+                                                        log("Erro ao Receber Mensagem do WABOXAPP: " + err);
+                                                } else {
+                                                        log("Nova Mensagem Recebida WABOXAPP...");
+                                                }
                                         });
                                 }
                         } else if (_message_type === "image") {
@@ -109,7 +120,11 @@ app.post('/api/v1/message', function (req, res, next) {
                                         var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size, body_thumb, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
                                         var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_thumb, _body_url";
                                         dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_thumb, _body_url], function (err, rows, fields) {
-                                                if (err) { log("Erro ao Receber Mensagem do WABOXAPP: " + err); } else { log("Nova Mensagem Recebida WABOXAPP..."); }
+                                                if (err) {
+                                                        log("Erro ao Receber Mensagem do WABOXAPP: " + err);
+                                                } else {
+                                                        log("Nova Mensagem Recebida WABOXAPP...");
+                                                }
                                         });
                                 }
                         } else if (_message_type === "video") {
@@ -125,7 +140,11 @@ app.post('/api/v1/message', function (req, res, next) {
                                         var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size, body_duration, body_thumb, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
                                         var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_duration, _body_thumb, _body_url";
                                         dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_duration, _body_thumb, _body_url], function (err, rows, fields) {
-                                                if (err) { log("Erro ao Receber Mensagem do WABOXAPP: " + err); } else { log("Nova Mensagem Recebida WABOXAPP..."); }
+                                                if (err) {
+                                                        log("Erro ao Receber Mensagem do WABOXAPP: " + err);
+                                                } else {
+                                                        log("Nova Mensagem Recebida WABOXAPP...");
+                                                }
                                         });
                                 }
                         } else if (_message_type === "audio") {
@@ -140,7 +159,11 @@ app.post('/api/v1/message', function (req, res, next) {
                                         var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size, body_duration, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
                                         var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_duration, _body_url";
                                         dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_duration, _body_url], function (err, rows, fields) {
-                                                if (err) { log("Erro ao Receber Mensagem do WABOXAPP: " + err); } else { log("Nova Mensagem Recebida WABOXAPP..."); }
+                                                if (err) {
+                                                        log("Erro ao Receber Mensagem do WABOXAPP: " + err);
+                                                } else {
+                                                        log("Nova Mensagem Recebida WABOXAPP...");
+                                                }
                                         });
                                 }
                         } else if (_message_type === "ptt") {
@@ -155,7 +178,11 @@ app.post('/api/v1/message', function (req, res, next) {
                                         var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size, body_duration, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
                                         var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_duration, _body_url";
                                         dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_duration, _body_url], function (err, rows, fields) {
-                                                if (err) { log("Erro ao Receber Mensagem do WABOXAPP: " + err); } else { log("Nova Mensagem Recebida WABOXAPP..."); }
+                                                if (err) {
+                                                        log("Erro ao Receber Mensagem do WABOXAPP: " + err);
+                                                } else {
+                                                        log("Nova Mensagem Recebida WABOXAPP...");
+                                                }
                                         });
                                 }
                         } else if (_message_type === "document") {
@@ -170,7 +197,11 @@ app.post('/api/v1/message', function (req, res, next) {
                                         var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size,  body_thumb, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
                                         var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_thumb, _body_url";
                                         dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_thumb, _body_url], function (err, rows, fields) {
-                                                if (err) { log("Erro ao Receber Mensagem do WABOXAPP: " + err); } else { log("Nova Mensagem Recebida WABOXAPP..."); }
+                                                if (err) {
+                                                        log("Erro ao Receber Mensagem do WABOXAPP: " + err);
+                                                } else {
+                                                        log("Nova Mensagem Recebida WABOXAPP...");
+                                                }
                                         });
                                 }
                         } else if (_message_type === "vcard") {
@@ -182,7 +213,11 @@ app.post('/api/v1/message', function (req, res, next) {
                                         var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_contact, body_vcard, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
                                         var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_contact, _body_vcard";
                                         dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_contact, _body_vcard], function (err, rows, fields) {
-                                                if (err) { log("Erro ao Receber Mensagem do WABOXAPP: " + err); } else { log("Nova Mensagem Recebida WABOXAPP..."); }
+                                                if (err) {
+                                                        log("Erro ao Receber Mensagem do WABOXAPP: " + err);
+                                                } else {
+                                                        log("Nova Mensagem Recebida WABOXAPP...");
+                                                }
                                         });
                                 }
                         } else if (_message_type === "location") {
@@ -196,7 +231,11 @@ app.post('/api/v1/message', function (req, res, next) {
                                         var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_name, body_lng, body_lat, body_thumb, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
                                         var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_name, _body_lng, _body_lat, _body_thumb";
                                         dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_name, _body_lng, _body_lat, _body_thumb], function (err, rows, fields) {
-                                                if (err) { log("Erro ao Receber Mensagem do WABOXAPP: " + err); } else { log("Nova Mensagem Recebida WABOXAPP..."); }
+                                                if (err) {
+                                                        log("Erro ao Receber Mensagem do WABOXAPP: " + err);
+                                                } else {
+                                                        log("Nova Mensagem Recebida WABOXAPP...");
+                                                }
                                         });
                                 }
                         }
@@ -247,292 +286,10 @@ app.post('/api/v2/message', function (req, res, next) {
         }
 });
 
-app.post('/api/bot/transbordo', function (req, res, next) {
-        var auth = req.headers['authorization'];
-        console.log("Authorization Header is: ", auth);
-        console.log(req.body);
-        if (!auth) {
-                res.statusCode = 401;
-                res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
-                res.end('Sorry! Invalid Authentication.');
-        } else if (auth) {
-                var tmp = auth.split(' ');
-                var buf = new Buffer(tmp[1], 'base64');
-                var plain_auth = buf.toString();
-                console.log("Decoded Authorization ", plain_auth);
-                var creds = plain_auth.split(':');
-                var username = creds[0];
-                var password = creds[1];
-                if ((username == 'atosBot') && (password == 'd8511353660467bb8e8c68016053bd9e')) {
-                        var _cnpj = req.body.cnpj.replace(/[^\w\s]/gi, '');
-                        dbcc.query('SELECT * FROM tab_filain WHERE status=1 and mobile=?', [_cnpj], function (err, result) {
-                                if (result.length == 0) {
-                                        dbcc.query('SELECT * FROM tab_atendein WHERE status=0 and mobile=?', [_cnpj], function (err, result) {
-                                                if (result.length == 0) {
-                                                        dbcc.query("INSERT INTO db_sanofi_ccs.tab_filain (mobile, sessionBot, status, origem) VALUES (?,?,1,'bot')", [_cnpj, req.body.sessionid], function (err, result) {
-                                                                if (err) {
-                                                                        console.log(err);
-                                                                        res.json({ status: 'falha', resultado: 'err' });
-                                                                } else {
-                                                                        // Necessario Mandar mensagem de boas vindas via API ATOS
-                                                                        var _normal = "Seja bem vindo ao novo canal exclusivo para Clientes Conecta PDV. Adicione esse número de telefone e faça seus pedidos via WhatsApp de segunda a sexta das 09h às 20h.\n\nPara agilizar seu atendimento, por favor informe seu nome e CNPJ.";
-                                                                        var _feriado = "Nosso time de analistas está em horário de descanso. Mas fique tranquilo, retornamos no próximo dia útil a partir das 9h pronto para te auxiliar ok?! Fique a vontade para entrar em contato novamente ou aguarde nosso contato. Até mais!";
-                                                                        var _treinamento = "Nosso time de analistas está em treinamento. Mas fique tranquilo, assim que possível, entraremos em contato com você neste mesmo número, ok?! Até mais!";
-                                                                        var _message = "";
-                                                                        dbcc.query('SELECT training from tab_treinamento where id="c102ba05-422c-11ea-8db1-000c290cc03d"', function (err, result) {
-                                                                                if (result[0].training == 'true') {
-                                                                                        _message = _treinamento
-                                                                                        sendWelcome(req.body.sessionid, _cnpj, _message)
-                                                                                } else if (new Date().getHours() >= 20) {
-                                                                                        _message = _feriado
-                                                                                        sendWelcome(req.body.sessionid, _cnpj, _message)
-                                                                                }
-                                                                        });
-                                                                        res.json({ status: '200', resultado: 'Usuario inserido em nossa plataforma' });
-                                                                }
-                                                        });
-                                                } else {
-                                                        res.json({ status: '400', resultado: 'Usuario já se encontra em nossa plataforma' });
-
-                                                }
-                                        });
-                                } else {
-                                        res.json({ status: '400', resultado: 'Usuario já se encontra em nossa plataforma' });
-
-                                }
-                        });
-                } else {
-                        res.statusCode = 401;
-                        res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
-                        res.end('Sorry! Unauthorized Access.');
-                }
-        }
-});
-
-app.post('/api/bot/message', function (req, res, next) {
-        var auth = req.headers['authorization'];
-        console.log("Authorization Header is: ", auth);
-        console.log(req.body);
-        if (!auth) {
-                res.statusCode = 401;
-                res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
-                res.end('Sorry! Invalid Authentication.');
-        } else if (auth) {
-                var tmp = auth.split(' ');
-                var buf = new Buffer(tmp[1], 'base64');
-                var plain_auth = buf.toString();
-                console.log("Decoded Authorization ", plain_auth);
-                var creds = plain_auth.split(':');
-                var username = creds[0];
-                var password = creds[1];
-                if ((username == 'atosBot') && (password == 'd8511353660467bb8e8c68016053bd9e')) {
-                        var _cnpj = req.body.cnpj.replace(/[^\w\s]/gi, '');
-                        dbcc.query('SELECT * FROM tab_filain WHERE status=1 and mobile=? and sessionBot=?', [_cnpj, req.body.sessionid], function (err, result) {
-                                if (result.length == 0) {
-                                        dbcc.query('SELECT * FROM tab_atendein WHERE status=0 and mobile=? and sessionBot=?', [_cnpj, req.body.sessionid], function (err, result) {
-                                                if (result.length == 0) {
-                                                        res.json({
-                                                                status: '400',
-                                                                resultado: 'Usuario não se encontra cadastrado em nossa plataforma'
-                                                        });
-                                                } else {
-                                                        var _hostin = "LON";
-                                                        var _uid = '5511969009126';
-                                                        var _dtin = getTimestamp();
-                                                        var _contact_uid = _cnpj;
-                                                        var _contact_name = '';
-                                                        var _contact_type = 'User';
-                                                        var _message_type = 'chat';
-                                                        var _message_ack = '2';
-                                                        var _message_cuid = '';
-                                                        var _message_dir = 'i';
-                                                        var _message_dtm = new Date().getTime();
-                                                        var _message_uid = 'custom_uid';
-                                                        var _body_text = req.body.message;
-                                                        var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_text, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
-                                                        var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_text";
-                                                        dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_text], function (err, rows, fields) {
-                                                                if (err) {
-                                                                        res.json({
-                                                                                status: 'falha',
-                                                                                resultado: 'err'
-                                                                        });
-                                                                } else {
-                                                                        res.json({
-                                                                                status: '200',
-                                                                                resultado: 'Mensagem Cadastrada'
-                                                                        });
-                                                                }
-                                                        });
-                                                }
-                                        });
-                                } else {
-                                        var _hostin = "LON";
-                                        var _uid = '5511969009126';
-                                        var _dtin = getTimestamp();
-                                        var _contact_uid = _cnpj;
-                                        var _contact_name = '';
-                                        var _contact_type = 'User';
-                                        var _message_type = 'chat';
-                                        var _message_ack = '2';
-                                        var _message_cuid = '';
-                                        var _message_dir = 'i';
-                                        var _message_dtm = new Date().getTime();
-                                        var _message_uid = 'custom_uid';
-                                        var _body_text = req.body.message;
-                                        var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_text, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
-                                        var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_text";
-                                        dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_text], function (err, rows, fields) {
-                                                if (err) {
-                                                        res.json({
-                                                                status: 'falha',
-                                                                resultado: 'err'
-                                                        });
-                                                } else {
-                                                        res.json({
-                                                                status: '200',
-                                                                resultado: 'Mensagem Cadastrada'
-                                                        });
-                                                }
-                                        });
-                                }
-                        });
-                } else {
-                        res.statusCode = 401;
-                        res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
-                        res.end('Sorry! Unauthorized Access.');
-                }
-        }
-})
-
-app.post('/api/bot/chat', function (req, res, next) {
-        var auth = req.headers['authorization'];
-        console.log("Authorization Header is: ", auth);
-        console.log(req.body);
-        if (!auth) {
-                res.statusCode = 401;
-                res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
-                res.end('Sorry! Invalid Authentication.');
-        } else if (auth) {
-                var tmp = auth.split(' ');
-                var buf = new Buffer(tmp[1], 'base64');
-                var plain_auth = buf.toString();
-                console.log("Decoded Authorization ", plain_auth);
-                var creds = plain_auth.split(':');
-                var username = creds[0];
-                var password = creds[1];
-                if ((username == 'atosBot') && (password == 'd8511353660467bb8e8c68016053bd9e')) {
-                        var _cnpj = req.body.cnpj.replace(/[^\w\s]/gi, '');
-                        var _sessionBot = req.body.sessionid;
-                        var _email = req.body.email;
-                        var _origem = 'bot';
-                        var _destino, _dten;
-                        var _telefone = req.body.telefone;
-                        var _chatBot = JSON.stringify(req.body.chat);
-                        var _dtin = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                        if (req.body.transfer != null && req.body.transfer != '' && req.body.sessionid != null && req.body.sessionid != '') {
-                                if (req.body.transfer == 'false') {
-                                        _destino = 'bot';
-                                        _dten = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                                } else {
-                                        _destino = 'human';
-                                }
-                                dbcc.query('SELECT * FROM tab_transbordo WHERE sessionBot=?', [_sessionBot], function (err, result) {
-                                        if (result.length == 0) {
-                                                dbcc.query("INSERT INTO tab_transbordo (id,cnpj,sessionBot,email,origem,destino,telefone,chatBot,dtin,dten) VALUES (uuid(),?,?,?,?,?,?,?,?,?)", [_cnpj, _sessionBot, _email, _origem, _destino, _telefone, _chatBot, _dtin, _dten], function (err, result) {
-                                                        if (err) {
-                                                                res.json({ status: 'falha', resultado: err });
-                                                        } else {
-                                                                res.json({ status: '200', resultado: 'Historico gravado com sucesso' });
-                                                        }
-                                                });
-                                        } else {
-                                                if (_dten != null) {
-                                                        dbcc.query("UPDATE tab_transbordo SET cnpj = ?, email = ?, telefone = ?, chatBot = ?, destino = ?, dtin = ?, dten = ? WHERE sessionBot = ?;", [_cnpj, _email, _telefone, _chatBot, _destino, _dtin, _dten, _sessionBot], function (err, result) {
-                                                                if (err) {
-                                                                        res.json({ status: 'falha', resultado: err });
-                                                                } else {
-                                                                        res.json({ status: '200', resultado: 'Historico atualizado com sucesso' });
-                                                                }
-                                                        });
-                                                } else {
-                                                        dbcc.query("UPDATE tab_transbordo SET cnpj = ?, email = ?, telefone = ?, chatBot = ?, destino = ?, dtin = ? WHERE sessionBot = ?;", [_cnpj, _email, _telefone, _chatBot, _destino, _dtin, _sessionBot], function (err, result) {
-                                                                if (err) {
-                                                                        res.json({ status: 'falha', resultado: err });
-                                                                } else {
-                                                                        res.json({ status: '200', resultado: 'Historico atualizado com sucesso' });
-                                                                }
-                                                        });
-                                                }
-
-                                        }
-                                });
-                        }
-                } else {
-                        res.statusCode = 401;
-                        res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
-                        res.end('Sorry! Unauthorized Access.');
-                }
-        }
-});
-
-app.post('/api/bot/status', function (req, res, next) {
-        var auth = req.headers['authorization'];
-        console.log("Authorization Header is: ", auth);
-        console.log(req.body);
-        if (!auth) {
-                res.statusCode = 401;
-                res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
-                res.end('Sorry! Invalid Authentication.');
-        } else if (auth) {
-                var tmp = auth.split(' ');
-                var buf = new Buffer(tmp[1], 'base64');
-                var plain_auth = buf.toString();
-                console.log("Decoded Authorization ", plain_auth);
-                var creds = plain_auth.split(':');
-                var username = creds[0];
-                var password = creds[1];
-                if ((username == 'atosBot') && (password == 'd8511353660467bb8e8c68016053bd9e')) {
-                        var _sessionBot = req.body.sessionid;
-                        var _consultar_pedido = req.body.consultar_pedido;
-                        var _orcamento = req.body.orcamento;
-                        var _novo_pedido = req.body.novo_pedido;
-                        var _vacina = req.body.vacina;
-                        var _convert_compra = req.body.convert_compra;
-                        var _pedidos = req.body.pedidos;
-                        var _transbordo_intent = req.body.transbordo_intent
-                        if (req.body.sessionid != null && req.body.sessionid != '') {
-                                dbcc.query(`
-                                UPDATE tab_transbordo SET 
-                                consultar_pedido = ?, 
-                                orcamento = ?, 
-                                novo_pedido = ?, 
-                                vacina = ?, 
-                                convert_compra = ?, 
-                                pedidos = ?,
-                                transbordo_intent = ?
-                                WHERE sessionBot = ?;`,
-                                        [_consultar_pedido, _orcamento, _novo_pedido, _vacina, _convert_compra, _pedidos, _transbordo_intent, _sessionBot], function (err, result) {
-                                                if (err) {
-                                                        console.log(err)
-                                                        res.json({ status: 'falha', resultado: err });
-                                                } else {
-                                                        res.json({ status: '200', resultado: 'Status atualizado com sucesso' });
-                                                }
-                                        });
-                        }
-                } else {
-                        res.statusCode = 401;
-                        res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
-                        res.end('Sorry! Unauthorized Access.');
-                }
-        }
-});
-
 app.get('/api/ubicua/report', function (req, res, next) {
         var auth = req.headers['authorization'];
-        console.log("Authorization Header is: ", auth);
-        console.log(req.body);
+        ////console.log("Authorization Header is: ", auth);
+        ////console.log(req.body);
         if (!auth) {
                 res.statusCode = 401;
                 res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
@@ -541,14 +298,14 @@ app.get('/api/ubicua/report', function (req, res, next) {
                 var tmp = auth.split(' ');
                 var buf = new Buffer(tmp[1], 'base64');
                 var plain_auth = buf.toString();
-                console.log("Decoded Authorization ", plain_auth);
+                ////console.log("Decoded Authorization ", plain_auth);
                 var creds = plain_auth.split(':');
                 var username = creds[0];
                 var password = creds[1];
                 if ((username == 'ubicua') && (password == '1zvzrAFyIwKhWqIoyRU9whpdBYoK')) {
                         dbcc.query('CALL rt_painelop();', function (err, result) {
                                 if (err) {
-                                        console.log(err)
+                                        //console.log(err)
                                         res.json({ status: 'falha', resultado: err });
                                 } else {
                                         res.json({ status: '200', resultado: result });
@@ -567,7 +324,7 @@ app.get('/tracking/api/:dtini/:dtfim', function (req, res) {
         var _dtini = req.params.dtini + ' 00:00:00';
         var _dtfim = req.params.dtfim + ' 23:59:59';
         var auth = req.headers['authorization'];
-        console.log("Authorization Header is: ", auth);
+        ////console.log("Authorization Header is: ", auth);
         if (!auth) {
                 res.statusCode = 401;
                 res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
@@ -577,11 +334,11 @@ app.get('/tracking/api/:dtini/:dtfim', function (req, res) {
                 var tmp = auth.split(' ');
                 var buf = new Buffer(tmp[1], 'base64');
                 var plain_auth = buf.toString();
-                console.log("Decoded Authorization ", plain_auth);
+                ////console.log("Decoded Authorization ", plain_auth);
                 var creds = plain_auth.split(':');
                 var username = creds[0];
                 var password = creds[1];
-                if ((username == 'sanofi') && (password == 'S@n0f1_')) {
+                if ((username == 'cruzeiro') && (password == 'vvP83m22Qg6qeYTJ')) {
                         dbcc.query("INSERT INTO tab_api_log (dtable, log) VALUES('tracking', 'granted');");
                         var results = [];
                         dbcc.query("SELECT db_sanofi_ccs.tab_encerrain.*, db_sanofi_ccs.tab_statusen.descricao AS statusd FROM db_sanofi_ccs.tab_encerrain LEFT JOIN db_sanofi_ccs.tab_statusen ON ( db_sanofi_ccs.tab_encerrain.status = db_sanofi_ccs.tab_statusen.id) WHERE db_sanofi_ccs.tab_encerrain.dtin BETWEEN ? AND ? ORDER BY db_sanofi_ccs.tab_encerrain.dtin", [_dtini, _dtfim], function (err, rows, fields) {
@@ -602,7 +359,7 @@ app.get('/requests/api/:dtini/:dtfim', function (req, res) {
         var _dtini = req.params.dtini + ' 00:00:00';
         var _dtfim = req.params.dtfim + ' 23:59:59';
         var auth = req.headers['authorization'];
-        console.log("Authorization Header is: ", auth);
+        ////console.log("Authorization Header is: ", auth);
         if (!auth) {
                 res.statusCode = 401;
                 res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
@@ -612,7 +369,7 @@ app.get('/requests/api/:dtini/:dtfim', function (req, res) {
                 var tmp = auth.split(' ');
                 var buf = new Buffer(tmp[1], 'base64');
                 var plain_auth = buf.toString();
-                console.log("Decoded Authorization ", plain_auth);
+                ////console.log("Decoded Authorization ", plain_auth);
                 var creds = plain_auth.split(':');
                 var username = creds[0];
                 var password = creds[1];
@@ -649,65 +406,6 @@ function onrefusegroup(admin) {
         });
 }
 
-async function loginAtos() {
-        return new Promise((resolve, reject) => {
-                var _url = 'https://conecta-dsv-drdryl.appspot.com/api/login/';
-                var _payload = {
-                        "user_name": "ubicua",
-                        "password": "senha$00"
-                };
-                request.post({ url: _url, form: _payload }, function (err, httpResponse, body) {
-                        var __responde = JSON.parse(body);
-                        resolve(__responde.token)
-
-                });
-        });
-}
-
-function sendWelcome(sessionBot, mobile, message) {
-        dbcc.query("SELECT uuid() as UUID;", async function (err, id) {
-                var _custom_uid = id[0].UUID;
-                loginAtos().then(async result => {
-                        var _hashToken = result;
-                        var options = {
-                                auth: {
-                                        'bearer': _hashToken
-                                },
-                                uri: 'https://conecta-dsv-drdryl.appspot.com/api/transbordo/send-message/' + sessionBot + '/',
-                                method: 'POST',
-                                json: {
-                                        "text": message
-                                }
-                        };
-                        console.log("> Options Configs");
-                        await request(options, function (error, response, body) {
-                                console.log("statusCode" + response.statusCode);
-                                //console.log("body" + response.body);
-                                if (!error && response.statusCode == 200) {
-                                        console.log("> Bot OK");
-                                        dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [mobile], function (err, result) {
-                                                if (result.length > 0) {
-                                                        // Armazenando Log da Conversa
-                                                        var _id = _custom_uid;
-                                                        var _sessionid = result[0].sessionid;
-                                                        var _fromid = result[0].fkto;
-                                                        var _fromname = result[0].fkname;
-                                                        var _toid = result[0].mobile;
-                                                        var _toname = result[0].name;
-                                                        var _msgdir = "o";
-                                                        var _msgtype = 'chat';
-                                                        var _msgtext = message;
-                                                        dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
-                                                                log("Novo Registro LOG Inserido", _id);
-                                                        });
-                                                }
-                                        });
-                                }
-                        });
-                })
-        });
-}
-
 // Core Chat Room
 var numUsers = 0;
 // WA ENDPOINT OUT
@@ -716,18 +414,7 @@ io.on('connection', function (socket) {
 
         // VARIABLE GLOBAL
         var addedUser = false;
-        var _atendimentos = 10;
-        var _registers = 44;
 
-	/* Descomentar para fazer segurança 4o. nivel
-	if ( socket.handshake.headers.referer == "https://ccs.sanofi-mobile.com.br/" ){
-		console.log("Origin OK :: " + md5(socket.handshake.headers.referer));
-	}else{
-		console.log("Origin ERROR :: []");
-		socket.emit('denied', {payload: "Servidor RT Ubicua Platform Recursou Sua Conexão..."});
-	}*/
-
-        // when the client emits 'new message', this listens and executes
         socket.on('new message', function (payload) {
                 // we tell the client to execute 'new message'
                 log('Nova Mensagem De: ' + payload.fkid + ' Nome: ' + payload.fkname + ' Para: ' + payload.fkto + ' Mensagem: ' + payload.payload);
@@ -768,11 +455,11 @@ io.on('connection', function (socket) {
                                 media: 'chat'
                         }
                         request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
-                                console.log(teste)
+                                ////console.log(teste)
                                 log("Response WABOXAPP", body);
                                 var _response = body;
                                 if (_response === 'ok') {
-                                        console.log('Alarme Enviando com Sucesso...')
+                                        ////console.log('Alarme Enviando com Sucesso...')
                                 }
                         });
                 });
@@ -783,114 +470,41 @@ io.on('connection', function (socket) {
                 var _mobile = payload.mobile;
                 var _type = payload.type;
                 var _message = payload.message;
-                var _host, _sessionBot;
-                findHost(_mobile).then(result => {
-                        _host = result[0];
-                        _sessionBot = result[1];
-                        dbcc.query("SELECT uuid() as UUID;", async function (err, id) {
-                                var _custom_uid = id[0].UUID;
-                                console.log("> UUID PRONTO");
-                                if (_host == "wpp") {
-                                        let teste = {
-                                                infra: _mobileUid,
-                                                id: _mobile + '@c.us',
-                                                msg: _message,
-                                                media: 'chat'
-                                        }
-                                        request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
-                                                console.log(teste)
-                                                log("Response WABOXAPP", body);
-                                                var _response = body;
-                                                if (_response === 'ok') {
-                                                        dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
-                                                                if (result.length > 0) {
-                                                                        // Armazenando Log da Conversa
-                                                                        var _id = _custom_uid;
-                                                                        var _sessionid = result[0].sessionid;
-                                                                        var _fromid = result[0].fkto;
-                                                                        var _fromname = result[0].fkname;
-                                                                        var _toid = result[0].mobile;
-                                                                        var _toname = result[0].name;
-                                                                        var _msgdir = "o";
-                                                                        var _msgtype = _type;
-                                                                        var _msgtext = _message;
-                                                                        dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
-                                                                                log("Novo Registro LOG Inserido", _id);
-                                                                        });
-                                                                }
+                dbcc.query("SELECT uuid() as UUID;", async function (err, id) {
+                        var _custom_uid = id[0].UUID;
+                        ////console.log("> UUID PRONTO");
+                        let teste = {
+                                infra: _mobileUid,
+                                id: _mobile + '@c.us',
+                                msg: _message,
+                                media: 'chat'
+                        }
+                        request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                                ////console.log(teste)
+                                log("Response WABOXAPP", body);
+                                var _response = body;
+                                if (_response === 'ok') {
+                                        dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+                                                if (result.length > 0) {
+                                                        // Armazenando Log da Conversa
+                                                        var _id = _custom_uid;
+                                                        var _sessionid = result[0].sessionid;
+                                                        var _fromid = result[0].fkto;
+                                                        var _fromname = result[0].fkname;
+                                                        var _toid = result[0].mobile;
+                                                        var _toname = result[0].name;
+                                                        var _msgdir = "o";
+                                                        var _msgtype = _type;
+                                                        var _msgtext = _message;
+                                                        dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
+                                                                log("Novo Registro LOG Inserido", _id);
                                                         });
                                                 }
                                         });
-                                } else if (_host == "bot") {
-                                        console.log("> Bot WAY");
-                                        loginAtos().then(async result => {
-                                                var _hashToken = result;
-                                                var options = {
-                                                        auth: {
-                                                                'bearer': _hashToken
-                                                        },
-                                                        uri: 'https://conecta-dsv-drdryl.appspot.com/api/transbordo/send-message/' + _sessionBot + '/',
-                                                        method: 'POST',
-                                                        json: {
-                                                                "text": _message
-                                                        }
-                                                };
-                                                console.log("> Options Configs");
-                                                await request(options, function (error, response, body) {
-                                                        console.log("statusCode" + response.statusCode);
-                                                        console.log("body" + response.body);
-                                                        if (!error && response.statusCode == 200) {
-                                                                console.log("> Bot OK");
-                                                                dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
-                                                                        if (result.length > 0) {
-                                                                                // Armazenando Log da Conversa
-                                                                                var _id = _custom_uid;
-                                                                                var _sessionid = result[0].sessionid;
-                                                                                var _fromid = result[0].fkto;
-                                                                                var _fromname = result[0].fkname;
-                                                                                var _toid = result[0].mobile;
-                                                                                var _toname = result[0].name;
-                                                                                var _msgdir = "o";
-                                                                                var _msgtype = _type;
-                                                                                var _msgtext = _message;
-                                                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
-                                                                                        log("Novo Registro LOG Inserido", _id);
-                                                                                });
-                                                                        }
-                                                                });
-                                                        }
-                                                });
-                                        })
                                 }
                         });
-                })
+                });
         });
-
-        async function findHost(mobile) {
-                return new Promise((resolve, reject) => {
-                        dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [mobile], function (err, result) {
-                                if (err) {
-                                        console.log("> Erro Tratativa Bot: " + err)
-                                }
-                                if (result[0].origem != "wpp") {
-                                        _host = 'bot'
-                                        _sessionBot = result[0].sessionBot
-                                        resolve([
-                                                _host,
-                                                _sessionBot
-                                        ])
-                                        console.log("> Tratativa Selecionada BOT");
-                                } else {
-                                        _host = 'wpp'
-                                        resolve([
-                                                _host,
-                                                ''
-                                        ])
-                                        console.log("> Tratativa Selecionada WPP");
-                                }
-                        });
-                })
-        }
 
         socket.on('send_welcome', function (payload) {
                 log("Nova Mensagem Enviada Welcome", payload);
@@ -898,26 +512,15 @@ io.on('connection', function (socket) {
                 var _type = payload.type;
                 var _sessionid = payload.sessionid;
                 //var _message = payload.message;
-                var _normal = "Seja bem vindo ao novo canal exclusivo para Clientes Conecta PDV. Adicione esse número de telefone e faça seus pedidos via WhatsApp de segunda a sexta das 09h às 20h.\n\nPara agilizar seu atendimento, por favor informe seu nome e CNPJ.";
-                var _feriado = "Nosso time de analistas está em horário de descanso. Mas fique tranquilo, retornamos no próximo dia útil a partir das 9h pronto para te auxiliar ok?! Fique a vontade para entrar em contato novamente ou aguarde nosso contato. Até mais!";
-                var _treinamento = "Nosso time de analistas está em treinamento. Mas fique tranquilo, assim que possível, entraremos em contato com você neste mesmo número, ok?! Até mais!";
-                var _ok_message = "";
+                var _message = "Seja Bem Vindo ao canal de fidelização da Cruzeiro do sul. Nosso horário de atendimento é de segunda a sexta das 09h às 19h (exceto aos feriados)";
 
                 dbcc.query('SELECT training from tab_treinamento where id="c102ba05-422c-11ea-8db1-000c290cc03d"', function (err, result) {
                         if (err) {
                                 log(err)
                         } else {
-                                var _message = "";
-                                if (result[0].training == 'true') {
-                                        _message = _treinamento
-                                } else if ((new Date().getHours()) > 20 || (new Date().getHours()) < 9) {
-                                        _message = _feriado
-                                } else {
-                                        _message = _ok_message
-                                }
                                 dbcc.query("SELECT uuid() as UUID;", function (err, id) {
                                         var _custom_uid = id[0].UUID;
-                                        if (_host == "LON" && _message != _ok_message) {
+                                        if (_host == "LON") {
                                                 let teste = {
                                                         infra: _mobileUid,
                                                         id: _mobile + '@c.us',
@@ -925,7 +528,7 @@ io.on('connection', function (socket) {
                                                         media: 'chat'
                                                 }
                                                 request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
-                                                        console.log(teste)
+                                                        ////console.log(teste)
                                                         log("Response WABOXAPP", body);
                                                         var _response = body;
                                                         if (_response === 'ok') {
@@ -969,7 +572,7 @@ io.on('connection', function (socket) {
                                                         media: 'chat'
                                                 }
                                                 request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
-                                                        console.log(teste)
+                                                        ////console.log(teste)
                                                         log("Response WABOXAPP", body);
                                                         var _response = body;
                                                         if (_response === 'ok') {
@@ -1004,7 +607,7 @@ io.on('connection', function (socket) {
         });
 
         socket.on('add_agent', function (payload) {
-                console.log(payload);
+                ////console.log(payload);
                 var _perfil = payload.perfil;
                 var _nome = payload.nome;
                 var _usuario = payload.usuario;
@@ -1020,7 +623,7 @@ io.on('connection', function (socket) {
         });
 
         socket.on('upd_agent', function (payload) {
-                console.log(payload);
+                ////console.log(payload);
                 var _id = payload.id;
                 var _pwd = payload.pwd;
                 if (_pwd == false) {
@@ -1049,7 +652,7 @@ io.on('connection', function (socket) {
         });
 
         socket.on('del_agent', function (payload) {
-                console.log(payload);
+                ////console.log(payload);
                 var _id = payload.id;
                 dbcc.query("UPDATE tab_usuarios SET status=0 WHERE id=?", [_id], function (err, result) {
                         dbcc.query("SELECT * FROM tab_usuarios WHERE status=1", [], function (err, result) {
@@ -1073,7 +676,7 @@ io.on('connection', function (socket) {
         });
 
         socket.on('add_sta', function (payload) {
-                console.log(payload);
+                ////console.log(payload);
                 var _descricao = payload.descricao;
                 var _pedido = payload.pedido;
                 dbcc.query("INSERT INTO tab_statusen (descricao, pedido) VALUES(?, ?)", [_descricao, _pedido], function (err, result) {
@@ -1087,12 +690,17 @@ io.on('connection', function (socket) {
         });
 
         socket.on('upd_sta', function (payload) {
-                console.log(payload);
+                ////console.log(payload);
                 var _id = payload.id;
                 var _descricao = payload.descricao;
-                var _pedido = payload.pedido;
-                dbcc.query("UPDATE tab_statusen SET descricao=?, pedido=? WHERE id=?", [_descricao, _pedido, _id], function (err, result) {
+                dbcc.query("UPDATE tab_statusen SET descricao=? WHERE id=?", [_descricao, _id], function (err, result) {
+                        if (err) {
+                                //console.log(err)
+                        }
                         dbcc.query("SELECT * FROM tab_statusen WHERE status=1", [], function (err, result) {
+                                if (err) {
+                                        //console.log(err)
+                                }
                                 if (result.length > 0) {
                                         var _status = JSON.stringify(result);
                                         socket.emit('bi-liststa', _status);
@@ -1102,13 +710,21 @@ io.on('connection', function (socket) {
         });
 
         socket.on('del_sta', function (payload) {
-                console.log(payload);
+                ////console.log(payload);
                 var _id = payload.id;
                 dbcc.query("UPDATE tab_statusen SET status=0 WHERE id=?", [_id], function (err, result) {
+                        if (err) {
+                                //console.log(err)
+                        }
                         dbcc.query("SELECT * FROM tab_statusen WHERE status=1", [], function (err, result) {
+                                if (err) {
+                                        //console.log(err)
+                                }
                                 if (result.length > 0) {
                                         var _status = JSON.stringify(result);
                                         socket.emit('bi-liststa', _status);
+                                } else {
+                                        socket.emit('bi-liststa', "[]");
                                 }
                         });
                 });
@@ -1143,7 +759,7 @@ io.on('connection', function (socket) {
                                         }
                                 }
                                 request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
-                                        console.log(teste)
+                                        ////console.log(teste)
                                         log("Response WABOXAPP", body);
                                         var _response = body;
                                         if (_response === 'ok') {
@@ -1199,7 +815,7 @@ io.on('connection', function (socket) {
                 return new Promise(function (resolve, reject) {
                         request.get({ url: "https://cdn.ubicuacloud.com/base64/" + hashFile }, function (err, httpResponse, body) {
                                 if (err) {
-                                        console.log(err)
+                                        //console.log(err)
                                         //reject(err)
                                 }
                                 if (fileType == 'image') {
@@ -1214,7 +830,7 @@ io.on('connection', function (socket) {
         }
 
         socket.on('send_register', function (payload) {
-                console.log(payload);
+                ////console.log(payload);
                 var _mobile = payload.mobile;
                 var _name = payload.name;
                 dbcc.query("UPDATE db_sanofi_ccs.tab_atendein SET name=? WHERE mobile=?", [_name, _mobile]);
@@ -1232,16 +848,17 @@ io.on('connection', function (socket) {
         });
 
         socket.on('bi-close_chat', function (payload) {
-                console.log("BI CLOSE CHAT ---------------------------");
-                console.log(payload);
-                console.log("-----------------------------------");
+                ////console.log("BI CLOSE CHAT ---------------------------");
+                ////console.log(payload);
+                ////console.log("-----------------------------------");
                 var _mobile = payload.mobile;
                 var _status = payload.status;
                 var _cnpj = payload.cnpj;
-                var _pedidos = payload.pedidos;
                 var _atendir = payload.atendir;
                 dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
-                        if (err) { console.log(err) };
+                        if (err) {
+                                //console.log(err)
+                        };
                         if (result.length > 0) {
                                 var _sessionid = result[0].sessionid;
                                 var _mobile = result[0].mobile;
@@ -1252,20 +869,17 @@ io.on('connection', function (socket) {
                                 var _photo = result[0].photo;
                                 var _fkto = result[0].fkto;
                                 var _fkname = result[0].fkname;
-                                var _sessionBot = result[0].sessionBot;
-                                var _origem = result[0].origem;
-                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, sessionBot, origem) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _dtat, _name, _account, _photo, _fkto, _fkname, _status, _cnpj, _atendir, _sessionBot, _origem], function (err, result) {
-                                        if (err) { console.log(err) };
-                                        for (i = 0; i < _pedidos.length; i++) {
-                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_pedidos (id, sessionid, segmento, pedido, valor) VALUES(uuid(), ?, ?, ?, ?)", [_sessionid, _pedidos[i].segmento, _pedidos[i].pedido, _pedidos[i].valor], function (err, result) {
-                                                        if (err) { console.log(err) }
-                                                });
-                                        }
+                                var _transfer = result[0].transfer;
+                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _dtat, _name, _account, _photo, _fkto, _fkname, _status, _cnpj, _atendir, _transfer], function (err, result) {
+                                        if (err) {
+                                                //console.log(err)
+                                        };
                                         dbcc.query("DELETE FROM db_sanofi_ccs.tab_atendein WHERE sessionid=?", [_sessionid]);
                                         dbcc.query("UPDATE tab_logs SET stread = 1 WHERE fromid = '?';", [_mobile], function (err, result) {
-                                                if (err) { console.log(err) };
+                                                if (err) {
+                                                        //console.log(err)
+                                                };
                                         });
-                                        insertTransbordo(_sessionBot, _sessionid);
                                         payload = { sessionid: _sessionid, mobile: _mobile };
                                         socket.emit('bi-close_chat', payload);
                                 });
@@ -1273,90 +887,49 @@ io.on('connection', function (socket) {
                 });
         });
 
-        function insertTransbordo(_sessionBot, _sessionid) {
-                dbcc.query("SELECT * FROM db_sanofi_ccs.tab_transbordo where sessionBot=? AND dten IS NULL LIMIT 1", [_sessionBot], function (err, result) {
-                        if (err) { console.log(err) };
-                        if (result.length > 0) {
-                                dbcc.query("SELECT * FROM tab_logs WHERE sessionid =?", [_sessionid], function (err, result) {
-                                        var _hist = JSON.stringify(result);
-                                        var _dten = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                                        dbcc.query("UPDATE tab_transbordo SET chatHuman=?, dten=? WHERE sessionBot=? LIMIT 1", [_hist, _dten, _sessionBot], function (err, result) {
-                                                if (err) { console.log(err) }
-                                        });
-                                });
-                        }
-                });
-        }
-
         socket.on('listafila', function () {
 
-                console.log("Listando Fila...................................");
+                ////console.log("Listando Fila...................................");
                 dbcc.query('SELECT * FROM tab_filain WHERE status=1', [], function (err, result) {
                         if (result.length == 0) {
-                                console.log("Nenhum Usuário na Fila\n\n");
+                                ////console.log("Nenhum Usuário na Fila\n\n");
                         } else {
-                                console.log("LISTA FILA: [[[");
-                                console.log(result);
-                                console.log("]]]");
+                                ////console.log("LISTA FILA: [[[");
+                                ////console.log(result);
+                                ////console.log("]]]");
+                        }
+                });
+        });
+
+        socket.on('bi-find_register', function (payload) {
+                var _mobile = payload.mobile;
+                dbcc.query("SELECT sessionid, mobile, name, account, photo FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+                        if (result.length > 0) {
+                                var _sessionid = result[0].sessionid;
+                                var _mobile = result[0].mobile;
+                                var _name = result[0].name;
+                                var _account = result[0].account;
+                                var _photo = result[0].photo;
+                                payload = { sessionid: _sessionid, mobile: _mobile, name: _name, account: _account, photo: _photo };
+                                socket.emit('bi-find_register', payload);
                         }
                 });
         });
 
         socket.on('bi-atendein', function (payload) {
                 log("EVENT: bi-atendein", payload);
-                dbcc.query("SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cnpj, B.nomefantasia, B.flagcampanha,  B.tipo, c.sessionBot, c.origem FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile LEFT JOIN tab_transbordo AS c ON A.sessionBot = c.sessionBot WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin", [payload.fkid], function (err, result) {
+                dbcc.query("SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin", [payload.fkid], function (err, result) {
                         if (result.length > 0) {
                                 var _contacts = JSON.stringify(result);
                                 var _sessionlist = "";
-                                var _sessionBotlist = "";
                                 for (i = 0; i < result.length; i++) {
                                         if (result.length - 1 == i) {
                                                 _sessionlist += "'" + result[i].sessionid + "'";
                                         } else {
                                                 _sessionlist += "'" + result[i].sessionid + "',";
-                                        }
-                                }
-                                for (i = 0; i < result.length; i++) {
-                                        if (result.length - 1 == i) {
-                                                _sessionBotlist += "'" + result[i].sessionBot + "'";
-                                        } else {
-                                                _sessionBotlist += "'" + result[i].sessionBot + "',";
                                         }
                                 }
                                 dbcc.query("SELECT sessionid, dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY sessionid, dt;", function (err, result) {
-                                        var _logs = JSON.stringify(result);
-                                        dbcc.query("SELECT sessionid, dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + _sessionBotlist + ") ORDER BY sessionid, dt;", function (err, result) {
-                                                var _bot = JSON.stringify(result);
-                                                dbcc.query("SELECT sessionBot, chatbot FROM db_sanofi_ccs.tab_transbordo WHERE sessionBot IN (" + _sessionBotlist + ") and origem = 'bot' ORDER BY sessionBot, dtin;", function (err, result) {
-                                                        if (err) { console.log(err) }
-                                                        var _webb = JSON.stringify(result);
-                                                        socket.emit('bi-atendein', { contacts: _contacts, logs: _logs, bot: _bot, webb: _webb });
-                                                });
-                                        });
-                                });
-                        } else {
-                                socket.emit('bi-atendein', { contacts: [], logs: [] });
-                        }
-                });
-        });
-
-        /*socket.on('bi-atendein_old', function (payload) {
-                log("EVENT: bi-atendein", payload);
-                dbcc.query("SELECT sessionid, mobile, account, photo, atendir FROM tab_atendein WHERE fkto=?", [payload.fkid], function (err, result) {
-                        if (result.length > 0) {
-                                var _contacts = JSON.stringify(result);
-                                var _sessionlist = "";
-                                console.log(result.length);
-                                for (i = 0; i < result.length; i++) {
-                                        if (result.length - 1 == i) {
-                                                console.log('opa');
-                                                _sessionlist += "'" + result[i].sessionid + "'";
-                                        } else {
-                                                _sessionlist += "'" + result[i].sessionid + "',";
-                                        }
-                                }
-                                console.log("SESSIONLIST [" + _sessionlist + "]");
-                                dbcc.query("SELECT sessionid, dt, msgdir, msgtype, msgtext, msgurl, msgcaption FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY sessionid, dt;", function (err, result) {
                                         var _logs = JSON.stringify(result);
                                         socket.emit('bi-atendein', { contacts: _contacts, logs: _logs });
                                 });
@@ -1364,7 +937,7 @@ io.on('connection', function (socket) {
                                 socket.emit('bi-atendein', { contacts: [], logs: [] });
                         }
                 });
-        });*/
+        });
 
         socket.on('bi-training', function () {
                 dbcc.query('SELECT training from tab_treinamento where id="c102ba05-422c-11ea-8db1-000c290cc03d"', function (err, result) {
@@ -1378,7 +951,7 @@ io.on('connection', function (socket) {
 
         socket.on('upd_training', function (payload) {
                 var _bool = payload.bool;
-                console.log(_bool)
+                ////console.log(_bool)
                 dbcc.query('UPDATE tab_treinamento SET training=? where id="c102ba05-422c-11ea-8db1-000c290cc03d"', [_bool.toString()], function (err, result) {
                         if (err) { log(err) } else {
                                 dbcc.query('SELECT training from tab_treinamento where id="c102ba05-422c-11ea-8db1-000c290cc03d"', function (err, result) {
@@ -1404,13 +977,13 @@ io.on('connection', function (socket) {
                 for (var i in io.sockets.connected) {
                         var _fkid = io.sockets.connected[i].fkid;
                         if (_fkid === _transferid) {
-                                console.log('Atendente Online >>> Transfer Agent Emitido...');
+                                ////console.log('Atendente Online >>> Transfer Agent Emitido...');
                                 socket.to(i).emit('bi-transferok', payload);
                                 _fkonline = true;
                         }
                 }
                 if (_fkonline == true) {
-                        console.log('Transfer Agent TRUE');
+                        ////console.log('Transfer Agent TRUE');
                         // TransferenciaOk armazena Logs
                         dbcc.query("SELECT uuid() as UUID;", function (err, id) {
                                 var _custom_uid = id[0].UUID;
@@ -1447,7 +1020,7 @@ io.on('connection', function (socket) {
                                 });
                         });
                 } else {
-                        console.log('Transfer Agent FALSE');
+                        ////console.log('Transfer Agent FALSE');
                         payload = { mobile: _mobile, fkid: _transferid, fkname: _transfername, status: 0 };
                         socket.emit('bi-transferagent', payload);
                 }
@@ -1455,40 +1028,25 @@ io.on('connection', function (socket) {
 
         socket.on('bi-transferok', function (payload) {
 
-                console.log('Confirmation Transfer Agent Ok....');
-                console.log(payload);
-                dbcc.query("SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cnpj, B.nomefantasia, B.flagcampanha,  B.tipo, c.sessionBot, c.origem FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile LEFT JOIN tab_transbordo AS c ON A.sessionBot = c.sessionBot WHERE A.mobile=? GROUP BY mobile ORDER BY A.dtin", [payload.mobile], function (err, result) {
+                ////console.log('Confirmation Transfer Agent Ok....');
+                ////console.log(payload);
+                dbcc.query("SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.mobile=? GROUP BY mobile ORDER BY A.dtin", [payload.mobile], function (err, result) {
                         if (result.length > 0) {
                                 var _contacts = JSON.stringify(result);
                                 var _sessionlist = "";
-                                var _sessionBotlist = "";
-                                console.log(result.length);
+                                ////console.log(result.length);
                                 for (i = 0; i < result.length; i++) {
                                         if (result.length - 1 == i) {
-                                                console.log('opa');
+                                                ////console.log('opa');
                                                 _sessionlist += "'" + result[i].sessionid + "'";
                                         } else {
                                                 _sessionlist += "'" + result[i].sessionid + "',";
                                         }
                                 }
-                                for (i = 0; i < result.length; i++) {
-                                        if (result.length - 1 == i) {
-                                                _sessionBotlist += "'" + result[i].sessionBot + "'";
-                                        } else {
-                                                _sessionBotlist += "'" + result[i].sessionBot + "',";
-                                        }
-                                }
-                                console.log("SESSIONLIST [" + _sessionlist + "]");
+                                ////console.log("SESSIONLIST [" + _sessionlist + "]");
                                 dbcc.query("SELECT sessionid, dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY sessionid, dt;", function (err, result) {
                                         var _logs = JSON.stringify(result);
-                                        dbcc.query("SELECT sessionid, dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + _sessionBotlist + ") ORDER BY sessionid, dt;", function (err, result) {
-                                                var _bot = JSON.stringify(result);
-                                                dbcc.query("SELECT sessionBot, chatbot FROM db_sanofi_ccs.tab_transbordo WHERE sessionBot IN (" + _sessionBotlist + ") and origem = 'bot' ORDER BY sessionBot, dtin;", function (err, result) {
-                                                        if (err) { console.log(err) }
-                                                        var _webb = JSON.stringify(result);
-                                                        socket.emit('bi-atendein', { contacts: _contacts, logs: _logs, bot: _bot, webb: _webb });
-                                                });
-                                        });
+                                        socket.emit('bi-atendein', { contacts: _contacts, logs: _logs });
                                 });
                         } else {
                                 socket.emit('bi-atendein', { contacts: [], logs: [] });
@@ -1498,68 +1056,25 @@ io.on('connection', function (socket) {
 
         socket.on('bi-historyone', function (payload) {
 
-                console.log('Request History, Session ID: ' + payload.sessionid + '...');
-                console.log(payload);
-                dbcc.query("SELECT sessionid, dtin, mobile, account, photo, sessionBot FROM tab_encerrain WHERE sessionid=? ORDER BY dtin DESC LIMIT 1", [payload.sessionid], function (err, result) {
+                ////console.log('Request History, Session ID: ' + payload.sessionid + '...');
+                ////console.log(payload);
+                dbcc.query("SELECT sessionid, dtin, mobile, account, photo FROM tab_encerrain WHERE sessionid=? ORDER BY dtin DESC LIMIT 1", [payload.sessionid], function (err, result) {
                         if (result.length > 0) {
                                 var _contacts = JSON.stringify(result);
                                 var _sessionlist = "";
-                                var _sessionbotlist = "";
-                                console.log(result.length);
+                                ////console.log(result.length);
                                 for (i = 0; i < result.length; i++) {
                                         if (result.length - 1 == i) {
-                                                console.log('opa');
+                                                ////console.log('opa');
                                                 _sessionlist += "'" + result[i].sessionid + "'";
                                         } else {
                                                 _sessionlist += "'" + result[i].sessionid + "',";
                                         }
                                 }
-                                _sessionlist += ","
-                                for (i = 0; i < result.length; i++) {
-                                        if (result.length - 1 == i) {
-                                                console.log('opa');
-                                                _sessionlist += "'" + result[i].sessionBot + "'";
-                                        } else {
-                                                _sessionlist += "'" + result[i].sessionBot + "',";
-                                        }
-                                }
-                                console.log("SESSIONLIST [" + _sessionlist + "]");
+                                ////console.log("SESSIONLIST [" + _sessionlist + "]");
                                 dbcc.query("SELECT a.sessionid, a.dt, a.fromname, a.msgdir, a.msgtype, a.msgtext, a.msgurl, a.msgcaption FROM tab_logs AS a WHERE a.sessionid IN (" + _sessionlist + ") ORDER BY a.dt;", function (err, result) {
                                         var _logs = JSON.stringify(result);
                                         socket.emit('bi-historyone', { contacts: _contacts, logs: _logs });
-                                        /*dbcc.query("SELECT chatBot, origem FROM tab_transbordo WHERE sessionBot IN (" + _sessionbotlist + ");", function (err, result) {
-                                                var _bot = JSON.stringify(result);
-                                                socket.emit('bi-historyone', { contacts: _contacts, logs: _logs, bot: _bot });
-                                        });*/
-                                });
-                        } else {
-                                //socket.emit('bi-historyone', { contacts: [], logs: [] });
-                                dbcc.query("SELECT sessionBot, dtin, telefone FROM tab_transbordo WHERE sessionBot=? and destino in ('bot','wbot') ORDER BY dtin DESC LIMIT 1", [payload.sessionid], function (err, result) {
-                                        if (result.length > 0) {
-                                                var _contacts = JSON.stringify(result);
-                                                var _sessionlist = "";
-                                                var _sessionbotlist = "";
-                                                console.log(result.length);
-                                                for (i = 0; i < result.length; i++) {
-                                                        if (result.length - 1 == i) {
-                                                                console.log('opa');
-                                                                _sessionlist += "'" + result[i].sessionBot + "'";
-                                                        } else {
-                                                                _sessionlist += "'" + result[i].sessionBot + "',";
-                                                        }
-                                                }
-                                                console.log("SESSIONLIST [" + _sessionlist + "]");
-                                                dbcc.query("SELECT a.sessionid, a.dt, a.fromname, a.msgdir, a.msgtype, a.msgtext, a.msgurl, a.msgcaption FROM tab_logs AS a WHERE a.sessionid IN (" + _sessionlist + ") ORDER BY a.dt;", function (err, result) {
-                                                        var _logs = JSON.stringify(result);
-                                                        socket.emit('bi-historyone', { contacts: _contacts, logs: _logs });
-                                                        /*dbcc.query("SELECT chatBot, origem FROM tab_transbordo WHERE sessionBot IN (" + _sessionbotlist + ");", function (err, result) {
-                                                                        var _bot = JSON.stringify(result);
-                                                                        socket.emit('bi-historyone', { contacts: _contacts, logs: _logs, bot: _bot });
-                                                        });*/
-                                                });
-                                        } else {
-                                                socket.emit('bi-historyone', { contacts: [], logs: [] });
-                                        }
                                 });
                         }
                 });
@@ -1567,40 +1082,25 @@ io.on('connection', function (socket) {
 
         socket.on('bi-lasthistory', function (payload) {
 
-                console.log('Request Last History, Mobile: ' + payload.mobile + '...');
-                console.log(payload);
-                dbcc.query("SELECT sessionid, dtin, mobile, account, photo, sessionBot, origem FROM tab_encerrain WHERE mobile=? AND dtin BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() + INTERVAL 1 DAY ORDER BY dtin DESC", [payload.mobile], function (err, result) {
+                ////console.log('Request Last History, Mobile: ' + payload.mobile + '...');
+                ////console.log(payload);
+                dbcc.query("SELECT sessionid, dtin, mobile, account, photo FROM tab_encerrain WHERE mobile=? AND dtin BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() + INTERVAL 1 DAY ORDER BY dtin DESC", [payload.mobile], function (err, result) {
                         if (result.length > 0) {
                                 var _contacts = JSON.stringify(result);
                                 var _sessionlist = "";
-                                var _sessionbotlist = "";
-                                var _origem = result[0].origem;
-                                console.log(result.length);
+                                ////console.log(result.length);
                                 for (i = 0; i < result.length; i++) {
                                         if (result.length - 1 == i) {
-                                                console.log('opa');
+                                                ////console.log('opa');
                                                 _sessionlist += "'" + result[i].sessionid + "'";
                                         } else {
                                                 _sessionlist += "'" + result[i].sessionid + "',";
                                         }
                                 }
-                                _sessionlist += ","
-                                for (i = 0; i < result.length; i++) {
-                                        if (result.length - 1 == i) {
-                                                console.log('opa');
-                                                _sessionlist += "'" + result[i].sessionBot + "'";
-                                        } else {
-                                                _sessionlist += "'" + result[i].sessionBot + "',";
-                                        }
-                                }
-                                console.log("SESSIONLIST [" + _sessionlist + "]");
+                                ////console.log("SESSIONLIST [" + _sessionlist + "]");
                                 dbcc.query("SELECT sessionid, dt, fromname, msgdir, msgtype, msgtext, msgurl, msgcaption FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY dt;", function (err, result) {
                                         var _logs = JSON.stringify(result);
-                                        //socket.emit('bi-lasthistory', { contacts: _contacts, logs: _logs });
-                                        dbcc.query("SELECT chatBot, origem FROM tab_transbordo WHERE sessionBot IN (" + _sessionlist + ");", function (err, result) {
-                                                var _bot = JSON.stringify(result);
-                                                socket.emit('bi-lasthistory', { contacts: _contacts, logs: _logs, bot: _bot, origem: _origem });
-                                        });
+                                        socket.emit('bi-lasthistory', { contacts: _contacts, logs: _logs });
                                 });
                         } else {
                                 socket.emit('bi-lasthistory', { contacts: [], logs: [] });
@@ -1609,11 +1109,11 @@ io.on('connection', function (socket) {
         });
 
         socket.on('bi-report1toxlsx', function (payload) {
-                console.log('Request Report 1 to XLSX, Parameters: ' + payload.params + '...');
+                ////console.log('Request Report 1 to XLSX, Parameters: ' + payload.params + '...');
                 var _params = payload.params;
                 var _transbordoDt = payload.transbordoDt;
                 var qry = 'CALL css_report_excel("MAX","' + _transbordoDt + '","' + _params + '", "*");';
-                console.log(qry)
+                ////console.log(qry)
                 dbcc.query(qry, [], function (err, result) {
                         if (err) {
                                 log("Erro: " + err);
@@ -1625,141 +1125,39 @@ io.on('connection', function (socket) {
                                 var _line = 2;
                                 var _path = "/home/ubicua/chatcore/public/supervisor/report/";
                                 var _namexlsx = "report" + Date.now() + ".xlsx";
-                                ws.getCell('A1').value = "Número do Cliente";
-                                ws.getCell('B1').value = "Interação";
-                                ws.getCell('C1').value = "CNPJ";
+                                ws.getCell('A1').value = "Mailing";
+                                ws.getCell('B1').value = "Cpf";
+                                ws.getCell('C1').value = "Interação";
                                 ws.getCell('D1').value = "Nome do Antendente";
-                                ws.getCell('E1').value = "Hora";
-                                ws.getCell('F1').value = "Data";
-                                ws.getCell('G1').value = "Status";
-                                ws.getCell('H1').value = "No. Pedido";
-                                ws.getCell('I1').value = "Segmento";
-                                ws.getCell('J1').value = "Valor";
-                                ws.getCell('K1').value = "FileName";
+                                ws.getCell('E1').value = "Telefone";
+                                ws.getCell('F1').value = "Hora";
+                                ws.getCell('G1').value = "Data";
+                                ws.getCell('H1').value = "Status";
+                                ws.getCell('I1').value = "Rgm Aluno";
+                                ws.getCell('J1').value = "Nome";
                                 // Data
                                 var _sessionlast;
                                 foreachasync(result[1], function (element, index) {
-                                        console.log(element)
-                                        ws.getCell('A' + _line).value = element.mobile;
-                                        ws.getCell('B' + _line).value = element.atendir;
-                                        ws.getCell('C' + _line).value = element.cnpj;
+                                        ////console.log(element)
+                                        ws.getCell('A' + _line).value = element.filename;
+                                        ws.getCell('B' + _line).value = element.cpf;
+                                        ws.getCell('C' + _line).value = element.atendir;
                                         ws.getCell('D' + _line).value = element.atendente;
-                                        ws.getCell('E' + _line).value = element.hora;
-                                        ws.getCell('F' + _line).value = element.data;
-                                        ws.getCell('G' + _line).value = element.status;
-                                        ws.getCell('H' + _line).value = element.pedido;
-                                        ws.getCell('I' + _line).value = element.segmento;
-                                        ws.getCell('J' + _line).value = element.valor;
-                                        ws.getCell('K' + _line).value = element.filename;
+                                        ws.getCell('E' + _line).value = element.mobile;
+                                        ws.getCell('F' + _line).value = element.hora;
+                                        ws.getCell('G' + _line).value = element.data;
+                                        ws.getCell('H' + _line).value = element.status;
+                                        ws.getCell('I' + _line).value = element.rgm_aluno;
+                                        ws.getCell('J' + _line).value = element.nome;
                                         _line = _line + 1;
                                 }).then(function () {
-                                        console.log('BI-REPORT1toXLXS >>> All searchs have finished!');
+                                        ////console.log('BI-REPORT1toXLXS >>> All searchs have finished!');
                                         try {
                                                 wb.xlsx.writeFile(_path + _namexlsx).then(function () { });
                                         } catch (err) {
                                                 log("Error writing to file ", err);
                                         }
-                                        var payload = { url: "https://ccs.sanofi-mobile.com.br/supervisor/report/" + _namexlsx };
-                                        socket.emit('bi-report1toxlsx', payload);
-                                });
-                        }
-                });
-        });
-
-        socket.on('old_bi-report1toxlsx', function (payload) {
-                console.log('Request Report 1 to XLSX, Parameters: ' + payload.params + '...');
-                var _params = payload.params;
-                var _transbordoDt = payload.transbordoDt;
-                var qry = 'CALL css_report_excel("MAX","' + _transbordoDt + '","' + _params + '", "*");';
-                console.log(qry)
-                dbcc.query(qry, [], function (err, result) {
-                        if (err) {
-                                log("Erro: " + err);
-                        } else {
-                                // Create Worksheet
-                                var workbook = excel.Workbook;
-                                var wb = new workbook();
-                                var ws = wb.addWorksheet('report');
-                                var _line = 2;
-                                var _path = "/home/ubicua/chatcore/public/supervisor/report/";
-                                var _namexlsx = "report" + Date.now() + ".xlsx";
-                                ws.getCell('A1').value = "Número do Cliente";
-                                ws.getCell('B1').value = "Interação";
-                                ws.getCell('C1').value = "CNPJ";
-                                ws.getCell('D1').value = "Nome do Antendente";
-                                ws.getCell('E1').value = "Hora";
-                                ws.getCell('F1').value = "Data";
-                                ws.getCell('G1').value = "Status";
-                                ws.getCell('H1').value = "No. Pedido";
-                                ws.getCell('I1').value = "Segmento";
-                                ws.getCell('J1').value = "Valor";
-                                ws.getCell('K1').value = "FileName";
-                                // Data
-                                var _sessionlast;
-                                foreachasync(result[1], function (element, index) {
-                                        var _sessionid = element.sessionid;
-                                        if (index == 0) {
-                                                _sessionlast = _sessionid;
-                                                ws.getCell('A' + _line).value = element.mobile;
-                                                ws.getCell('B' + _line).value = element.atendir;
-                                                ws.getCell('C' + _line).value = element.cnpj;
-                                                ws.getCell('D' + _line).value = element.atendente;
-                                                ws.getCell('E' + _line).value = element.hora;
-                                                ws.getCell('F' + _line).value = element.data;
-                                                ws.getCell('G' + _line).value = element.status;
-                                                ws.getCell('K' + _line).value = element.filename;
-                                                var _elsegmento = element.segmento;
-                                                if (_elsegmento != null) {
-                                                        _line = _line + 1;
-                                                        ws.getCell('H' + _line).value = "No. Pedido";
-                                                        ws.getCell('I' + _line).value = "Segmento";
-                                                        ws.getCell('J' + _line).value = "Valor";
-                                                        _line = _line + 1;
-                                                        ws.getCell('H' + _line).value = element.pedido;
-                                                        ws.getCell('I' + _line).value = element.segmento;
-                                                        ws.getCell('J' + _line).value = element.valor;
-                                                }
-                                        } else {
-                                                if (_sessionid == _sessionlast) {
-                                                        var _elsegmento = element.segmento;
-                                                        if (_elsegmento != null) {
-                                                                _line = _line + 1;
-                                                                ws.getCell('H' + _line).value = element.pedido;
-                                                                ws.getCell('I' + _line).value = element.segmento;
-                                                                ws.getCell('J' + _line).value = element.valor;
-                                                        }
-                                                } else {
-                                                        _sessionlast = _sessionid;
-                                                        _line = _line + 1;
-                                                        ws.getCell('A' + _line).value = element.mobile;
-                                                        ws.getCell('B' + _line).value = element.atendir;
-                                                        ws.getCell('C' + _line).value = element.cnpj;
-                                                        ws.getCell('D' + _line).value = element.atendente;
-                                                        ws.getCell('E' + _line).value = element.hora;
-                                                        ws.getCell('F' + _line).value = element.data;
-                                                        ws.getCell('G' + _line).value = element.status;
-                                                        ws.getCell('K' + _line).value = element.filename;
-                                                        var _elsegmento = element.segmento;
-                                                        if (_elsegmento != null) {
-                                                                _line = _line + 1;
-                                                                ws.getCell('H' + _line).value = "No. Pedido";
-                                                                ws.getCell('I' + _line).value = "Segmento";
-                                                                ws.getCell('J' + _line).value = "Valor";
-                                                                _line = _line + 1;
-                                                                ws.getCell('H' + _line).value = element.pedido;
-                                                                ws.getCell('I' + _line).value = element.segmento;
-                                                                ws.getCell('J' + _line).value = element.valor;
-                                                        }
-                                                }
-                                        }
-                                }).then(function () {
-                                        console.log('BI-REPORT1toXLXS >>> All searchs have finished!');
-                                        try {
-                                                wb.xlsx.writeFile(_path + _namexlsx).then(function () { });
-                                        } catch (err) {
-                                                log("Error writing to file ", err);
-                                        }
-                                        var payload = { url: "https://ccs.sanofi-mobile.com.br/supervisor/report/" + _namexlsx };
+                                        var payload = { url: "https://ccs.cruzeirodosul-aluno.com.br/supervisor/report/" + _namexlsx };
                                         socket.emit('bi-report1toxlsx', payload);
                                 });
                         }
@@ -1768,12 +1166,12 @@ io.on('connection', function (socket) {
 
         socket.on('bi-report1', function (payload) {
 
-                console.log('Request Report 1, Parameters: ' + payload.params + '...');
+                ////console.log('Request Report 1, Parameters: ' + payload.params + '...');
                 var _params = payload.params;
                 var _limit = payload.limit;
                 var _transbordoDt = payload.transbordoDt;
                 var qry = 'CALL css_report("0","' + _transbordoDt + '","' + _params + '", "COUNT(*) as total");';
-                console.log("COUNT", qry)
+                ////console.log("COUNT", qry)
                 dbcc.query(qry, [], function (err, result) {
                         if (err) {
                                 log("Erro: " + err);
@@ -1784,7 +1182,7 @@ io.on('connection', function (socket) {
                                         socket.emit('bi-report1', payload);
                                 } else {
                                         var qry = 'CALL css_report("' + _limit + '","' + _transbordoDt + '","' + _params + '", "*");';
-                                        console.log("TESTE" + qry)
+                                        ////console.log("TESTE" + qry)
                                         dbcc.query(qry, [], function (err, result) {
                                                 if (err) {
                                                         log("Erro: " + err);
@@ -1792,32 +1190,26 @@ io.on('connection', function (socket) {
                                                         var _reportdata = [];
                                                         var _lenchat = result[1].length - 1;
                                                         foreachasync(result[1], function (element, index) {
-                                                                var _sessionid = element.sessionid;
                                                                 var _serialized = {
+                                                                        filename: element.filename,
                                                                         sessionid: element.sessionid,
-                                                                        cnpj: element.cnpj,
+                                                                        cpf: element.cpf,
+                                                                        atendir: element.atendir,
                                                                         atendente: element.atendente,
                                                                         mobile: element.mobile,
                                                                         hora: element.hora,
                                                                         data: element.data,
                                                                         status: element.status,
-                                                                        atendir: element.atendir,
-                                                                        filename: element.filename,
-                                                                        origem: element.origem,
-                                                                        destino: element.destino
+                                                                        rgm_aluno: element.rgm_aluno,
+                                                                        nome: element.nome
                                                                 };
-                                                                async function buscapedidos(sid, index) {
-                                                                        var _pedidos = await onPedidos(sid);
-                                                                        _serialized.pedidos = _pedidos;
-                                                                        _reportdata.push(_serialized);
-                                                                        if (_lenchat == index) {
-                                                                                var payload = { count: _count, reportadata: _reportdata };
-                                                                                socket.emit('bi-report1', payload);
-                                                                        }
+                                                                _reportdata.push(_serialized);
+                                                                if (_lenchat == index) {
+                                                                        var payload = { count: _count, reportadata: _reportdata };
+                                                                        socket.emit('bi-report1', payload);
                                                                 }
-                                                                buscapedidos(_sessionid, index);
                                                         }).then(function () {
-                                                                console.log('BI-REPORT1 >>> All searchs have finished!');
+                                                                ////console.log('BI-REPORT1 >>> All searchs have finished!');
                                                         });
                                                 }
                                         });
@@ -1826,33 +1218,53 @@ io.on('connection', function (socket) {
                 });
         });
 
-        socket.on('OLD_bi-report1', function (payload) {
+        socket.on('bi-report2', function (payload) {
 
-                console.log('Request Report 1, Parameters: ' + payload.params + '...');
-                console.log(payload.params);
+                ////console.log('Request Report 1, Parameters: ' + payload.params + '...');
                 var _params = payload.params;
                 var _limit = payload.limit;
-                var qry = "SELECT count(*) as total FROM tab_encerrain LEFT JOIN tab_usuarios ON (tab_encerrain.fkto = tab_usuarios.id) LEFT JOIN tab_statusen ON (tab_encerrain.status = tab_statusen.id) WHERE " + _params;
-                console.log('Query : ');
-                console.log(qry);
-                console.log('\n');
+                var _transbordoDt = payload.transbordoDt;
+                var qry = 'CALL ccs_consulta("0","' + _transbordoDt + '","' + _params + '", "COUNT(*) as total");';
+                ////console.log("COUNT", qry)
                 dbcc.query(qry, [], function (err, result) {
                         if (err) {
                                 log("Erro: " + err);
                         } else {
-                                var _count = result[0].total;
+                                var _count = result[1][0].total;
                                 if (_count == 0) {
                                         var payload = { count: 0, reportadata: '' };
-                                        socket.emit('bi-report1', payload);
+                                        socket.emit('bi-report2', payload);
                                 } else {
-                                        var qry = "SELECT sessionid, cnpj, tab_usuarios.nome as atendente, substr(mobile, 3, 11) as mobile, DATE_FORMAT(dtin, '%H:%i') as hora, DATE_FORMAT(dtin, '%d/%m/%Y') as data, pedido, segmento, valor, (tab_statusen.descricao) as status FROM tab_encerrain LEFT JOIN tab_usuarios ON (tab_encerrain.fkto = tab_usuarios.id) LEFT JOIN tab_statusen ON (tab_encerrain.status = tab_statusen.id) WHERE " + _params + " ORDER BY dtin LIMIT " + _limit + ", 20;";
+                                        var qry = 'CALL ccs_consulta("' + _limit + '","' + _transbordoDt + '","' + _params + '", "*");';
+                                        ////console.log("TESTE" + qry)
                                         dbcc.query(qry, [], function (err, result) {
                                                 if (err) {
                                                         log("Erro: " + err);
                                                 } else {
-                                                        var _reportdata = JSON.stringify(result);
-                                                        var payload = { count: _count, reportadata: _reportdata };
-                                                        socket.emit('bi-report1', payload);
+                                                        var _reportdata = [];
+                                                        var _lenchat = result[1].length - 1;
+                                                        foreachasync(result[1], function (element, index) {
+                                                                var _serialized = {
+                                                                        filename: element.filename,
+                                                                        sessionid: element.sessionid,
+                                                                        cpf: element.cpf,
+                                                                        atendir: element.atendir,
+                                                                        atendente: element.atendente,
+                                                                        mobile: element.mobile,
+                                                                        hora: element.hora,
+                                                                        data: element.data,
+                                                                        status: element.status,
+                                                                        rgm_aluno: element.rgm_aluno,
+                                                                        nome: element.nome
+                                                                };
+                                                                _reportdata.push(_serialized);
+                                                                if (_lenchat == index) {
+                                                                        var payload = { count: _count, reportadata: _reportdata };
+                                                                        socket.emit('bi-report2', payload);
+                                                                }
+                                                        }).then(function () {
+                                                                ////console.log('BI-REPORT2 >>> All searchs have finished!');
+                                                        });
                                                 }
                                         });
                                 }
@@ -1864,8 +1276,8 @@ io.on('connection', function (socket) {
 
                 var _fkto = payload.fkid;
                 var _fkname = payload.fkname;
-                console.log(payload);
-                dbcc.query('SELECT a.mobile, a.dtin, a.account, a.photo, a.sessionBot, a.origem, b.origem AS fonte FROM tab_filain AS a LEFT JOIN db_sanofi_ccs.tab_transbordo AS b ON a.sessionBot = b.sessionBot WHERE a.status=1 ORDER BY a.dtin LIMIT 1;', [], function (err, result) {
+                ////console.log(payload);
+                dbcc.query('SELECT mobile, dtin, account, photo FROM tab_filain WHERE status=1 ORDER BY dtin LIMIT 1;', [], function (err, result) {
                         if (err) {
                                 log(err);
                         } else {
@@ -1874,15 +1286,13 @@ io.on('connection', function (socket) {
                                 var _account = result[0].account;
                                 var _photo = result[0].photo;
                                 var _atendir = result[0].atendir;
-                                var _sessionBot = result[0].sessionBot;
-                                var _origem = result[0].origem;
                                 var _fonte = result[0].fonte;
                                 dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
                                         if (result.length == 0) {
                                                 dbcc.query("UPDATE tab_filain SET status=2 WHERE mobile=" + _mobile);
                                                 dbcc.query("SELECT uuid() as UUID;", function (err, id) {
                                                         var _sessionid = id[0].UUID;
-                                                        dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot,origem) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname, _sessionBot, _origem], function (err, result) {
+                                                        dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname) VALUES(?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname], function (err, result) {
                                                                 if (err) {
                                                                         log("Erro ao Encaminhar Usuário para Atendimento, Erro: " + err);
                                                                 } else {
@@ -1914,8 +1324,8 @@ io.on('connection', function (socket) {
         });
 
         socket.on('sentinel_message_send', function (payload) {
-                console.log('sentinel_message_send <> ');
-                console.log(payload);
+                ////console.log('sentinel_message_send <> ');
+                ////console.log(payload);
                 var _fkonline = false;
                 for (var i in io.sockets.connected) {
                         var _fkid = io.sockets.connected[i].fkid;
@@ -1934,18 +1344,20 @@ io.on('connection', function (socket) {
                                 var _msgcaption = payload.body_caption;
                                 if (payload.message_type == "chat") {
                                         dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
-                                                if (err) { console.log(err) }
+                                                if (err) {
+                                                        //console.log(err)
+                                                }
                                                 log("Novo Registro LOG Inserido", _id);
                                         });
                                 } else {
                                         dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgurl, _msgcaption], function (err, result) {
-                                                if (err) { console.log(err) }
+                                                if (err) {
+                                                        //console.log(err)
+                                                }
                                                 log("Novo Registro LOG Inserido", _id);
                                         });
                                 }
-                                if (_toname != 'Bot') {
-                                        socket.to(i).emit('receive_chat', payload);
-                                }
+                                socket.to(i).emit('receive_chat', payload);
                                 _fkonline = true;
                         }
                 }
@@ -1962,43 +1374,43 @@ io.on('connection', function (socket) {
 
         // Checking Clients is Alive
         socket.on('sentinel_clients_alive', function () {
-                console.log("\n\n");
-                console.log("----------------------------------------------------");
-                console.log("----     R T   U B I C U A   P L A T F O R M    ----");
-                console.log("----------------------------------------------------");
-                console.log("Sentinel Clients Alive");
-                console.log("Numero de Usuarios Conectados: " + numUsers + "  -  Data/Hora: " + getTimestamp());
-                console.log("---------------------------------------------------------------------------------------------------------------");
+                ////console.log("\n\n");
+                ////console.log("----------------------------------------------------");
+                ////console.log("----     R T   U B I C U A   P L A T F O R M    ----");
+                ////console.log("----------------------------------------------------");
+                ////console.log("Sentinel Clients Alive");
+                ////console.log("Numero de Usuarios Conectados: " + numUsers + "  -  Data/Hora: " + getTimestamp());
+                ////console.log("---------------------------------------------------------------------------------------------------------------");
                 var payload = "[";
                 for (var i in io.sockets.connected) {
-                        console.log('Socket: ' + i + ' FKID: ' + io.sockets.connected[i].fkid + ' Name: ' + io.sockets.connected[i].fkname + ' Date: ' + io.sockets.connected[i].fkon + ' Address: ' + io.sockets.connected[i].fkip);
+                        ////console.log('Socket: ' + i + ' FKID: ' + io.sockets.connected[i].fkid + ' Name: ' + io.sockets.connected[i].fkname + ' Date: ' + io.sockets.connected[i].fkon + ' Address: ' + io.sockets.connected[i].fkip);
                         payload += { fkname: io.sockets.connected[i].fkname, fkdt: io.sockets.connected[i].fkon, fkip: io.sockets.connected[i].fkip };
                         socket.broadcast.emit('sentinel_clients_alive');
                 }
                 socket.broadcast.emit('sentinel_clients_alive');
-                console.log("---------------------------------------------------------------------------------------------------------------\n");
+                ////console.log("---------------------------------------------------------------------------------------------------------------\n");
         });
 
         // Checking Clients on Queue
         socket.on('sentinel_clients_queue', function (payload) {
-                //console.log("\n\n");
-                //console.log("----------------------------------------------------");
-                //console.log("----     R T   U B I C U A   P L A T F O R M    ----");
-                //console.log("----------------------------------------------------");
-                //console.log("Sentinel Clients Queue");
-                //console.log("---------------------------------------------------------------------------------------------------------------");
+                //////console.log("\n\n");
+                //////console.log("----------------------------------------------------");
+                //////console.log("----     R T   U B I C U A   P L A T F O R M    ----");
+                //////console.log("----------------------------------------------------");
+                //////console.log("Sentinel Clients Queue");
+                //////console.log("---------------------------------------------------------------------------------------------------------------");
                 dbcc.query('SELECT * FROM db_sanofi_ccs.vw_fila;', [], function (err, result) {
                         socket.broadcast.emit('sentinel_clients_queue', result);
                 });
-                //console.log(payload);
-                //console.log("---------------------------------------------------------------------------------------------------------------");
-                //console.log("Sentinel Clients Alive");
-                //console.log("Numero de Usuarios Conectados: " + numUsers + "  -  Data/Hora: " + getTimestamp());
-                //console.log("---------------------------------------------------------------------------------------------------------------");
+                //////console.log(payload);
+                //////console.log("---------------------------------------------------------------------------------------------------------------");
+                //////console.log("Sentinel Clients Alive");
+                //////console.log("Numero de Usuarios Conectados: " + numUsers + "  -  Data/Hora: " + getTimestamp());
+                //////console.log("---------------------------------------------------------------------------------------------------------------");
                 var payload = "[";
                 for (var i in io.sockets.connected) {
-                        //console.log('Socket: ' + i + ' FKID: ' + io.sockets.connected[i].fkid + ' Name: ' + io.sockets.connected[i].fkname);
-                        //console.log('Socket: ' + i + ' FKID: ' + io.sockets.connected[i].fkid + ' Name: ' + io.sockets.connected[i].fkname + ' Date: ' + io.sockets.connected[i].fkon + ' Address: ' + io.sockets.connected[i].fkip + ' Status: ' + io.sockets.connected[i].fkstatus);
+                        //////console.log('Socket: ' + i + ' FKID: ' + io.sockets.connected[i].fkid + ' Name: ' + io.sockets.connected[i].fkname);
+                        //////console.log('Socket: ' + i + ' FKID: ' + io.sockets.connected[i].fkid + ' Name: ' + io.sockets.connected[i].fkname + ' Date: ' + io.sockets.connected[i].fkon + ' Address: ' + io.sockets.connected[i].fkip + ' Status: ' + io.sockets.connected[i].fkstatus);
                         linha = '{ "socketid": "' + i +
                                 '", "fkid": "' + io.sockets.connected[i].fkid +
                                 '", "fkname": "' + io.sockets.connected[i].fkname +
@@ -2015,7 +1427,7 @@ io.on('connection', function (socket) {
                                 socket.broadcast.emit('view_agents', JSON.stringify(result));
                         }
                 });
-                //console.log("---------------------------------------------------------------------------------------------------------------\n");
+                //////console.log("---------------------------------------------------------------------------------------------------------------\n");
         });
 
         socket.on('bi-auth', function (payload) {
@@ -2026,14 +1438,14 @@ io.on('connection', function (socket) {
                 var _app = payload.app;
                 if (_key == "a02c7f8c8bf9635037eb5653302f8b84") {
                         dbcc.query('SELECT * FROM tab_usuarios WHERE usuario=? AND status=1 LIMIT 1', [_fkname], function (err, result) {
-                                console.log(err);
+                                //console.log(err);
                                 if (result.length > 0) {
                                         // Validando Perfil
                                         if (_app == 3) {
                                                 var _senha = result[0].senha;
                                                 // Validando Senha
                                                 if (md5(_fkpass) == _senha) {
-                                                        console.log('senha ok');
+                                                        ////console.log('senha ok');
                                                         var _status = result[0].status;
                                                         // Verificando Status do Usuário
                                                         if (_status == 1) {
@@ -2045,7 +1457,7 @@ io.on('connection', function (socket) {
                                                                 socket.emit('bi-auth', { response: 2 });
                                                         }
                                                 } else {
-                                                        console.log('emitiu');
+                                                        ////console.log('emitiu');
                                                         socket.emit('bi-auth', { response: 3 });
                                                 }
                                         } else if (_app == 2) {
@@ -2053,7 +1465,7 @@ io.on('connection', function (socket) {
                                                         var _senha = result[0].senha;
                                                         // Validando Senha
                                                         if (md5(_fkpass) == _senha) {
-                                                                console.log('senha ok');
+                                                                ////console.log('senha ok');
                                                                 var _status = result[0].status;
                                                                 // Verificando Status do Usuário
                                                                 if (_status == 1) {
@@ -2065,7 +1477,7 @@ io.on('connection', function (socket) {
                                                                         socket.emit('bi-auth', { response: 2 });
                                                                 }
                                                         } else {
-                                                                console.log('emitiu');
+                                                                ////console.log('emitiu');
                                                                 socket.emit('bi-auth', { response: 3 });
                                                         }
                                                 } else {
@@ -2087,8 +1499,8 @@ io.on('connection', function (socket) {
         socket.on('add user', function (payload) {
                 if (addedUser) return;
 
-                console.log('>>>>>>>>>>>>>>>>>\n');
-                console.log(payload);
+                ////console.log('>>>>>>>>>>>>>>>>>\n');
+                ////console.log(payload);
                 // we store the username in the socket session for this client
                 socket.fkid = payload.fkid;
                 socket.fkname = payload.fkname;
@@ -2136,12 +1548,12 @@ io.on('connection', function (socket) {
                 if (addedUser) {
                         --numUsers;
                         //chatcore.deleteOne({ userid: socket.id}, function(err, result){
-                        //        console.log('Usuario Descontecou: ' + socket.username);
+                        //        ////console.log('Usuario Descontecou: ' + socket.username);
                         //});
                         // echo globally that this client has left
-                        console.log("USUARIO DESCONECTADO:::::::::::::::::::: " + socket.id);
+                        ////console.log("USUARIO DESCONECTADO:::::::::::::::::::: " + socket.id);
                         socket.disconnect();
-                        //console.log(socket);
+                        //////console.log(socket);
                         //socket.close();
                         //socket.broadcast.emit('user left', {
                         //        username: socket.username,
@@ -2158,7 +1570,7 @@ io.on('connection', function (socket) {
         });
 
         socket.on('sentinel_waendpoint', function (payload) {
-                //console.log('sentinel_waendpoint................' + _host);
+                //////console.log('sentinel_waendpoint................' + _host);
                 dbcc.query("SELECT waendpoint FROM db_sanofi_ccs.tab_config WHERE id=1", [], function (err, result) {
                         _host = result[0].waendpoint;
                         socket.broadcast.emit('waendpoint', { server: _host });
@@ -2171,13 +1583,13 @@ io.on('connection', function (socket) {
                         var _custom_uid = id[0].UUID;
                         let teste = {
                                 infra: _mobileUid,
-                                id: '5511969009126@c.us',
+                                id: '5511999991152@c.us',
                                 msg: payload,
                                 media: 'chat'
                         }
                         if (_host == "LON") {
                                 request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
-                                        console.log(teste)
+                                        ////console.log(teste)
                                         log("Response WABOXAPP", body);
                                 });
                         }
@@ -2197,7 +1609,7 @@ io.on('connection', function (socket) {
 
         socket.on('bi-mailativo', function (payload) {
                 var _tipo = payload.tipo;
-                dbcc.query("SELECT * FROM tab_ativo WHERE tipo=? AND status=0 ORDER BY nome", [_tipo], function (err, result) {
+                dbcc.query("SELECT * FROM tab_ativo WHERE status=0 ORDER BY nome", function (err, result) {
                         if (result.length > 0) {
                                 var _mailing = JSON.stringify(result);
                                 socket.emit('bi-mailativo', _mailing);
@@ -2246,39 +1658,48 @@ io.on('connection', function (socket) {
                 });
         });
 
-        socket.on('bi-addativo', function (payload) {
-                var _nome = payload.nome;
-                var _fantasia = payload.fantasia;
-                var _mobile = payload.mobile;
-                var _tipo = payload.tipo;
-                var _cnpj = payload.cnpj;
-                var _bandeira = payload.bandeira;
-                var _uf = payload.uf;
-                var _filename = payload.filename;
-                var _flagcampanha = payload.flagcampanha;
-                if (_mobile.length < 13) {
-                        _mobile = "55" + _mobile;
+        socket.on('bi-addativo', async function (payload) {
+                //console.log(payload.length)
+                for (i = 0; i < payload.length; i++) {
+                        //console.log(payload[i])
+                        var _nome = payload[i].nome;
+                        var _rgm_aluno = payload[i].rgm_aluno;
+                        var _cpf = payload[i].cpf;
+                        var _celular = payload[i].celular;
+                        var _filename = payload[i].filename;
+                        var _quantidade = payload[i].quantidade;
+                        if (_celular != "" && _celular != null) {
+                                _celular = _celular.replace(/[^\w\s]/gi, '')
+                                _celular = _celular.replace(/\D/g, '');
+                                if (_celular.length < 13) {
+                                        _celular = "55" + _celular;
+                                }
+                                if (_celular != "" && _celular != null && _celular.length >= 9) {
+                                        await addAtivoMail(_nome, _rgm_aluno, _cpf, _celular, _filename, _quantidade)
+                                }
+                        }
                 }
-                if (_mobile.length >= 9) {
-                        const d1 = new Date();
-                        const d2 = d1 - 604800000;
-                        const d3 = new Date(d2);
-                        dbcc.query("SELECT COUNT(*) AS resultCount FROM tab_ativo WHERE dtcadastro BETWEEN '" + d3.toISOString() + "' AND '" + d1.toISOString() + "' AND STATUS = '0';", [], function (err, result) {
-                                if (result[0].resultCount < 300) {
-                                        console.log(result[0].resultCount);
+        });
+
+        function addAtivoMail(_nome, _rgm_aluno, _cpf, _celular, _filename, _quantidade) {
+                return new Promise(function (resolve, reject) {
+                        dbcc.query("SELECT COUNT(*) as resultCount FROM tab_ativo WHERE DATE(dtcadastro) = DATE(NOW());", [], function (err, result) {
+                                if (err) { console.log(err) }
+                                if (result[0].resultCount <= 500) {
                                         dbcc.query("SELECT UUID() AS UUID;", [], function (err, result) {
-                                                if (err) { console.log(err); }
+                                                if (err) { console.log(err) }
                                                 var _id = result[0].UUID;
-                                                dbcc.query("SELECT * FROM tab_ativo WHERE mobile='" + _mobile + "' and status = 0;", function (err, result) {
+                                                dbcc.query("SELECT * FROM tab_ativo WHERE mobile='" + _celular + "' and status = 0;", function (err, result) {
+                                                        if (err) { console.log(err) }
                                                         if (result.length < 1) {
-                                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_ativo (id, tipo, nome, nomefantasia, mobile, cnpj, bandeira, uf, filename, flagcampanha) VALUES (?,?,?,?,?,?,?,?,?,?);", [_id, _tipo, _nome, _fantasia, _mobile, _cnpj, _bandeira, _uf, _filename, _flagcampanha], function (err, result) {
-                                                                        if (err) { console.log(err); }
+                                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_ativo (id, nome, rgm_aluno, cpf, mobile, filename, quantidade) VALUES (?,?,?,?,?,?,?);", [_id, _nome, _rgm_aluno, _cpf, _celular, _filename, _quantidade], function (err, result) {
+                                                                        if (err) { console.log(err) }
                                                                         dbcc.query("SELECT * FROM tab_ativo WHERE status=0", [], function (err, result) {
-                                                                                if (err) { console.log(err); }
+                                                                                if (err) { console.log(err) }
                                                                                 if (result.length > 0) {
                                                                                         var _ativo = JSON.stringify(result);
                                                                                         socket.emit('bi-addativo', _ativo);
-                                                                                        return '200'
+                                                                                        resolve('200')
                                                                                 }
                                                                         });
                                                                 });
@@ -2289,8 +1710,8 @@ io.on('connection', function (socket) {
                                         socket.emit('maillimite', 'MAX');
                                 }
                         });
-                }
-        });
+                })
+        }
 
         function onPedidos(_sessionid) {
                 return new Promise(function (resolve, reject) {
@@ -2305,91 +1726,10 @@ io.on('connection', function (socket) {
                         return res
                 });
         }
-
-        function sendFirstTextMsg(payload) {
-                log("Nova Mensagem Enviada", payload);
-                var _mobile = payload.mobile;
-                var _type = payload.type;
-                var _message = payload.message;
-                dbcc.query("SELECT uuid() as UUID;", function (err, id) {
-                        var _custom_uid = id[0].UUID;
-                        if (_host == "LON") {
-                                let teste = {
-                                        infra: _mobileUid,
-                                        id: _mobile + '@c.us',
-                                        msg: _message,
-                                        media: 'chat'
-                                }
-                                request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
-                                        console.log(teste)
-                                        log("Response WABOXAPP", body);
-                                        var _response = body;
-                                        if (_response === 'ok') {
-                                                dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
-                                                        if (result.length > 0) {
-                                                                var _id = _custom_uid;
-                                                                var _sessionid = result[0].sessionid;
-                                                                var _fromid = result[0].fkto;
-                                                                var _fromname = result[0].fkname;
-                                                                var _toid = result[0].mobile;
-                                                                var _toname = result[0].name;
-                                                                var _msgdir = "o";
-                                                                var _msgtype = _type;
-                                                                var _msgtext = _message;
-                                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext)  VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
-                                                                        log("Novo Registro LOG Inserido", _id);
-                                                                        socket.emit('bi-atendemail', {
-                                                                                status: '200'
-                                                                        });
-                                                                });
-                                                        }
-                                                });
-                                        }
-                                });
-                        }
-                });
-
-        }
-
-        function sendMyChat(payload) {
-                var corJson = {
-                        'mobile': payload.mobile,
-                        'type': payload.type,
-                        'message': 'BLACK NOVEMBER: DORFLEX com até 17% de desconto?! Retorne essa mensagem para aproveitar a condição.'
-                }
-                sendFirstTextMsg(payload);
-                socket.broadcast.emit('receive_picture', corJson);
-                var _mobile = payload.mobile;
-                var _type = payload.type;
-                var _message = 'BLACK NOVEMBER: DORFLEX com até 17% de desconto?! Retorne essa mensagem para aproveitar a condição.';
-                dbcc.query("SELECT uuid() as UUID;", function (err, id) {
-                        var _custom_uid = id[0].UUID;
-                        dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
-                                if (result.length > 0) {
-                                        var _id = _custom_uid;
-                                        var _sessionid = result[0].sessionid;
-                                        var _fromid = result[0].fkto;
-                                        var _fromname = result[0].fkname;
-                                        var _toid = result[0].mobile;
-                                        var _toname = result[0].name;
-                                        var _msgdir = "o";
-                                        var _msgtype = 'chat';
-                                        //var _msgurl = "https://cdn.ubicuacloud.com/file/2f7b4a7133fb8c5c327421632ae91308.jpg";
-                                        var _msgcaption = _message;
-                                        dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype], function (err, result) {
-                                                log("Novo Registro LOG Inserido", _id);
-                                                socket.emit('bi-atendemail', {
-                                                        status: '200'
-                                                });
-                                        });
-                                }
-                        });
-                });
-        }
 });
 
 function onkill() {
-        console.log(new Date() + " >> onKill acionando!");
+        ////console.log(new Date() + " >> onKill acionando!");
 }
 
 function onalive(fkid) {
@@ -2407,15 +1747,15 @@ function onalive(fkid) {
 
 server.listen(port, function () {
         log('Chat Core - Ubicua Cloud Platform - Listening at Port ' + port);
-        console.log(new Date().getHours())
+        ////console.log(new Date().getHours())
 });
 
 process.on('uncaughtException', function (err) {
-        console.error(' ');
-        console.error('----- ' + (new Date).toUTCString() + ' ----------------------------------')
-        console.error('Erro uncaughtException: ', err.message)
-        console.error(err.stack)
-        console.error(' ');
+        //console.error(' ');
+        //console.error('----- ' + (new Date).toUTCString() + ' ----------------------------------')
+        //console.error('Erro uncaughtException: ', err.message)
+        //console.error(err.stack)
+        //console.error(' ');
         return
 });
 
