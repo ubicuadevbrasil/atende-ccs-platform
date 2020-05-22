@@ -334,6 +334,12 @@
                 </button>
               </div>
               <div class="btn-group">
+                <button id="btnConCliente" type="button" class="btn btn-primary" data-toggle="tooltip"
+                  data-placement="bottom" title="Consulta Cliente" style="width: 100px;">
+                  <i class="fa fa-user"></i> Cliente
+                </button>
+              </div>
+              <div class="btn-group">
                 <button id="btncadastro" type="button" class="btn btn-primary" data-toggle="tooltip"
                   data-placement="bottom" title="Dados do Contato" style="width: 100px;">
                   <i class="fa fa-pencil-square-o"></i> Cadastro
@@ -422,7 +428,36 @@
                 <input id="iCPF" type="text" class="form-control" placeholder="CPF">
               </div>
               <br>
-              <!---->
+              <!-- NOVOS INPUTS -->
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-building-o"></i></span>
+                <div class="form-group">
+                  <div class="col-xs-19">
+                    <select id="iPilar" class="form-control">
+                      <option value=''>Pilar</option>
+                      <option>Rematricula</option>
+                      <option>Regresso</option>
+                      <option>Retenção</option>
+                      <option>Cobrança</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <br>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-building-o"></i></span>
+                <div class="form-group">
+                  <div class="col-xs-19">
+                    <select id="iModalidade" class="form-control">
+                      <option value=''>Modalidade</option>
+                      <option>Presencial</option>
+                      <option>EAD</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <br>
+              <!-- NOVOS INPUTS -->
               <div id="novoPedido" style="display: none">
                 <h5 class="m-t-0">Tabular Novo Pedido <span id="fillWarning" class="fillWarning"></span></h5>
                 <div class="input-group">
@@ -641,6 +676,55 @@
           <div class="modal-body">Nenhum Atendimento Iniciado!</div>
           <div class="modal-footer">
             <button type="button" class="btn btn-warning" data-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="myModalInfo" class="modal fade modal-alert modal-info">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #008a7c; border-color: #008a7c"><i class="fa fa-user"></i>
+          </div>
+          <div class="modal-title">Informações</div>
+          <div class="modal-body">
+            <br>
+            <div class="input-group">
+              <span class="input-group-addon">Nome</span>
+              <input id="iNomeTx" type="text" class="form-control" disabled>
+            </div>
+            <br>
+            <div class="input-group">
+              <span class="input-group-addon">Cpf</span>
+              <input id="iCpfTx" type="text" class="form-control" disabled>
+            </div>
+            <br>
+            <div class="input-group">
+              <span class="input-group-addon">Pilar</span>
+              <input id="iPilarTx" type="text" class="form-control" disabled>
+            </div>
+            <br>
+            <div class="input-group">
+              <span class="input-group-addon">Modalidade</span>
+              <input id="iModalidadeTx" type="text" class="form-control" disabled>
+            </div>
+            <br>
+            <!--
+              <strong>Nome:</strong>
+              <span id="iNomeTx"></span>
+              <br>
+              <strong>Cpf:</strong>
+              <span id="iCpfTx"></span>
+              <br>
+              <strong>Pilar:</strong>
+              <span id="iPilarTx"></span>
+              <br>
+              <strong>Modalidade:</strong>
+              <span id="iModalidadeTx"></span>
+            -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-warning" data-dismiss="modal">Fechar</button>
           </div>
         </div>
       </div>

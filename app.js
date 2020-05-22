@@ -43,7 +43,11 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(cors());
 
 app.get('/', function (req, res) {
-        res.redirect('/atendente')
+        if (req.hostname == "falecomacruzeiro.com.br") {
+                res.redirect('https://wa.me/5511999991152')
+        } else {
+                res.redirect('/atendente')
+        }
 })
 
 // Request HTTPS
@@ -512,7 +516,7 @@ io.on('connection', function (socket) {
                 var _type = payload.type;
                 var _sessionid = payload.sessionid;
                 //var _message = payload.message;
-                var _message = "Seja Bem Vindo ao canal de fidelização da Cruzeiro do sul. Nosso horário de atendimento é de segunda a sexta das 09h às 19h (exceto aos feriados)";
+                var _message = "Seja Bem Vindo ao canal de fidelização da Cruzeiro do sul. Nosso horário de atendimento é de segunda a sexta das 09h às 16h (exceto aos feriados)";
 
                 dbcc.query('SELECT training from tab_treinamento where id="c102ba05-422c-11ea-8db1-000c290cc03d"', function (err, result) {
                         if (err) {
@@ -855,6 +859,8 @@ io.on('connection', function (socket) {
                 var _status = payload.status;
                 var _cnpj = payload.cnpj;
                 var _atendir = payload.atendir;
+                var _pilar = payload.pilar;
+                var _modalidade = payload.modalidade;
                 dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
                         if (err) {
                                 //console.log(err)
@@ -870,7 +876,7 @@ io.on('connection', function (socket) {
                                 var _fkto = result[0].fkto;
                                 var _fkname = result[0].fkname;
                                 var _transfer = result[0].transfer;
-                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _dtat, _name, _account, _photo, _fkto, _fkname, _status, _cnpj, _atendir, _transfer], function (err, result) {
+                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer, pilar, modalidade) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _dtat, _name, _account, _photo, _fkto, _fkname, _status, _cnpj, _atendir, _transfer, _pilar, _modalidade], function (err, result) {
                                         if (err) {
                                                 //console.log(err)
                                         };
@@ -897,6 +903,26 @@ io.on('connection', function (socket) {
                                 ////console.log("LISTA FILA: [[[");
                                 ////console.log(result);
                                 ////console.log("]]]");
+                        }
+                });
+        });
+
+        socket.on('get_cliInfo', function (payload) {
+                console.log(payload)
+                var _mobile = payload.mobile;
+                dbcc.query("SELECT NAME,cnpj,pilar,modalidade FROM tab_encerrain WHERE mobile = ? ORDER BY dten DESC LIMIT 1", [_mobile], function (err, result) {
+                        if (result.length > 0) {
+                                var _nome = result[0].NAME;
+                                var _cpf = result[0].cnpj;
+                                var _pilar = result[0].pilar;
+                                var _modalidade = result[0].modalidade;
+                                payload = {
+                                        nome: _nome,
+                                        cpf: _cpf,
+                                        pilar: _pilar,
+                                        modalidade: _modalidade
+                                };
+                                socket.emit('get_cliInfo', payload);
                         }
                 });
         });
@@ -1027,9 +1053,6 @@ io.on('connection', function (socket) {
         });
 
         socket.on('bi-transferok', function (payload) {
-
-                ////console.log('Confirmation Transfer Agent Ok....');
-                ////console.log(payload);
                 dbcc.query("SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.mobile=? GROUP BY mobile ORDER BY A.dtin", [payload.mobile], function (err, result) {
                         if (result.length > 0) {
                                 var _contacts = JSON.stringify(result);
@@ -1044,7 +1067,7 @@ io.on('connection', function (socket) {
                                         }
                                 }
                                 ////console.log("SESSIONLIST [" + _sessionlist + "]");
-                                dbcc.query("SELECT sessionid, dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY sessionid, dt;", function (err, result) {
+                                dbcc.query("SELECT sessionid, DATE_ADD(dt, INTERVAL 3 HOUR) as dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY sessionid, dt;", function (err, result) {
                                         var _logs = JSON.stringify(result);
                                         socket.emit('bi-atendein', { contacts: _contacts, logs: _logs });
                                 });
@@ -1055,9 +1078,6 @@ io.on('connection', function (socket) {
         });
 
         socket.on('bi-historyone', function (payload) {
-
-                ////console.log('Request History, Session ID: ' + payload.sessionid + '...');
-                ////console.log(payload);
                 dbcc.query("SELECT sessionid, dtin, mobile, account, photo FROM tab_encerrain WHERE sessionid=? ORDER BY dtin DESC LIMIT 1", [payload.sessionid], function (err, result) {
                         if (result.length > 0) {
                                 var _contacts = JSON.stringify(result);
@@ -1072,7 +1092,7 @@ io.on('connection', function (socket) {
                                         }
                                 }
                                 ////console.log("SESSIONLIST [" + _sessionlist + "]");
-                                dbcc.query("SELECT a.sessionid, a.dt, a.fromname, a.msgdir, a.msgtype, a.msgtext, a.msgurl, a.msgcaption FROM tab_logs AS a WHERE a.sessionid IN (" + _sessionlist + ") ORDER BY a.dt;", function (err, result) {
+                                dbcc.query("SELECT a.sessionid, DATE_ADD(a.dt, INTERVAL 3 HOUR) as dt, a.fromname, a.msgdir, a.msgtype, a.msgtext, a.msgurl, a.msgcaption FROM tab_logs AS a WHERE a.sessionid IN (" + _sessionlist + ") ORDER BY a.dt;", function (err, result) {
                                         var _logs = JSON.stringify(result);
                                         socket.emit('bi-historyone', { contacts: _contacts, logs: _logs });
                                 });

@@ -47,6 +47,15 @@ socket.on("force_disconnect", function () {
     onbtnlogout();
 });
 
+socket.on("get_cliInfo", function (payload) {
+    $("#iNomeTx").val(payload.nome)
+    $("#iCpfTx").val(payload.cpf)
+    $("#iPilarTx").val(payload.pilar)
+    $("#iModalidadeTx").val(payload.modalidade)
+    $('#myModalInfo').modal();
+    console.log(payload)
+});
+
 socket.on('sentinel_clients_queue', function (payload) {
     var json = payload;
     console.log(payload);
@@ -533,7 +542,9 @@ socket.on('bi-find_register', function (payload) {
                     status: $('#icbStatus').val(),
                     cnpj: $('#iCPF').val().replace(/[^\d]+/g, ''),
                     pedidos: table,
-                    atendir: _atendir
+                    atendir: _atendir,
+                    pilar: $('#iPilar option:selected').val(),
+                    modalidade: $('#iModalidade option:selected').val()
                 }
                 $('#contatos').addClass('form-loading');
                 socket.emit('bi-close_chat', payload);
@@ -556,7 +567,9 @@ socket.on('bi-find_register', function (payload) {
                 status: $('#icbStatus').val(),
                 cnpj: $('#iCPF').val().replace(/[^\d]+/g, ''),
                 pedidos: table,
-                atendir: _atendir
+                atendir: _atendir,
+                pilar: $('#iPilar option:selected').val(),
+                modalidade: $('#iModalidade option:selected').val()
             }
             $('#contatos').addClass('form-loading');
             socket.emit('bi-close_chat', payload);
@@ -970,6 +983,22 @@ $('#btnconsulta').on('click', function () {
     window.open('consulta.html');
 });
 
+$('#btnConCliente').on('click', function () {
+
+    if (contactuid != "") {
+
+        var json = {
+            mobile: contactuid
+        }
+
+        socket.emit('get_cliInfo', json);
+
+    } else {
+        $('#myModal7').modal();
+    }
+
+});
+
 $('#btncadastro').on('click', function () {
 
     if (contactuid != "") {
@@ -1176,8 +1205,11 @@ $("#icbStatus").change(function () {
 $('#confirmaenc').on('click', function () {
     if (contactuid != "") {
         var _stsel = $('#icbStatus option:selected').val();
-        if (_stsel == "0") {
-            alert('Selecione um Status para Encerrar o Atendimento !');
+        var _pilar = $('#iPilar option:selected').val();
+        var _modalidade = $('#iModalidade option:selected').val();
+        var _cpf = $("#iCPF").val();
+        if (_stsel == "0" || _pilar == "" || _modalidade == "" || _cpf == "") {
+            alert('Preencha todos os campos abaixo para Encerrar o Atendimento !');
         } else {
             console.log('Emmit');
             socket.emit('bi-find_register', {
