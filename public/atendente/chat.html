@@ -270,16 +270,29 @@
     <div class="page-messages-container box m-a-0 bg-transparent position-static">
       <div class="box-row">
 
-        <div id="contactbar" class="panel-heading"
+        <div id="contactbar" class="ubcPriorGrid"
           style="border-style: solid; border-width: 1px; border-color: #e2e2e2; background-color: #3D4A5D; color: #FFF">
 
-          <span class="panel-title">Receptivo</span>
+          <div>
+            <span class="">Receptivo</span>
+          </div>
 
-          <div id="atendenv" class="box-cell pull-right" style="width: 170px; border-style: none;">
-            <a id="nvatend" class="btn btn-block btn-primary">
-              <span class="btn btn-primary btn-label-icon left ion-person-add"></span>Atender Fila
-              <span id="filain" class="badge" style="margin-left:5px ">0</span>
-            </a>
+          <div>
+            <div id="atendePrior" class="box-cell pull-right" style="width: 170px; border-style: none; display: none">
+              <a id="nvatendPrior" class="btn btn-warning" style="width: 170px;">
+                <span class="btn btn-warning btn-label-icon left ion-person-add"></span>Prioritarios
+                <span id="filaPrior" class="badge">0</span>
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <div id="atendenv" class="box-cell pull-right" style="width: 170px; border-style: none;">
+              <a id="nvatend" class="btn btn-primary" style="width: 170px;">
+                <span class="btn btn-primary btn-label-icon left ion-person-add"></span>Atender Fila
+                <span id="filain" class="badge">0</span>
+              </a>
+            </div>
           </div>
 
         </div>
@@ -730,6 +743,27 @@
       </div>
     </div>
 
+    <div id="modalInput" class="modal fade modal-alert modal-info">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #008a7c; border-color: #008a7c"><i class="fa fa-user"></i>
+          </div>
+          <div class="modal-title">Chamar Aluno</div>
+          <div class="modal-body">
+            <br>
+            <div class="input-group">
+              <span class="input-group-addon">Numero</span>
+              <input id="mobileInput" type="number" class="form-control" maxlength="13">
+            </div>
+            <br>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="insertInput">Chamar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="modalAlert" class="modal fade modal-alert modal-warning">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -825,6 +859,10 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default " data-dismiss="modal">Fechar</button>
+
+            <button id="callOther" type="button" class="btn btn-success " data-dismiss="modal"><span
+                class="ion-person-add"></span>&nbsp;&nbsp;Outro</button>
+
             <button id="callAll" type="button" class="btn btn-primary " data-dismiss="modal"><span
                 class="ion-person-add"></span>&nbsp;&nbsp;Chamar</button>
           </div>
@@ -846,12 +884,38 @@
       </div>
     </div>
 
+    <div id="modalPlataforma" class="modal fade modal-alert modal-warning">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header"><i class="fa ion-alert"></i></div>
+          <div class="modal-title">Aviso</div>
+          <div class="modal-body">Este numero já se encontra cadastrado na Plataforma!</div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-warning" data-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="modalNoMail" class="modal fade modal-alert modal-warning">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header"><i class="fa ion-alert"></i></div>
           <div class="modal-title">Aviso</div>
           <div class="modal-body">Nenhum registro encontrado!</div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-warning" data-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="modalInvalid" class="modal fade modal-alert modal-warning">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header"><i class="fa ion-alert"></i></div>
+          <div class="modal-title">Aviso</div>
+          <div class="modal-body">Numero invalido!</div>
           <div class="modal-footer">
             <button type="button" class="btn btn-warning" data-dismiss="modal">OK</button>
           </div>

@@ -23,6 +23,8 @@ const _mobileUid = "5511999991152@c.us";
 // Function Platforma Ubicua
 require('ubc/tools.js')();
 var dbcc = require('ubc/dbcc.js');
+const { promises } = require('dns');
+const { Promise } = require('q');
 
 var options = {
         key: fs.readFileSync('/etc/letsencrypt/live/ccs.cruzeirodosul-aluno.com.br/privkey.pem'),
@@ -322,6 +324,67 @@ app.get('/api/ubicua/report', function (req, res, next) {
                 }
         }
 });
+
+app.post('/api/smi/recordMsg', function (req, res) {
+        console.log(req.body);
+        let params = [
+                req.body.message.session,
+                req.body.message.uid,
+                req.body.message.name,
+                req.body.message.contact_uid,
+                req.body.message.contact_name,
+                req.body.message.message_dir,
+                req.body.message.message_type,
+                req.body.message.body_text
+        ]
+        dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(UUID(), ?, ?, ?, ?, ?, ?, ?, ?)", params, function (err, result) {
+                if (err) { console.log(err); }
+                log("Novo Registro LOG Inserido", _id);
+        });
+        res.send('ok')
+})
+
+app.post('/api/smi/insertFila', async function (req, res) {
+        console.log(req.body);
+        let mobile = '55' + req.body.message.uid;
+        let ckFila = await findInFila(mobile);
+        let ckAtende = await findInAtende(mobile);
+        var _custom_uid = "";
+        var _message = "Olá, nosso horário de atendimento é das 09:00 as 18:00 de segunda a sexta-feira.\n\nEsse canal é exclusivo para atendimento de rematrícula, retorno ao curso e cancelamento/trancamento.\n\nAguarde enquanto já iremos lhe atender.\n\nPara agilizar, informe RGM, CPF e nome da instituição.";
+
+        dbcc.query("SELECT uuid() as UUID;", function (err, id) { _custom_uid = id[0].UUID; });
+
+        if (ckFila == 1 && ckAtende == 1) {
+                let params = [
+                        '55' + req.body.message.uid,
+                        req.body.message.name,
+                        req.body.message.session
+                ]
+
+                let teste = {
+                        id: _custom_uid,
+                        sessionId: req.body.message.session,
+                        msg: _message,
+                }
+
+                dbcc.query("INSERT INTO db_sanofi_ccs.tab_filain (mobile, name, sessionBot) VALUES(?, ?, ?)", params, function (err, result) {
+                        if (err) { console.log(err); }
+                        log("Novo Registro LOG Inserido", _id);
+                });
+
+                request.post({ url: 'https://dashboard-homolog.ubicuacloud.com.br/cruzeiro_m7/api/wsfMsg', form: teste }, function (err, httpResponse, body) {
+                        log("Response SMI Welcome", body);
+                        var _response = body;
+                        if
+                                (_response === 'ok') { }
+                });
+
+                res.send('ok')
+        } else {
+                res.send('erro')
+        }
+})
+
 // API Report Tracking
 app.get('/tracking/api/:dtini/:dtfim', function (req, res) {
 
@@ -388,6 +451,31 @@ app.get('/requests/api/:dtini/:dtfim', function (req, res) {
                         res.statusCode = 401;
                         res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
                         res.end('Sorry! Unauthorized Access.');
+                }
+        }
+});
+
+// API Report Pedidos
+app.get('/requests/api/logins', function (req, res) {
+        var auth = req.headers['authorization'];
+        ////console.log("Authorization Header is: ", auth);
+        if (!auth) {
+                res.statusCode = 401;
+                res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
+                res.end('Sorry! Invalid Authentication.');
+        } else if (auth) {
+
+                var tmp = auth.split(' ');
+                var buf = new Buffer(tmp[1], 'base64');
+                var plain_auth = buf.toString();
+                ////console.log("Decoded Authorization ", plain_auth);
+                var creds = plain_auth.split(':');
+                var username = creds[0];
+                var password = creds[1];
+                if ((username == 'cruzeiro') && (password == 'APsxrRvv4mzX33pB')) {
+                        dbcc.query("SELECT * FROM tab_logins WHERE fkid != '2';", function (err, rows, fields) {
+                                res.send(JSON.stringify(rows));
+                        });
                 }
         }
 });
@@ -477,54 +565,35 @@ io.on('connection', function (socket) {
                 dbcc.query("SELECT uuid() as UUID;", async function (err, id) {
                         var _custom_uid = id[0].UUID;
                         ////console.log("> UUID PRONTO");
-                        let teste = {
-                                infra: _mobileUid,
-                                id: _mobile + '@c.us',
-                                msg: _message,
-                                media: 'chat'
-                        }
-                        request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
-                                ////console.log(teste)
-                                log("Response WABOXAPP", body);
-                                var _response = body;
-                                if (_response === 'ok') {
-                                        dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
-                                                if (result.length > 0) {
-                                                        // Armazenando Log da Conversa
-                                                        var _id = _custom_uid;
-                                                        var _sessionid = result[0].sessionid;
-                                                        var _fromid = result[0].fkto;
-                                                        var _fromname = result[0].fkname;
-                                                        var _toid = result[0].mobile;
-                                                        var _toname = result[0].name;
-                                                        var _msgdir = "o";
-                                                        var _msgtype = _type;
-                                                        var _msgtext = _message;
-                                                        dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
-                                                                log("Novo Registro LOG Inserido", _id);
-                                                        });
+                        dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+                                if (result.length > 0) {
+                                        // Armazenando Log da Conversa
+                                        var _id = _custom_uid;
+                                        var _sessionid = result[0].sessionid;
+                                        var _fromid = result[0].fkto;
+                                        var _fromname = result[0].fkname;
+                                        var _toid = result[0].mobile;
+                                        var _toname = result[0].name;
+                                        var _sessionBot = result[0].sessionBot;
+                                        var _msgdir = "o";
+                                        var _msgtype = _type;
+                                        var _msgtext = _message;
+                                        if (_sessionBot != "" && _sessionBot != null) {
+                                                let teste = {
+                                                        id: _custom_uid,
+                                                        sessionId: _sessionBot,
+                                                        msg: _message,
                                                 }
-                                        });
-                                }
-                        });
-                });
-        });
-
-        socket.on('send_welcome', function (payload) {
-                log("Nova Mensagem Enviada Welcome", payload);
-                var _mobile = payload.mobile;
-                var _type = payload.type;
-                var _sessionid = payload.sessionid;
-                //var _message = payload.message;
-                var _message = "Seja Bem Vindo ao canal de fidelização da Cruzeiro do sul. Nosso horário de atendimento é de segunda a sexta das 09h às 16h (exceto aos feriados)";
-
-                dbcc.query('SELECT training from tab_treinamento where id="c102ba05-422c-11ea-8db1-000c290cc03d"', function (err, result) {
-                        if (err) {
-                                log(err)
-                        } else {
-                                dbcc.query("SELECT uuid() as UUID;", function (err, id) {
-                                        var _custom_uid = id[0].UUID;
-                                        if (_host == "LON") {
+                                                request.post({ url: 'https://dashboard-homolog.ubicuacloud.com.br/cruzeiro_m7/api/wsfMsg', form: teste }, function (err, httpResponse, body) {
+                                                        ////console.log(teste)
+                                                        log("Response SMI", body);
+                                                        var _response = body;
+                                                        if (_response === 'ok') { }
+                                                });
+                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
+                                                        log("Novo Registro LOG Inserido", _id);
+                                                });
+                                        } else {
                                                 let teste = {
                                                         infra: _mobileUid,
                                                         id: _mobile + '@c.us',
@@ -535,20 +604,69 @@ io.on('connection', function (socket) {
                                                         ////console.log(teste)
                                                         log("Response WABOXAPP", body);
                                                         var _response = body;
-                                                        if (_response === 'ok') {
-                                                                // Armazenando Log da Conversa
-                                                                var _id = _custom_uid;
-                                                                var _fromid = 1;
-                                                                var _fromname = "Sistema";
-                                                                var _toid = _mobile;
-                                                                var _msgdir = "o";
-                                                                var _msgtype = _type;
-                                                                var _msgtext = _message;
-                                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, fromid, fromname, toid, msgdir, msgtype, msgtext, sessionid, dt) VALUES(?, ?, ?, ?, ?, ?, ?, ?, TIMESTAMPADD(MINUTE, 1, NOW()))", [_id, _fromid, _fromname, _toid, _msgdir, _msgtype, _msgtext, _sessionid], function (err, result) {
-                                                                        log("Novo Registro LOG Inserido", _id);
-                                                                });
-                                                        }
+                                                        if (_response === 'ok') { }
                                                 });
+                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
+                                                        log("Novo Registro LOG Inserido", _id);
+                                                });
+                                        }
+                                }
+                        });
+
+                });
+        });
+
+        socket.on('send_welcome', function (payload) {
+                log("Nova Mensagem Enviada Welcome", payload);
+                var _mobile = payload.mobile;
+                var _type = payload.type;
+                var _sessionid = payload.sessionid;
+                var _message = "Olá, nosso horário de atendimento é das 09:00 as 18:00 de segunda a sexta-feira.\n\nEsse canal é exclusivo para atendimento de rematrícula, retorno ao curso e cancelamento/trancamento.\n\nAguarde enquanto já iremos lhe atender.\n\nPara agilizar, informe RGM, CPF e nome da instituição.";
+
+                dbcc.query("SELECT * FROM db_sanofi_ccs.tab_filain WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+                        if (result.length > 0) {
+                                var _sessionBot = result[0].sessionBot;
+                                dbcc.query("SELECT uuid() as UUID;", function (err, id) {
+                                        var _custom_uid = id[0].UUID;
+                                        var _id = _custom_uid;
+                                        var _fromid = 1;
+                                        var _fromname = "Sistema";
+                                        var _toid = _mobile;
+                                        var _msgdir = "o";
+                                        var _msgtype = _type;
+                                        var _msgtext = _message;
+
+                                        if (_host == "LON") {
+                                                if (_sessionBot != "" && _sessionBot != null) {
+                                                        let teste = {
+                                                                id: _custom_uid,
+                                                                sessionId: _sessionBot,
+                                                                msg: _message,
+                                                        }
+                                                        request.post({ url: 'https://dashboard-homolog.ubicuacloud.com.br/cruzeiro_m7/api/wsfMsg', form: teste }, function (err, httpResponse, body) {
+                                                                log("Response SMI Welcome", body);
+                                                                var _response = body;
+                                                                if (_response === 'ok') { }
+                                                        });
+                                                        dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
+                                                                log("Novo Registro LOG Inserido", _id);
+                                                        });
+                                                } else {
+                                                        let teste = {
+                                                                infra: _mobileUid,
+                                                                id: _mobile + '@c.us',
+                                                                msg: _message,
+                                                                media: 'chat'
+                                                        }
+                                                        request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                                                                log("Response WABOXAPP Welcome", body);
+                                                                var _response = body;
+                                                                if (_response === 'ok') { }
+                                                        });
+                                                        dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, fromid, fromname, toid, msgdir, msgtype, msgtext, sessionid, dt) VALUES(?, ?, ?, ?, ?, ?, ?, ?, TIMESTAMPADD(MINUTE, 1, NOW()))", [_id, _fromid, _fromname, _toid, _msgdir, _msgtype, _msgtext, _sessionid], function (err, result) {
+                                                                log("Novo Registro LOG Inserido", _id);
+                                                        });
+                                                }
                                         }
                                 });
                         }
@@ -876,12 +994,13 @@ io.on('connection', function (socket) {
                                 var _fkto = result[0].fkto;
                                 var _fkname = result[0].fkname;
                                 var _transfer = result[0].transfer;
-                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer, pilar, modalidade) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _dtat, _name, _account, _photo, _fkto, _fkname, _status, _cnpj, _atendir, _transfer, _pilar, _modalidade], function (err, result) {
+                                var _sessionBot = result[0].sessionBot
+                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer, pilar, modalidade, sessionBot) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _dtat, _name, _account, _photo, _fkto, _fkname, _status, _cnpj, _atendir, _transfer, _pilar, _modalidade, _sessionBot], function (err, result) {
                                         if (err) {
                                                 //console.log(err)
                                         };
                                         dbcc.query("DELETE FROM db_sanofi_ccs.tab_atendein WHERE sessionid=?", [_sessionid]);
-                                        dbcc.query("UPDATE tab_logs SET stread = 1 WHERE fromid = '?';", [_mobile], function (err, result) {
+                                        dbcc.query("UPDATE tab_logs SET stread = 1 WHERE fromid = '?' AND stread = 0;", [_mobile], function (err, result) {
                                                 if (err) {
                                                         //console.log(err)
                                                 };
@@ -944,7 +1063,7 @@ io.on('connection', function (socket) {
 
         socket.on('bi-atendein', function (payload) {
                 log("EVENT: bi-atendein", payload);
-                dbcc.query("SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin", [payload.fkid], function (err, result) {
+                dbcc.query("SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome, A.sessionBot FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin", [payload.fkid], function (err, result) {
                         if (result.length > 0) {
                                 var _contacts = JSON.stringify(result);
                                 var _sessionlist = "";
@@ -953,6 +1072,14 @@ io.on('connection', function (socket) {
                                                 _sessionlist += "'" + result[i].sessionid + "'";
                                         } else {
                                                 _sessionlist += "'" + result[i].sessionid + "',";
+                                        }
+                                }
+                                _sessionlist += ","
+                                for (i = 0; i < result.length; i++) {
+                                        if (result.length - 1 == i) {
+                                                _sessionlist += "'" + result[i].sessionBot + "'";
+                                        } else {
+                                                _sessionlist += "'" + result[i].sessionBot + "',";
                                         }
                                 }
                                 dbcc.query("SELECT sessionid, dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY sessionid, dt;", function (err, result) {
@@ -1078,7 +1205,7 @@ io.on('connection', function (socket) {
         });
 
         socket.on('bi-historyone', function (payload) {
-                dbcc.query("SELECT sessionid, dtin, mobile, account, photo FROM tab_encerrain WHERE sessionid=? ORDER BY dtin DESC LIMIT 1", [payload.sessionid], function (err, result) {
+                dbcc.query("SELECT sessionid, dtin, mobile, account, photo, sessionBot FROM tab_encerrain WHERE sessionid=? ORDER BY dtin DESC LIMIT 1", [payload.sessionid], function (err, result) {
                         if (result.length > 0) {
                                 var _contacts = JSON.stringify(result);
                                 var _sessionlist = "";
@@ -1091,10 +1218,27 @@ io.on('connection', function (socket) {
                                                 _sessionlist += "'" + result[i].sessionid + "',";
                                         }
                                 }
+                                _sessionlist += ","
+                                for (i = 0; i < result.length; i++) {
+                                        if (result.length - 1 == i) {
+                                                //console.log('opa');
+                                                _sessionlist += "'" + result[i].sessionBot + "'";
+                                        } else {
+                                                _sessionlist += "'" + result[i].sessionBot + "',";
+                                        }
+                                }
                                 ////console.log("SESSIONLIST [" + _sessionlist + "]");
                                 dbcc.query("SELECT a.sessionid, DATE_ADD(a.dt, INTERVAL 3 HOUR) as dt, a.fromname, a.msgdir, a.msgtype, a.msgtext, a.msgurl, a.msgcaption FROM tab_logs AS a WHERE a.sessionid IN (" + _sessionlist + ") ORDER BY a.dt;", function (err, result) {
-                                        var _logs = JSON.stringify(result);
-                                        socket.emit('bi-historyone', { contacts: _contacts, logs: _logs });
+                                        if (result.length > 0) {
+                                                var _logs = JSON.stringify(result);
+                                                socket.emit('bi-historyone', { contacts: _contacts, logs: _logs });
+                                        } else {
+                                                dbcc.query("SELECT a.sessionid, DATE_ADD(a.dt, INTERVAL 3 HOUR) as dt, a.fromname, a.msgdir, a.msgtype, a.msgtext, a.msgurl, a.msgcaption FROM tab_logs_old AS a WHERE a.sessionid IN (" + _sessionlist + ") ORDER BY a.dt;", function (err, result) {
+                                                        var _logs = JSON.stringify(result);
+                                                        socket.emit('bi-historyone', { contacts: _contacts, logs: _logs });
+                                                });
+                                        }
+
                                 });
                         }
                 });
@@ -1104,7 +1248,7 @@ io.on('connection', function (socket) {
 
                 ////console.log('Request Last History, Mobile: ' + payload.mobile + '...');
                 ////console.log(payload);
-                dbcc.query("SELECT sessionid, dtin, mobile, account, photo FROM tab_encerrain WHERE mobile=? AND dtin BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() + INTERVAL 1 DAY ORDER BY dtin DESC", [payload.mobile], function (err, result) {
+                dbcc.query("SELECT sessionid, dtin, mobile, account, photo, sessionBot FROM tab_encerrain WHERE mobile=? AND dtin BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() + INTERVAL 1 DAY ORDER BY dtin DESC", [payload.mobile], function (err, result) {
                         if (result.length > 0) {
                                 var _contacts = JSON.stringify(result);
                                 var _sessionlist = "";
@@ -1117,10 +1261,26 @@ io.on('connection', function (socket) {
                                                 _sessionlist += "'" + result[i].sessionid + "',";
                                         }
                                 }
+                                _sessionlist += ","
+                                for (i = 0; i < result.length; i++) {
+                                        if (result.length - 1 == i) {
+                                                //console.log('opa');
+                                                _sessionlist += "'" + result[i].sessionBot + "'";
+                                        } else {
+                                                _sessionlist += "'" + result[i].sessionBot + "',";
+                                        }
+                                }
                                 ////console.log("SESSIONLIST [" + _sessionlist + "]");
                                 dbcc.query("SELECT sessionid, dt, fromname, msgdir, msgtype, msgtext, msgurl, msgcaption FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY dt;", function (err, result) {
-                                        var _logs = JSON.stringify(result);
-                                        socket.emit('bi-lasthistory', { contacts: _contacts, logs: _logs });
+                                        if (result.length > 0) {
+                                                var _logs = JSON.stringify(result);
+                                                socket.emit('bi-lasthistory', { contacts: _contacts, logs: _logs });
+                                        } else {
+                                                dbcc.query("SELECT sessionid, dt, fromname, msgdir, msgtype, msgtext, msgurl, msgcaption FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY dt;", function (err, result) {
+                                                        var _logs = JSON.stringify(result);
+                                                        socket.emit('bi-lasthistory', { contacts: _contacts, logs: _logs });
+                                                });
+                                        }
                                 });
                         } else {
                                 socket.emit('bi-lasthistory', { contacts: [], logs: [] });
@@ -1179,6 +1339,77 @@ io.on('connection', function (socket) {
                                         }
                                         var payload = { url: "https://ccs.cruzeirodosul-aluno.com.br/supervisor/report/" + _namexlsx };
                                         socket.emit('bi-report1toxlsx', payload);
+                                });
+                        }
+                });
+        });
+
+        socket.on('bi-loginstoxlsx', function (payload) {
+                ////console.log('Request Report 1 to XLSX, Parameters: ' + payload.params + '...');
+                var qry = "SELECT fkid, fkname, date, DATE_FORMAT(DATE, '%d/%m/%Y %H:%m:%s') AS dateForm FROM tab_logins WHERE fkid != '2' " + payload + " GROUP BY fkid, DATE(DATE);";
+                console.log(qry)
+                dbcc.query(qry, [], function (err, result) {
+                        if (err) {
+                                log("Erro: " + err);
+                        } else {
+                                // Create Worksheet
+                                var workbook = excel.Workbook;
+                                var wb = new workbook();
+                                var ws = wb.addWorksheet('report');
+                                var _line = 2;
+                                var _path = "/home/ubicua/chatcore/public/supervisor/report/";
+                                var _namexlsx = "logins" + Date.now() + ".xlsx";
+                                ws.getCell('A1').value = "Id Operador";
+                                ws.getCell('B1').value = "Operador";
+                                ws.getCell('C1').value = "Data";
+                                ws.getCell('D1').value = "Login";
+                                ws.getCell('E1').value = "Logout";
+                                ws.getCell('F1').value = "Qtd Logouts";
+                                // Data
+                                var _sessionlast;
+                                // Async
+                                foreachasync(result, async function (element, index) {
+
+                                        // Get more Info
+                                        let minLogin, maxLogout, contLogout;
+                                        let infoArr = await getLoginsInfo(element.fkid, element.date)
+                                        console.log(infoArr);
+                                        // Remove RowDataPacket Part1
+                                        if (infoArr[0].length > 0) { minLogin = infoArr[0][0] } else { minLogin = { 'data': '' } }
+                                        if (infoArr[1].length > 0) { maxLogout = infoArr[1][0] } else { maxLogout = { 'data': '' } }
+                                        if (infoArr[2].length > 0) { contLogout = infoArr[2][0] } else { contLogout = { 'cont': '' } }
+                                        // Remove RowDataPacket Part2
+                                        minLogin = JSON.stringify(minLogin)
+                                        maxLogout = JSON.stringify(maxLogout)
+                                        contLogout = JSON.stringify(contLogout)
+                                        // Remove RowDataPacket Part3
+                                        minLogin = JSON.parse(minLogin)
+                                        maxLogout = JSON.parse(maxLogout)
+                                        contLogout = JSON.parse(contLogout)
+
+                                        // Add Elements
+                                        if (minLogin) { element.minLogin = minLogin.data } else { element.minLogin = "" }
+                                        if (maxLogout) { element.maxLogout = maxLogout.data } else { element.maxLogout = "" }
+                                        if (contLogout) { element.contLogout = contLogout.cont } else { element.contLogout = "" }
+
+                                        // Create Excel
+                                        ws.getCell('A' + _line).value = element.fkid;
+                                        ws.getCell('B' + _line).value = element.fkname;
+                                        ws.getCell('C' + _line).value = element.dateForm;
+                                        ws.getCell('D' + _line).value = element.minLogin;
+                                        ws.getCell('E' + _line).value = element.maxLogout;
+                                        ws.getCell('F' + _line).value = element.contLogout;
+
+                                        _line = _line + 1;
+
+                                }).then(function () {
+                                        try {
+                                                wb.xlsx.writeFile(_path + _namexlsx).then(function () { });
+                                        } catch (err) {
+                                                log("Error writing to file ", err);
+                                        }
+                                        var payload = { url: "https://ccs.cruzeirodosul-aluno.com.br/supervisor/report/" + _namexlsx };
+                                        socket.emit('bi-loginstoxlsx', payload);
                                 });
                         }
                 });
@@ -1296,8 +1527,8 @@ io.on('connection', function (socket) {
 
                 var _fkto = payload.fkid;
                 var _fkname = payload.fkname;
-                ////console.log(payload);
-                dbcc.query('SELECT mobile, dtin, account, photo FROM tab_filain WHERE status=1 ORDER BY dtin LIMIT 1;', [], function (err, result) {
+                console.log(payload);
+                dbcc.query('SELECT mobile, dtin, account, photo, sessionBot FROM tab_filain WHERE status=1 ORDER BY dtin LIMIT 1;', [], async function (err, result) {
                         if (err) {
                                 log(err);
                         } else {
@@ -1307,23 +1538,32 @@ io.on('connection', function (socket) {
                                 var _photo = result[0].photo;
                                 var _atendir = result[0].atendir;
                                 var _fonte = result[0].fonte;
-                                dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
-                                        if (result.length == 0) {
-                                                dbcc.query("UPDATE tab_filain SET status=2 WHERE mobile=" + _mobile);
-                                                dbcc.query("SELECT uuid() as UUID;", function (err, id) {
-                                                        var _sessionid = id[0].UUID;
-                                                        dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname) VALUES(?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname], function (err, result) {
-                                                                if (err) {
-                                                                        log("Erro ao Encaminhar Usuário para Atendimento, Erro: " + err);
-                                                                } else {
-                                                                        dbcc.query("DELETE FROM tab_filain WHERE mobile=" + _mobile);
-                                                                        payload = { sessionid: _sessionid, mobile: _mobile, account: _account, photo: _photo, atendir: _atendir, fonte: _fonte };
-                                                                        socket.emit('bi-answer_new_queue', payload);
-                                                                }
-                                                        });
-                                                });
-                                        }
-                                });
+                                var _sessionBot = result[0].sessionBot;
+                                await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _fonte, _sessionBot)
+                                socket.emit('bi-answer_new_queue', payload);
+
+                        }
+                });
+        });
+
+        socket.on('bi-answer_new_prior', function (payload) {
+
+                var _fkto = payload.fkid;
+                var _fkname = payload.fkname;
+                console.log(payload);
+                dbcc.query('SELECT mobile, dtin, account, photo, _sessionBot FROM tab_filain WHERE status=7 ORDER BY dtin LIMIT 1;', [], async function (err, result) {
+                        if (err) {
+                                log(err);
+                        } else {
+                                var _mobile = result[0].mobile;
+                                var _dtin = result[0].dtin;
+                                var _account = result[0].account;
+                                var _photo = result[0].photo;
+                                var _atendir = result[0].atendir;
+                                var _fonte = result[0].fonte;
+                                await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _fonte, _sessionBot)
+                                socket.emit('bi-answer_new_prior', payload);
+
                         }
                 });
         });
@@ -1365,14 +1605,14 @@ io.on('connection', function (socket) {
                                 if (payload.message_type == "chat") {
                                         dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
                                                 if (err) {
-                                                        //console.log(err)
+                                                        console.log(err)
                                                 }
                                                 log("Novo Registro LOG Inserido", _id);
                                         });
                                 } else {
                                         dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgurl, _msgcaption], function (err, result) {
                                                 if (err) {
-                                                        //console.log(err)
+                                                        console.log(err)
                                                 }
                                                 log("Novo Registro LOG Inserido", _id);
                                         });
@@ -1516,7 +1756,7 @@ io.on('connection', function (socket) {
         });
 
         // when the client emits 'add user', this listens and executes
-        socket.on('add user', function (payload) {
+        socket.on('add user', async function (payload) {
                 if (addedUser) return;
 
                 ////console.log('>>>>>>>>>>>>>>>>>\n');
@@ -1528,6 +1768,8 @@ io.on('connection', function (socket) {
                 socket.fkip = socket.handshake.address;
                 socket.fkstatus = 'Online';
                 log('USUARIO CONECTADO: ' + payload.fkname);
+                log('LOGIN REG: ' + socket.fkid)
+                await insertLogReg(socket.fkid, socket.fkname, 'login')
                 ++numUsers;
                 addedUser = true;
                 socket.emit('login', {
@@ -1564,9 +1806,11 @@ io.on('connection', function (socket) {
         });
 
         // when the user disconnects.. perform this
-        socket.on('disconnect', function () {
+        socket.on('disconnect', async function () {
                 if (addedUser) {
                         --numUsers;
+                        log('LOGOUT REG: ' + socket.fkid)
+                        await insertLogReg(socket.fkid, socket.fkname, 'logout')
                         //chatcore.deleteOne({ userid: socket.id}, function(err, result){
                         //        ////console.log('Usuario Descontecou: ' + socket.username);
                         //});
@@ -1701,6 +1945,65 @@ io.on('connection', function (socket) {
                 }
         });
 
+        socket.on('bi-callinput', function (payload) {
+                var _fkto = payload.fkid;
+                var _fkname = payload.fkname;
+                var _mobile = payload.mobile;
+                var _atendir = 'out';
+                var _dtin = getTimestamp();
+                dbcc.query("SELECT * FROM db_sanofi_ccs.tab_filain WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+                        if (result.length == 0) {
+                                dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+                                        if (result.length == 0) {
+                                                dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, fkto, fkname, atendir) VALUES(UUID(), ?, ?, ?, ?, ?)", [_mobile, _dtin, _fkto, _fkname, _atendir],
+                                                        function (err, result) {
+                                                                if (err) {
+                                                                        log("Erro ao Encaminhar Usuario para Atendimento, Erro: " + err);
+                                                                } else {
+                                                                        socket.emit('bi-atendemail', {
+                                                                                status: '200'
+                                                                        });
+                                                                }
+                                                        });
+                                        } else {
+                                                socket.emit('bi-callinput', {
+                                                        status: '400'
+                                                });
+                                        }
+                                });
+                        } else {
+                                socket.emit('bi-callinput', {
+                                        status: '400'
+                                });
+                        }
+                });
+        });
+
+        function getLoginsInfo(fkid, date) {
+                return new Promise(function (resolve, reject) {
+                        let minLogin, maxLogout, contLogouts;
+
+                        // Get Min Login
+                        dbcc.query("SELECT DATE_FORMAT(DATE, '%d/%m/%Y %H:%m:%s') AS data FROM tab_logins WHERE fkid = ? AND STATUS = 'login' AND DATE(DATE) = DATE(?) ORDER BY DATE ASC LIMIT 1; ", [fkid, date], function (err, result1) {
+                                if (err) { console.log(err) }
+                                minLogin = result1
+                                // Get Max Logout
+                                dbcc.query("SELECT DATE_FORMAT(DATE, '%d/%m/%Y %H:%m:%s') AS data FROM tab_logins WHERE fkid = ? AND STATUS = 'logout' AND DATE(DATE) = DATE(?) ORDER BY DATE DESC LIMIT 1; ", [fkid, date], function (err, result2) {
+                                        if (err) { console.log(err) }
+                                        maxLogout = result2
+                                        // Get Count
+                                        dbcc.query("SELECT COUNT(*) as cont FROM tab_logins WHERE fkid = ? AND STATUS = 'logout' AND DATE(DATE) = DATE(?);", [fkid, date], function (err, result3) {
+                                                if (err) { console.log(err) }
+                                                contLogouts = result3
+                                                resolve([minLogin, maxLogout, contLogouts])
+                                        })
+                                })
+                        })
+
+
+                })
+        }
+
         function addAtivoMail(_nome, _rgm_aluno, _cpf, _celular, _filename, _quantidade) {
                 return new Promise(function (resolve, reject) {
                         dbcc.query("SELECT COUNT(*) as resultCount FROM tab_ativo WHERE DATE(dtcadastro) = DATE(NOW());", [], function (err, result) {
@@ -1730,6 +2033,44 @@ io.on('connection', function (socket) {
                                         socket.emit('maillimite', 'MAX');
                                 }
                         });
+                })
+        }
+
+        function insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _fonte, _sessionBot) {
+                return new Promise(function (resolve, reject) {
+                        dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+                                if (err) throw err
+                                if (result.length == 0) {
+                                        dbcc.query("UPDATE tab_filain SET status=2 WHERE mobile=" + _mobile, function (err, id) {
+                                                if (err) throw err
+                                        });
+                                        dbcc.query("SELECT UUID() AS UUID;", [], function (err, result) {
+                                                var _sessionid = result[0].UUID;
+                                                dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname, _sessionBot], function (err, result) {
+                                                        console.log(result)
+                                                        if (err) {
+                                                                log("Erro ao Encaminhar Usuário para Atendimento, Erro: " + err);
+                                                        } else {
+                                                                dbcc.query("DELETE FROM tab_filain WHERE mobile=" + _mobile);
+                                                                payload = { sessionid: _sessionid, mobile: _mobile, account: _account, photo: _photo, atendir: _atendir, fonte: _fonte };
+                                                                resolve(payload)
+                                                        }
+                                                });
+                                        })
+                                }
+                        });
+                })
+        }
+
+        function insertLogReg(id, nome, status) {
+                return new Promise(function (resolve, reject) {
+                        dbcc.query("INSERT INTO db_sanofi_ccs.tab_logins (id,fkid,fkname,status) VALUES (UUID(), ?, ?, ?)", [id, nome, status], function (err, result) {
+                                if (err) {
+                                        console.log(err)
+                                } else {
+                                        resolve('200')
+                                }
+                        })
                 })
         }
 
@@ -1763,6 +2104,32 @@ function onalive(fkid) {
                 });
         });
 
+}
+
+function findInFila(mobile) {
+        return new Promise(function (resolve, reject) {
+                dbcc.query("SELECT * FROM tab_filain WHERE mobile = ?;", [mobile], function (err, result) {
+                        if (err) { console.log(err) }
+                        if (result.length > 0) {
+                                resolve(0)
+                        } else {
+                                resolve(1)
+                        }
+                });
+        })
+}
+
+function findInAtende(mobile) {
+        return new Promise(function (resolve, reject) {
+                dbcc.query("SELECT * FROM tab_atendein WHERE mobile = ?;", [mobile], function (err, result) {
+                        if (err) { console.log(err) }
+                        if (result.length > 0) {
+                                resolve(0)
+                        } else {
+                                resolve(1)
+                        }
+                });
+        })
 }
 
 server.listen(port, function () {

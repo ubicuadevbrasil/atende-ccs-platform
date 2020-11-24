@@ -35,12 +35,12 @@ if (sessionStorage.getItem('fkname') == null) {
 }
 
 socket.on('connect', function () {
-    console.log('------------------------CONECTADO-----CONECTADO------------------------------------');
+    //console.log('------------------------CONECTADO-----CONECTADO------------------------------------');
     socket.emit('bi-atendein', { fkid: sessionStorage.getItem('fkid') });
 });
 
 socket.on('disconnect', function () {
-    console.log('------------------------DESCONECTADO-----DESCONECTADO------------------------------');
+    //console.log('------------------------DESCONECTADO-----DESCONECTADO------------------------------');
 });
 
 socket.on("force_disconnect", function () {
@@ -53,18 +53,20 @@ socket.on("get_cliInfo", function (payload) {
     $("#iPilarTx").val(payload.pilar)
     $("#iModalidadeTx").val(payload.modalidade)
     $('#myModalInfo').modal();
-    console.log(payload)
+    //console.log(payload)
 });
 
 socket.on('sentinel_clients_queue', function (payload) {
     var json = payload;
-    console.log(payload);
+    //console.log(payload);
     if (payload[1].total > 0) {
         var audio = new Audio('assets/aud/tethys.mp3');
-        audio.play();
+        //audio.play();
     }
     $('#filain').text(payload[1].total);
+    $('#filaPrior').text(payload[5].total);
     $('#nvatend').removeClass('form-loading');
+    $('#nvatendPrior').removeClass('form-loading');
 });
 
 socket.on('bi-close_chat', function (payload) {
@@ -153,27 +155,64 @@ socket.on('receive_register', function (payload) {
     }
 });
 
-socket.on('bi-answer_new_queue', function (payload) {
-
+socket.on('bi-answer_new_queue', async function (payload) {
+    //console.log(payload)
     idcontato = idcontato + 1;
     var numac = payload.mobile;
     var atendir;
     console.log(payload);
     console.log('', payload.mobile, payload.account, payload.photo, 'ion-reply', 'color:red', '', '', '', payload.fonte);
-    var menu = modalpis('', payload.mobile, payload.account, payload.photo, 'ion-reply', 'color:red', '', '', '', '', payload.fonte);
-    $('#ulConversation').append(menu);
-    var menu2 = '';
-    menu2 += chatbox1(payload.mobile);
-    if (document.getElementById("chat" + payload.mobile) == null) {
-        $('#chat11').append(menu2);
-    }
-    if (payload.account != null) {
-        $('#ac' + numac).show();
+    if (payload.mobile != null) {
+        var menu = modalpis('', payload.mobile, payload.account, payload.photo, 'ion-reply', 'color:red', '', '', '', '', payload.fonte);
+        $('#ulConversation').append(menu);
+        var menu2 = '';
+        menu2 += chatbox1(payload.mobile);
+        if (document.getElementById("chat" + payload.mobile) == null) {
+            $('#chat11').append(menu2);
+        }
+        if (payload.account != null) {
+            $('#ac' + numac).show();
+        } else {
+            $('#ac' + numac).hide();
+        }
+        console.log('SLEEP ATIVADO');
+        await sleep(2000)
+        console.log('SLEEP DESATIVADO');
+        socket.emit('bi-atendein', { fkid: sessionStorage.getItem('fkid') });
     } else {
-        $('#ac' + numac).hide();
+        console.log('SLEEP ATIVADO');
+        await sleep(2000)
+        console.log('SLEEP DESATIVADO');
+        socket.emit('bi-atendein', { fkid: sessionStorage.getItem('fkid') });
     }
 
-    socket.emit('bi-atendein', { fkid: sessionStorage.getItem('fkid') });
+});
+
+socket.on('bi-answer_new_prior', function (payload) {
+    //console.log(payload)
+    idcontato = idcontato + 1;
+    var numac = payload.mobile;
+    var atendir;
+    //console.log(payload);
+    //console.log('', payload.mobile, payload.account, payload.photo, 'ion-reply', 'color:red', '', '', '', payload.fonte);
+    if (payload.mobile != null) {
+        var menu = modalpis('', payload.mobile, payload.account, payload.photo, 'ion-reply', 'color:red', '', '', '', '', payload.fonte);
+        $('#ulConversation').append(menu);
+        var menu2 = '';
+        menu2 += chatbox1(payload.mobile);
+        if (document.getElementById("chat" + payload.mobile) == null) {
+            $('#chat11').append(menu2);
+        }
+        if (payload.account != null) {
+            $('#ac' + numac).show();
+        } else {
+            $('#ac' + numac).hide();
+        }
+
+        socket.emit('bi-atendein', { fkid: sessionStorage.getItem('fkid') });
+    } else {
+        socket.emit('bi-atendein', { fkid: sessionStorage.getItem('fkid') });
+    }
 
 });
 
@@ -264,7 +303,7 @@ socket.on('bi-statusen', function (payload) {
 });
 
 socket.on('bi-lasthistory', function (payload) {
-    console.log(payload)
+    //console.log(payload)
     if (payload.contacts.length != 0) {
         var logs = JSON.parse(payload.logs);
         var contacts = JSON.parse(payload.contacts);
@@ -368,7 +407,7 @@ socket.on('receive_chat', function (payload) {
             $('#chat' + contact_uid).append(menu);
             pageScroll();
             var notifica = $('#s' + contact_uid).text();
-            console.log(notifica);
+            //console.log(notifica);
             notifica = Number(notifica) + 1;
             $('#s' + contact_uid).text(notifica);
             $('#s' + contact_uid).fadeIn(1);
@@ -378,7 +417,7 @@ socket.on('receive_chat', function (payload) {
             $('#chat' + contact_uid).append(menu);
             pageScroll();
             var notifica = $('#s' + contact_uid).text();
-            console.log(notifica);
+            //console.log(notifica);
             notifica = Number(notifica) + 1;
             $('#s' + contact_uid).text(notifica);
             $('#s' + contact_uid).fadeIn(1);
@@ -391,7 +430,7 @@ socket.on('receive_chat', function (payload) {
         $('#chat' + contact_uid).append(menu);
         pageScroll();
         var notifica = $('#s' + contact_uid).text();
-        console.log(notifica);
+        //console.log(notifica);
         notifica = Number(notifica) + 1;
         $('#s' + contact_uid).text(notifica);
         $('#s' + contact_uid).fadeIn(1);
@@ -408,7 +447,7 @@ socket.on('receive_chat', function (payload) {
             pageScroll();
 
             var notifica = $('#s' + contact_uid).text();
-            console.log(notifica);
+            //console.log(notifica);
             notifica = Number(notifica) + 1;
             $('#s' + contact_uid).text(notifica);
             $('#s' + contact_uid).fadeIn(1);
@@ -420,7 +459,7 @@ socket.on('receive_chat', function (payload) {
             pageScroll();
 
             var notifica = $('#s' + contact_uid).text();
-            console.log(notifica);
+            //console.log(notifica);
             notifica = Number(notifica) + 1;
             $('#s' + contact_uid).text(notifica);
             $('#s' + contact_uid).fadeIn(1);
@@ -436,7 +475,7 @@ socket.on('receive_chat', function (payload) {
             $('#chat' + contact_uid).append(menu);
             pageScroll();
             var notifica = $('#s' + contact_uid).text();
-            console.log(notifica);
+            //console.log(notifica);
             notifica = Number(notifica) + 1;
             $('#s' + contact_uid).text(notifica);
             $('#s' + contact_uid).fadeIn(1);
@@ -446,7 +485,7 @@ socket.on('receive_chat', function (payload) {
             $('#chat' + contact_uid).append(menu);
             pageScroll();
             var notifica = $('#s' + contact_uid).text();
-            console.log(notifica);
+            //console.log(notifica);
             notifica = Number(notifica) + 1;
             $('#s' + contact_uid).text(notifica);
             $('#s' + contact_uid).fadeIn(1);
@@ -465,7 +504,7 @@ socket.on('bi-mailativo', function (payload) {
             var row = [data[i].nome, data[i].rgm_aluno, data[i].cpf, data[i].mobile, callBtn]
             dataSet.push(row);
         }
-        console.log(dataSet);
+        //console.log(dataSet);
         $('#table_id').dataTable({
             "destroy": true,
             "autoWidth": true,
@@ -511,7 +550,7 @@ socket.on('bi-mailativo', function (payload) {
 });
 
 socket.on("bi-atendemail", function (payload) {
-    console.log(payload);
+    //console.log(payload);
     if (payload.status == '200') {
         socket.emit('bi-atendein', { fkid: sessionStorage.getItem('fkid') });
     } else {
@@ -519,8 +558,17 @@ socket.on("bi-atendemail", function (payload) {
     }
 });
 
+socket.on("bi-callinput", function (payload) {
+    //console.log(payload);
+    if (payload.status == '200') {
+        socket.emit('bi-atendein', { fkid: sessionStorage.getItem('fkid') });
+    } else {
+        $("#modalPlataforma").modal("toggle")
+    }
+});
+
 socket.on('bi-find_register', function (payload) {
-    console.log(payload);
+    //console.log(payload);
     if (payload.name == null) {
         $('#modalAlertTitle').text('Aviso');
         $('#modalAlertText').text('Cadastre o Nome e Sobrenome do Cliente!');
@@ -602,12 +650,12 @@ function onbtnlogout() {
 
 function uplimg() {
     var file = inseririmg.files[0];
-    console.log(">>>> Enviando novo img...");
-    console.log("name : " + file.name);
-    console.log("size : " + file.size);
-    console.log("type : " + file.type);
-    console.log("date : " + file.lastModified);
-    console.log("");
+    //console.log(">>>> Enviando novo img...");
+    //console.log("name : " + file.name);
+    //console.log("size : " + file.size);
+    //console.log("type : " + file.type);
+    //console.log("date : " + file.lastModified);
+    //console.log("");
     uploadFileimg(inseririmg.files[0]);
 
 }
@@ -621,7 +669,7 @@ async function uploadFileimg(file) {
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
             // Every thing ok, file uploaded
-            console.log(xhr.responseText); // handle response.
+            //console.log(xhr.responseText); // handle response.
             hashimg = xhr.responseText;
             reshashimg = JSON.parse(hashimg);
             finhashimg = reshashimg.hashfile;
@@ -634,7 +682,7 @@ async function uploadFileimg(file) {
                 myMedia: loadBase64(finhashimg)
             }
 
-            console.log(imgtx);
+            //console.log(imgtx);
             socket.emit('send_media', imgtx);
 
             $('#modalloading').removeClass('form-loading');
@@ -682,7 +730,7 @@ function delPedido(data) {
 
 function tableJson() {
     var table = $('#myTable').tableToJSON({ onlyColumns: [0, 1, 2] });
-    console.log(table);
+    //console.log(table);
     return table;
 }
 
@@ -727,12 +775,12 @@ function addClientToAll(mobile) {
 
 function uplvid() {
     var file = inserirvid.files[0];
-    console.log(">>>> Enviando novo video...");
-    console.log("name : " + file.name);
-    console.log("size : " + file.size);
-    console.log("type : " + file.type);
-    console.log("date : " + file.lastModified);
-    console.log("");
+    //console.log(">>>> Enviando novo video...");
+    //console.log("name : " + file.name);
+    //console.log("size : " + file.size);
+    //console.log("type : " + file.type);
+    //console.log("date : " + file.lastModified);
+    //console.log("");
     uploadFilevid(inserirvid.files[0]);
 
 }
@@ -746,7 +794,7 @@ function uploadFilevid(file) {
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
             // Every thing ok, file uploaded
-            console.log(xhr.responseText); // handle response.
+            //console.log(xhr.responseText); // handle response.
             hashvid = xhr.responseText;
             reshashvid = JSON.parse(hashvid);
             finhashvid = reshashvid.hashfile;
@@ -759,7 +807,7 @@ function uploadFilevid(file) {
                 myMedia: loadBase64(finhashvid)
             }
 
-            console.log(vidtx);
+            //console.log(vidtx);
             socket.emit('send_media', vidtx);
 
             $('#modalloading').removeClass('form-loading');
@@ -793,12 +841,12 @@ function uploadFilevid(file) {
 
 function uplaudio() {
     var file = inseriraudio.files[0];
-    console.log(">>>> Enviando novo audio...");
-    console.log("name : " + file.name);
-    console.log("size : " + file.size);
-    console.log("type : " + file.type);
-    console.log("date : " + file.lastModified);
-    console.log("");
+    //console.log(">>>> Enviando novo audio...");
+    //console.log("name : " + file.name);
+    //console.log("size : " + file.size);
+    //console.log("type : " + file.type);
+    //console.log("date : " + file.lastModified);
+    //console.log("");
     uploadFileaudio(inseriraudio.files[0]);
 
 }
@@ -812,7 +860,7 @@ function uploadFileaudio(file) {
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
             // Every thing ok, file uploaded
-            console.log(xhr.responseText); // handle response.
+            //console.log(xhr.responseText); // handle response.
             hashaudio = xhr.responseText;
             reshashaudio = JSON.parse(hashaudio);
             finhashaudio = reshashaudio.hashfile;
@@ -825,7 +873,7 @@ function uploadFileaudio(file) {
                 myMedia: loadBase64(finhashaudio)
             }
 
-            console.log(audiotx);
+            //console.log(audiotx);
             socket.emit('send_media', audiotx);
 
             $('#modalloading').removeClass('form-loading');
@@ -859,13 +907,13 @@ function uploadFileaudio(file) {
 
 function upldoc() {
     var file = inserirdoc.files[0];
-    console.log(">>>> Enviando novo doc...");
-    console.log("name : " + file.name);
+    //console.log(">>>> Enviando novo doc...");
+    //console.log("name : " + file.name);
     nomedoc = file.name;
-    console.log("size : " + file.size);
-    console.log("type : " + file.type);
-    console.log("date : " + file.lastModified);
-    console.log("");
+    //console.log("size : " + file.size);
+    //console.log("type : " + file.type);
+    //console.log("date : " + file.lastModified);
+    //console.log("");
     uploadFiledoc(inserirdoc.files[0]);
 
 }
@@ -879,7 +927,7 @@ function uploadFiledoc(file) {
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
             // Every thing ok, file uploaded
-            console.log(xhr.responseText); // handle response.
+            //console.log(xhr.responseText); // handle response.
             hashdoc = xhr.responseText;
             reshashdoc = JSON.parse(hashdoc);
             finhashdoc = reshashdoc.hashfile;
@@ -892,7 +940,7 @@ function uploadFiledoc(file) {
                 myMedia: loadBase64(finhashdoc)
             }
 
-            console.log(doctx);
+            //console.log(doctx);
             socket.emit('send_media', doctx);
 
             $('#modalloading').removeClass('form-loading');
@@ -924,6 +972,10 @@ function uploadFiledoc(file) {
     $('#inserirdoc').val('');
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 $("#btnlogout").on("click", function () {
     onbtnlogout();
 });
@@ -946,6 +998,20 @@ $("#nvatend").on("click", function () {
         $('#myModal').modal();
     }
 });
+
+$("#nvatendPrior").on("click", function () {
+    var _filain = $('#filaPrior').text();
+    if (_filain > 0) {
+        payload = {
+            fkid: sessionStorage.getItem('fkid'),
+            fkname: sessionStorage.getItem('fkname')
+        };
+        socket.emit('bi-answer_new_prior', payload);
+        $('#nvatendPrior').addClass('form-loading');
+    } else {
+        $('#myModal').modal();
+    }
+})
 
 $("#sendmsgtxt").on("click", function () {
 
@@ -1009,12 +1075,12 @@ $('#btncadastro').on('click', function () {
                 if (result == null) {
                     alert('Registro Cancelado');
                 } else if (result != null) {
-                    console.log(result);
+                    //console.log(result);
                     var json2 = {
                         mobile: contactuid,
                         name: result
                     }
-                    console.log(json2);
+                    //console.log(json2);
                     socket.emit('send_register', json2);
                 }
             },
@@ -1101,9 +1167,29 @@ $('#btnencerrar').on('click', function () {
 
 });
 
+$('#callOther').on('click', function () {
+    $('#modalInput').modal()
+})
+
+$('#insertInput').on('click', function () {
+    let mobile = $('#mobileInput').val();
+    if ((mobile.length == 12) || (mobile.length == 13)) {
+        var payload = {
+            fkid: sessionStorage.getItem('fkid'),
+            fkname: sessionStorage.getItem('fkname'),
+            mobile: mobile
+        };
+        $("#modalInput").modal("hide")
+        $('#mobileInput').val('');
+        socket.emit('bi-callinput', payload);
+    } else {
+        $("#modalInvalid").modal();
+    }
+})
+
 $("#btn").on("click", function () {
 
-    console.log('opa');
+    //console.log('opa');
     $("#ulConversation").html(
 
         $("#ulConversation").children("li").sort(function (a, b) {
@@ -1117,46 +1203,46 @@ $("#btn").on("click", function () {
 });
 
 $('#inseririmg').change(function () {
-    console.log('bate');
+    //console.log('bate');
     var file = this.files[0];
     // This code is only for demo ...
-    console.log("name : " + file.name);
-    console.log("size : " + file.size);
-    console.log("type : " + file.type);
-    console.log("date : " + file.lastModified);
+    //console.log("name : " + file.name);
+    //console.log("size : " + file.size);
+    //console.log("type : " + file.type);
+    //console.log("date : " + file.lastModified);
     uplimg();
 });
 
 $('#inserirvid').change(function () {
-    console.log('bate');
+    //console.log('bate');
     var file = this.files[0];
     // This code is only for demo ...
-    console.log("name : " + file.name);
-    console.log("size : " + file.size);
-    console.log("type : " + file.type);
-    console.log("date : " + file.lastModified);
+    //console.log("name : " + file.name);
+    //console.log("size : " + file.size);
+    //console.log("type : " + file.type);
+    //console.log("date : " + file.lastModified);
     uplvid();
 });
 
 $('#inseriraudio').change(function () {
-    console.log('bate');
+    //console.log('bate');
     var file = this.files[0];
     // This code is only for demo ...
-    console.log("name : " + file.name);
-    console.log("size : " + file.size);
-    console.log("type : " + file.type);
-    console.log("date : " + file.lastModified);
+    //console.log("name : " + file.name);
+    //console.log("size : " + file.size);
+    //console.log("type : " + file.type);
+    //console.log("date : " + file.lastModified);
     uplaudio();
 });
 
 $('#inserirdoc').change(function () {
-    console.log('bate');
+    //console.log('bate');
     var file = this.files[0];
     // This code is only for demo ...
-    console.log("name : " + file.name);
-    console.log("size : " + file.size);
-    console.log("type : " + file.type);
-    console.log("date : " + file.lastModified);
+    //console.log("name : " + file.name);
+    //console.log("size : " + file.size);
+    //console.log("type : " + file.type);
+    //console.log("date : " + file.lastModified);
     upldoc();
 });
 
@@ -1211,7 +1297,7 @@ $('#confirmaenc').on('click', function () {
         if (_stsel == "0" || _pilar == "" || _modalidade == "" || _cpf == "") {
             alert('Preencha todos os campos abaixo para Encerrar o Atendimento !');
         } else {
-            console.log('Emmit');
+            //console.log('Emmit');
             socket.emit('bi-find_register', {
                 "mobile": contactuid
             });

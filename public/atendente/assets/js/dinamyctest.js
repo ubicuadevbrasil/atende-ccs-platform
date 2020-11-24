@@ -9,8 +9,12 @@ function modalpis(info, mobile, account, imageuser, atendir, atendircolor, direc
     }
     texto += "<div class='widget-followers-controls'>";
     texto += "<span id='s" + mobile + "' class='badge badge-primary' style='margin-right:5px'>" + info + "</span>";
-    texto += "<a id='ac" + mobile + "'href='#' class='btn btn-sm btn-success'>";
-    texto += "<i class='" + atendir + "'></i>" + account + "";
+    texto += "<a id='ac" + mobile + "'href='#' class='btn btn-sm btn-warning' style='margin-right:1vw'>";
+    if (account == "prior") {
+        texto += "<i class=''></i>P";
+    } else {
+        texto += "<i class=''></i>" + account + "";
+    }
     texto += "</a>";
     texto += "<i id='reply" + mobile + "' class='" + atendir + "' style='font-size:25px; " + atendircolor + "'></i>";
     texto += "</div>";
@@ -322,11 +326,15 @@ function previewdoctxr(pvdoc, caption, lname, ltime, ldate) {
 
 
 function conversor_remessa(data) {
-
+    console.log(data);
     var dateTime = new Date(data);
+    console.log(dateTime);
     var minutos = dateTime.getMinutes();
     var horas = dateTime.getHours();
     var segundos = dateTime.getSeconds();
+
+    horas = horas + 3
+
     if (horas < 10) {
         horas = "0" + horas;
     }

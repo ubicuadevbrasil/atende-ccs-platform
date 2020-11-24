@@ -25,7 +25,7 @@ rtserver = None
 ## Methods SocketIO
 @sio.on('connect')
 def on_connect():
-    #print(str(datetime.now()) + " >> Conectado ao RT Ubicua Platform !")
+    print(str(datetime.now()) + " >> Conectado ao RT Ubicua Platform !")
     syslog.syslog(">> Conectado ao RT Ubicua Platform !")
     data = {}
     data['fkid']   = "2"
@@ -74,26 +74,15 @@ def sentinel_newmessages():
                 qryC = "SELECT * FROM db_sanofi_ccs.tab_filain WHERE mobile='" + _mobile + "'  LIMIT 1;"
                 curC.execute(qryC)
                 if ( curC.rowcount == 0 ):
-                    #print(str(datetime.now()) + " >> Mobile Não Encontrado, Inserir na Fila e Notificar o Usuário: " + _mobile)
-                    qryD = "SELECT name, account, photo FROM db_sanofi_ccs.tab_profiles WHERE mobile='" + _mobile + "' LIMIT 1;"
+                    print(str(datetime.now()) + " >> Mobile Não Encontrado, Inserir na Fila e Notificar o Usuário: " + _mobile)
+                    qryD = "SELECT mobile FROM db_sanofi_ccs.tab_prior WHERE mobile='" + _mobile + "' LIMIT 1;"
                     curD.execute(qryD)
                     if ( curD.rowcount == 1 ):
-                        for profile in curD:
-                            _account = profile[1]
-                            _photo   = profile[2]
-                            if ( _account == "True" ):
-                                _account = "B"
-                            else:
-                                _account = "P"
-                        qryE = "INSERT INTO db_sanofi_ccs.tab_filain (mobile, account, photo, name) VALUES(" + _mobile + ", '" + _account + "', '" + _photo + "', '" + _name + "');"
+                        qryE = "INSERT INTO db_sanofi_ccs.tab_filain (mobile, account, status) VALUES(" + _mobile + ", 'prior', '7');"
                         curE.execute(qryE)
                     else:
-                        if ( _uid == "CHAT" ):
-                            qryE = "INSERT INTO db_sanofi_ccs.tab_filain (mobile, account, name) VALUES(" + _mobile + ", 'C', '" + _name + "');"
-                            curE.execute(qryE)
-                        else:
-                            qryE = "INSERT INTO db_sanofi_ccs.tab_filain (mobile, name) VALUES(" + _mobile + ", '" + _name + "');"
-                            curE.execute(qryE)
+                        qryE = "INSERT INTO db_sanofi_ccs.tab_filain (mobile) VALUES(" + _mobile + ");"
+                        curE.execute(qryE)
                     # Enviando mensagem Welcome, se UID <> CHAT
                     if ( _uid != "CHAT" ):
                         payload = {}
@@ -101,7 +90,7 @@ def sentinel_newmessages():
                         payload["type"] = "chat"
                         sio.emit("send_welcome", payload)
             else:
-                #print(str(datetime.now()) + " >> Mobile em Atendimento, Dispara Mensagem para Atendente: " + _mobile)
+                print(str(datetime.now()) + " >> Mobile em Atendimento, Dispara Mensagem para Atendente: " + _mobile)
                 for inat in curB:
                     _sessionid = inat[0]
                     _fkto      = inat[1]
@@ -145,7 +134,7 @@ def persistence_dbcc():
         curD = dbcc.cursor(buffered=True)
         global curE
         curE = dbcc.cursor()
-        #print(str(datetime.now()) + " >> Conectado no Banco de Dados MariaDB/MySQL....")
+        print(str(datetime.now()) + " >> Conectado no Banco de Dados MariaDB/MySQL....")
         qry = "SELECT rtserver FROM db_sanofi_ccs.tab_config WHERE id=1;"
         cursor.execute(qry)
         for result in cursor:

@@ -56,12 +56,12 @@ function histmsg(contacts, logs) {
   var lx = logs.length;
   for (a = 0; a < lx; a++) {
     for (i = 0; i < cx; i++) {
-      if (contacts[i].sessionid == logs[a].sessionid) {
+      if ((contacts[i].sessionid == logs[a].sessionid) || (contacts[i].sessionBot == logs[a].sessionid)) {
         if (logs[a].msgdir === 'i') {
           if (logs[a].msgtype === 'chat') {
             var btime2 = conversor_remessa(logs[a].dt);
             var menu = '';
-            menu += msgtxtl(logs[a].msgtext, contacts[i].mobile);
+            menu += msgtxtl(logs[a].msgtext, contacts[i].mobile, btime2);
             $('#chat' + contacts[i].mobile).append(menu);
           } else if (logs[a].msgtype === 'image') {
             var btime2 = conversor_remessa(logs[a].dt);
@@ -118,7 +118,7 @@ function histmsg(contacts, logs) {
           if (logs[a].msgtype === 'chat') {
             var btime2 = conversor_remessa(logs[a].dt);
             var menu = '';
-            menu += msgtxtr(logs[a].msgtext, logs[a].fromname);
+            menu += msgtxtr(logs[a].msgtext, logs[a].fromname, btime2);
             $('#chat' + contacts[i].mobile).append(menu);
           } else if (logs[a].msgtype === 'transfer') {
             var btime2 = conversor_remessa(logs[a].dt);

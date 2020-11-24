@@ -4,6 +4,7 @@ var contg;
 var globalqry
 var globalqry2 = "";
 var globalqry3 = "";
+var globalqry4 = "";
 var ida = 0;
 var idcontato = 0;
 var json;
@@ -117,6 +118,13 @@ socket.on('bi-report1', function (payload) {
 });
 
 socket.on('bi-report1toxlsx', function (payload) {
+    document.getElementById("modaltitle4").href = payload.url;
+    $('#modalubc2').modal();
+});
+
+socket.on('bi-loginstoxlsx', function (payload) {
+    console.log('Receive Socket');
+    $('#btnLogins').removeClass('form-loading');
     document.getElementById("modaltitle4").href = payload.url;
     $('#modalubc2').modal();
 });
@@ -373,6 +381,22 @@ $('#btnexcel').on('click', function () {
     //console.log(toExcelParams);
 
     tableToExcel(toExcelParams);
+});
+
+$('#btnLogins').on('click', function () {
+    console.log('Call Socket');
+    $('#btnLogins').addClass('form-loading');
+
+    var str = $('#daterange-1').val();
+
+    if (str != "") {
+        globalqry4 = onformataperiodo(str);
+        globalqry4 = globalqry4.replace("a.dtin", " AND date ")
+        socket.emit('bi-loginstoxlsx', globalqry4);
+    } else {
+        $('#btnLogins').removeClass('form-loading');
+        alert("Periodo de Data não selecionado")
+    }
 });
 
 $('#confirmaenc').on('click', function () {
