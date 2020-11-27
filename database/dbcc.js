@@ -1,6 +1,6 @@
 // Ubicua Plataform - MYSQL Module
 try {
-    var mysql_npm = require('../mysql');
+    var mysql_npm = require('mysql');
 } catch (err) {
     console.log("Cannot find `mysql` module. Is it installed ? Try `npm install mysql` or `npm install`.");
 }
@@ -8,6 +8,7 @@ try {
 //-
 //- Connection configuration
 //-
+
 var db_config = {
     host: 'localhost',
     user: 'admin',
@@ -19,8 +20,8 @@ var db_config = {
 //-
 //- Create the connection variable
 //-
-var connection = mysql_npm.createPool(db_config);
 
+var connection = mysql_npm.createPool(db_config);
 
 //-
 //- Establish a new connection

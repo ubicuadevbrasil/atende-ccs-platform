@@ -1,5 +1,16 @@
 function modalpis(info, mobile, account, imageuser, atendir, atendircolor, direction, tipo, cnpj, flagcamp) {
     //console.log(info, mobile, account, imageuser, atendir, atendircolor, direction, tipo, cnpj, flagcamp, origem);
+    let tipoAluno
+    if (flagcamp == '1' || flagcamp == 1) {
+        tipoAluno = 'Retorno ao curso'
+    } else if (flagcamp == '2' || flagcamp == 2) {
+        tipoAluno = 'Rematrícula'
+    } else if (flagcamp == '3' || flagcamp == 3) {
+        tipoAluno = 'Cancelamento ou trancamento'
+    } else {
+        tipoAluno = mobile
+    }
+
     var texto = "<li id='id" + mobile + "' class='onhoverli'>";
     texto += "<div id='sid" + mobile + "' class='widget-followers-item onhoverli' onclick='openbox1(" + mobile + ")'>";
     if (direction == "foward") {
@@ -22,7 +33,7 @@ function modalpis(info, mobile, account, imageuser, atendir, atendircolor, direc
     texto += "<a href='#' class='widget-followers-name'>" + mobile + "</a>";
 
 
-    texto += "<a id='a" + mobile + "' href='#' class='widget-followers-username'>" + mobile + "</a>";
+    texto += "<a id='a" + mobile + "' href='#' class='widget-followers-username'>" + tipoAluno + "</a>";
     texto += "</div>";
     texto += "</li>";
     return texto;

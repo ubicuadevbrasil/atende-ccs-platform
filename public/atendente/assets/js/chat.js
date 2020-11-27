@@ -58,13 +58,17 @@ socket.on("get_cliInfo", function (payload) {
 
 socket.on('sentinel_clients_queue', function (payload) {
     var json = payload;
+    let filaPrior = 0;
+    let filaNorm = 0;
+    if (payload.length > 5) { filaPrior = payload[5].total }
+    if (payload.length > 1) { filaNorm = payload[1].total }
     //console.log(payload);
     if (payload[1].total > 0) {
         var audio = new Audio('assets/aud/tethys.mp3');
         //audio.play();
     }
-    $('#filain').text(payload[1].total);
-    $('#filaPrior').text(payload[5].total);
+    $('#filain').text(filaNorm);
+    $('#filaPrior').text(filaPrior);
     $('#nvatend').removeClass('form-loading');
     $('#nvatendPrior').removeClass('form-loading');
 });
@@ -226,7 +230,7 @@ socket.on('bi-atendein', function (payload) {
         var cx = contacts.length;
         var lx = logs.length;
         for (i = 0; i < cx; i++) {
-            var _flagcamp = contacts[i].flagcampanha;
+            var _flagcamp = contacts[i].optAtendimento;
             var _cnpj = contacts[i].cnpj;
             var _tipo = contacts[i].tipo;
             var atendir;

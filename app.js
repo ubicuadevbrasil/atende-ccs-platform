@@ -1,8 +1,12 @@
+// Setup ENV
+const dotenv = require('dotenv')
+dotenv.config()
 // Setup Chat Core Ubicua Cloud Platform
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const md5 = require('md5');
+const { v4: uuidv4 } = require('uuid');
 const bodyparser = require('body-parser');
 const cors = require('cors');
 const request = require('request');
@@ -17,18 +21,18 @@ process.env.TZ = 'Brazil/brt';
 //console.log(process.env)
 
 // Constantes
-const cdn = "https://cdn.ubicuacloud.com/file/";
-const _mobileUid = "5511999991152@c.us";
+const cdn = process.env.CCS_CDN_FILE;
+const _mobileUid = process.env.CCS_MOBILE
 
 // Function Platforma Ubicua
-require('ubc/tools.js')();
-var dbcc = require('ubc/dbcc.js');
+require('./database/tools')();
+var dbcc = require('./database/dbcc');
 const { promises } = require('dns');
 const { Promise } = require('q');
 
 var options = {
-        key: fs.readFileSync('/etc/letsencrypt/live/ccs.cruzeirodosul-aluno.com.br/privkey.pem'),
-        cert: fs.readFileSync('/etc/letsencrypt/live/ccs.cruzeirodosul-aluno.com.br/fullchain.pem')
+        key: fs.readFileSync(process.env.CCS_OPTIONSKEY),
+        cert: fs.readFileSync(process.env.CCS_OPTIONSCERT)
 };
 
 // Config App Express
@@ -46,7 +50,7 @@ app.use(cors());
 
 app.get('/', function (req, res) {
         if (req.hostname == "falecomacruzeiro.com.br") {
-                res.redirect('https://wa.me/5511999991152')
+                res.redirect('https://wa.me/' + String(process.env.CCS_MOBILE).replace("@c.us"))
         } else {
                 res.redirect('/atendente')
         }
@@ -493,7 +497,7 @@ function onrefusegroup(admin) {
                         msg: _message,
                         media: 'chat'
                 }
-                request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
                 });
         });
 }
@@ -546,7 +550,7 @@ io.on('connection', function (socket) {
                                 msg: _message,
                                 media: 'chat'
                         }
-                        request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                        request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
                                 ////console.log(teste)
                                 log("Response WABOXAPP", body);
                                 var _response = body;
@@ -575,16 +579,17 @@ io.on('connection', function (socket) {
                                         var _toid = result[0].mobile;
                                         var _toname = result[0].name;
                                         var _sessionBot = result[0].sessionBot;
+                                        var _origem = result[0].origem
                                         var _msgdir = "o";
                                         var _msgtype = _type;
                                         var _msgtext = _message;
-                                        if (_sessionBot != "" && _sessionBot != null) {
+                                        if (_sessionBot != "" && _sessionBot != null && _origem == "smi") {
                                                 let teste = {
                                                         id: _custom_uid,
                                                         sessionId: _sessionBot,
                                                         msg: _message,
                                                 }
-                                                request.post({ url: 'https://dashboard-homolog.ubicuacloud.com.br/cruzeiro_m7/api/wsfMsg', form: teste }, function (err, httpResponse, body) {
+                                                request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
                                                         ////console.log(teste)
                                                         log("Response SMI", body);
                                                         var _response = body;
@@ -600,7 +605,7 @@ io.on('connection', function (socket) {
                                                         msg: _message,
                                                         media: 'chat'
                                                 }
-                                                request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                                                request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
                                                         ////console.log(teste)
                                                         log("Response WABOXAPP", body);
                                                         var _response = body;
@@ -658,7 +663,7 @@ io.on('connection', function (socket) {
                                                                 msg: _message,
                                                                 media: 'chat'
                                                         }
-                                                        request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                                                        request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
                                                                 log("Response WABOXAPP Welcome", body);
                                                                 var _response = body;
                                                                 if (_response === 'ok') { }
@@ -671,6 +676,101 @@ io.on('connection', function (socket) {
                                 });
                         }
                 });
+        });
+
+        socket.on('bot_answer', async function (payload) {
+                console.log(payload)
+                var _sessionBot = payload.sessionBot;
+                var _toname = payload.name
+                var _toid = payload.mobile;
+                var _origem = payload.origem
+                var _msgtext = payload.response
+                var _fromid = String(_mobileUid).replace("@c.us", "")
+                var _fromname = "bot";
+                var _msgdir = "o";
+                var _msgtype = "chat";
+
+                if (_sessionBot != "" && _sessionBot != null && _origem == "smi") {
+                        for (let i = 0; i < _msgtext.length; i++) {
+                                let _id = uuidv4();
+                                let element = _msgtext[i];
+
+                                let formDataSMI = {
+                                        id: _custom_uid,
+                                        sessionId: _sessionBot,
+                                        msg: _message,
+                                }
+
+                                let messageReq = await sendMessageSMI(formDataSMI, _id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element)
+                        }
+
+                } else {
+                        console.log('Envio Pro Zap');
+                        for (let i = 0; i < _msgtext.length; i++) {
+                                let _id = uuidv4();
+                                let element = _msgtext[i];
+
+                                let formDataWPP = {
+                                        infra: _mobileUid,
+                                        id: _toid + '@c.us',
+                                        msg: element,
+                                        media: 'chat'
+                                }
+                                console.log(formDataWPP);
+                                let messageReq = await sendMessageWPP(formDataWPP, _id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element)
+                        }
+                }
+
+
+                function sendMessageWPP(formData, _id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element) {
+                        return new Promise((resolve, reject) => {
+                                setTimeout(() => {
+                                        request.post({ url: process.env.CCS_EXTENSION, form: formData }, function (err, httpResponse, body) {
+                                                if (err) { console.log(err) }
+
+                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element], function (err, result) {
+                                                        if (err) { console.log(err) }
+                                                        log("SendmessageWPP - Novo Registro LOG Inserido", _id);
+                                                        // dbcc.query("UPDATE db_sanofi_ccs.tab_waboxappin SET status=1 WHERE id=?", [_id]);
+
+                                                        resolve({ httpResponse, body, result })
+                                                });
+                                        })
+                                }, 1000);
+                        })
+                }
+
+                function sendMessageSMI(formDataSMI, _id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element) {
+                        return new Promise((resolve, reject) => {
+                                request.post({ url: 'https://dashboard-homolog.ubicuacloud.com.br/cruzeiro_m7/api/wsfMsg', form: teste }, function (err, httpResponse, body) {
+                                        ////console.log(teste)
+                                        log("Response SMI", body);
+                                        var _response = body;
+                                        if (_response === 'ok') {
+                                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionBot, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, element], function (err, result) {
+                                                        log("SendmessageSMI - Novo Registro LOG Inserido", _id);
+                                                        resolve(result)
+                                                });
+                                        }
+                                });
+
+                        })
+                }
+        });
+
+        socket.on('timeout_bot', function (payload) {
+                var _mobile = payload.mobile
+
+                let formData = {
+                        infra: _mobileUid,
+                        id: _mobile + '@c.us',
+                        msg: payload.timeout_response,
+                        media: 'chat'
+                }
+
+                request.post({ url: ubcExtensionUrl, form: formData }, function (err, httpResponse, body) {
+                        log("Timeout fila", payload.sessionBot);
+                })
         });
 
         socket.on('send_timeout', function (payload) {
@@ -693,7 +793,7 @@ io.on('connection', function (socket) {
                                                         msg: _message,
                                                         media: 'chat'
                                                 }
-                                                request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                                                request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
                                                         ////console.log(teste)
                                                         log("Response WABOXAPP", body);
                                                         var _response = body;
@@ -880,7 +980,7 @@ io.on('connection', function (socket) {
                                                 media: 'chat',
                                         }
                                 }
-                                request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                                request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
                                         ////console.log(teste)
                                         log("Response WABOXAPP", body);
                                         var _response = body;
@@ -935,7 +1035,7 @@ io.on('connection', function (socket) {
 
         function loadBase64(hashFile, fileType) {
                 return new Promise(function (resolve, reject) {
-                        request.get({ url: "https://cdn.ubicuacloud.com/base64/" + hashFile }, function (err, httpResponse, body) {
+                        request.get({ url: process.env.CCS_CDN_BASE + hashFile }, function (err, httpResponse, body) {
                                 if (err) {
                                         //console.log(err)
                                         //reject(err)
@@ -995,7 +1095,8 @@ io.on('connection', function (socket) {
                                 var _fkname = result[0].fkname;
                                 var _transfer = result[0].transfer;
                                 var _sessionBot = result[0].sessionBot
-                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer, pilar, modalidade, sessionBot) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _dtat, _name, _account, _photo, _fkto, _fkname, _status, _cnpj, _atendir, _transfer, _pilar, _modalidade, _sessionBot], function (err, result) {
+                                var _optAtendimento = result[0].optAtendimento
+                                dbcc.query("INSERT INTO db_sanofi_ccs.tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer, pilar, modalidade, sessionBot, optAtendimento) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _dtat, _name, _account, _photo, _fkto, _fkname, _status, _cnpj, _atendir, _transfer, _pilar, _modalidade, _sessionBot, _optAtendimento], function (err, result) {
                                         if (err) {
                                                 //console.log(err)
                                         };
@@ -1063,7 +1164,7 @@ io.on('connection', function (socket) {
 
         socket.on('bi-atendein', function (payload) {
                 log("EVENT: bi-atendein", payload);
-                dbcc.query("SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome, A.sessionBot FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin", [payload.fkid], function (err, result) {
+                dbcc.query("SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome, A.sessionBot, A.optAtendimento FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin", [payload.fkid], function (err, result) {
                         if (result.length > 0) {
                                 var _contacts = JSON.stringify(result);
                                 var _sessionlist = "";
@@ -1528,7 +1629,7 @@ io.on('connection', function (socket) {
                 var _fkto = payload.fkid;
                 var _fkname = payload.fkname;
                 console.log(payload);
-                dbcc.query('SELECT mobile, dtin, account, photo, sessionBot FROM tab_filain WHERE status=1 ORDER BY dtin LIMIT 1;', [], async function (err, result) {
+                dbcc.query('SELECT mobile, dtin, account, photo, sessionBot, intent, optAtendimento FROM tab_filain WHERE status=1 ORDER BY dtin LIMIT 1;', [], async function (err, result) {
                         if (err) {
                                 log(err);
                         } else {
@@ -1539,7 +1640,9 @@ io.on('connection', function (socket) {
                                 var _atendir = result[0].atendir;
                                 var _fonte = result[0].fonte;
                                 var _sessionBot = result[0].sessionBot;
-                                await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _fonte, _sessionBot)
+                                var _optAtendimento = result[0].optAtendimento;
+
+                                await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _fonte, _sessionBot, _optAtendimento)
                                 socket.emit('bi-answer_new_queue', payload);
 
                         }
@@ -1551,7 +1654,7 @@ io.on('connection', function (socket) {
                 var _fkto = payload.fkid;
                 var _fkname = payload.fkname;
                 console.log(payload);
-                dbcc.query('SELECT mobile, dtin, account, photo, _sessionBot FROM tab_filain WHERE status=7 ORDER BY dtin LIMIT 1;', [], async function (err, result) {
+                dbcc.query('SELECT mobile, dtin, account, photo, sessionBot, intent, optAtendimento FROM tab_filain WHERE status=7 ORDER BY dtin LIMIT 1;', [], async function (err, result) {
                         if (err) {
                                 log(err);
                         } else {
@@ -1561,7 +1664,9 @@ io.on('connection', function (socket) {
                                 var _photo = result[0].photo;
                                 var _atendir = result[0].atendir;
                                 var _fonte = result[0].fonte;
-                                await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _fonte, _sessionBot)
+                                var _sessionBot = result[0].sessionBot;
+                                var _optAtendimento = result[0].optAtendimento;
+                                await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _fonte, _sessionBot, _optAtendimento)
                                 socket.emit('bi-answer_new_prior', payload);
 
                         }
@@ -1852,7 +1957,7 @@ io.on('connection', function (socket) {
                                 media: 'chat'
                         }
                         if (_host == "LON") {
-                                request.post({ url: 'https://extensao.ubicuacloud.com.br/client', form: teste }, function (err, httpResponse, body) {
+                                request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
                                         ////console.log(teste)
                                         log("Response WABOXAPP", body);
                                 });
@@ -2036,7 +2141,7 @@ io.on('connection', function (socket) {
                 })
         }
 
-        function insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _fonte, _sessionBot) {
+        function insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _fonte, _sessionBot, _optAtendimento) {
                 return new Promise(function (resolve, reject) {
                         dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
                                 if (err) throw err
@@ -2046,7 +2151,7 @@ io.on('connection', function (socket) {
                                         });
                                         dbcc.query("SELECT UUID() AS UUID;", [], function (err, result) {
                                                 var _sessionid = result[0].UUID;
-                                                dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname, _sessionBot], function (err, result) {
+                                                dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot, optAtendimento) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname, _sessionBot, _optAtendimento], function (err, result) {
                                                         console.log(result)
                                                         if (err) {
                                                                 log("Erro ao Encaminhar Usuário para Atendimento, Erro: " + err);
