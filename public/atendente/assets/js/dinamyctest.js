@@ -40,7 +40,7 @@ function modalpis(info, mobile, account, imageuser, atendir, atendircolor, direc
 }
 
 function chatbox1(numcl) {
-    var msg = "<div id='chat" + numcl + "'' style='display: none'>";
+    var msg = "<div id='chat" + numcl + "' style='display: none'>";
     msg += "</div>";
     return (msg);
 }

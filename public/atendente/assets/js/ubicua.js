@@ -53,6 +53,9 @@ $(document).ready(function () {
 function histmsg(contacts, logs) {
 
   var cx = contacts.length;
+  for (i = 0; i < contacts.length; i++) {
+    $('#chat' + contacts[i].mobile).empty();
+  }
   var lx = logs.length;
   for (a = 0; a < lx; a++) {
     for (i = 0; i < cx; i++) {
@@ -176,7 +179,7 @@ function histmsg(contacts, logs) {
             }
           }
         }
-      } else { }
+      }
     }
   }
 }

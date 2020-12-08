@@ -24,7 +24,6 @@ rtserver = None
 
 # Methods SocketIO
 
-
 @sio.on('connect')
 def on_connect():
     print(str(datetime.now()) + " >> Conectado ao RT Ubicua Platform !")
@@ -37,21 +36,17 @@ def on_connect():
 
 # Schedules
 
-
 def sentinel_monitor():
     reportmsg = "**** Status Report ****\nMobile: 5511995518459 \nCPU: " + \
         str(psutil.cpu_percent()) + "% \nMemory: " + \
         str(psutil.virtual_memory().percent) + "% \nBattery: 100%"
     #sio.emit('sentinel_monitor', reportmsg)
 
-
 def sentinel_waendpoint():
     sio.emit('sentinel_waendpoint')
 
-
 def sentinel_clientsqueue():
     sio.emit('sentinel_clients_queue')
-
 
 def selUuid():
     sql = "SELECT UUID();"
@@ -63,8 +58,8 @@ def selUuid():
 def botAnswer(id, origem, intent, sessionBot, name, mobile, messagetype, bodytext, bodyurl, bodycaption):
     try:
         intents = {
-            "welcome": ["Olá, nosso horário de atendimento é das 09:00 as 18:00 de segunda a sexta-feira.\n\nEsse canal é exclusivo para atendimento de rematrícula, retorno ao curso e cancelamento/trancamento.\n\nAguarde enquanto já iremos lhe atender.\n\nPara agilizar, informe RGM, CPF e nome da instituição.", "Para darmos continuidade ao seu atendimento, por favor escolha o motivo do seu contato. Informe 1, 2 ou 3\n1 - Retorno ao curso\n2 - Rematrícula\n3 - Cancelamento ou trancamento"],
-            "select-opt": ["Você será atendido por um de nossos representantes, por favor aguarde"],
+            "welcome": ["Olá, nosso horário de atendimento é das 09h00 às 18h00 de segunda a sexta-feira.", "Para darmos continuidade ao seu atendimento, por favor, escolha o motivo do seu contato. Informe 1,2 ou 3:\n1 - Retorno ao curso\n2 - Rematrícula\n3 - Cancelamento ou trancamento"],
+            "select-opt": ["Você será atendido por um de nossos representantes. Para agilizar, informe seu RGM, CPF e nome da instituição."],
             "opt-fallback": ["Você digitou uma opção inválida, por favor escolha uma das 3 opções informadas."]
         }
 
@@ -117,11 +112,9 @@ def botAnswer(id, origem, intent, sessionBot, name, mobile, messagetype, bodytex
 def updateBotIntent(sessionBot, intent, selectOpt=None):
     try:
         if selectOpt != None:
-            sql = "UPDATE db_sanofi_ccs.tab_filain SET intent = '{}', optAtendimento = '{}' WHERE sessionBot = '{}';".format(
-                str(intent), str(selectOpt), str(sessionBot))
+            sql = "UPDATE db_sanofi_ccs.tab_filain SET intent = '{}', optAtendimento = '{}' WHERE sessionBot = '{}';".format(str(intent), str(selectOpt), str(sessionBot))
         else:
-            sql = "UPDATE db_sanofi_ccs.tab_filain SET intent = '{}' WHERE sessionBot = '{}';".format(
-                str(intent), str(sessionBot))
+            sql = "UPDATE db_sanofi_ccs.tab_filain SET intent = '{}' WHERE sessionBot = '{}';".format(str(intent), str(sessionBot))
 
         cursor.execute(sql)
 
@@ -133,8 +126,7 @@ def updateBotIntent(sessionBot, intent, selectOpt=None):
 
 def handleBotError(sessionBot, intent, payload):
     try:
-        sql = "SELECT error_count FROM db_sanofi_ccs.tab_filain WHERE sessionBot = '{}';".format(
-            str(sessionBot))
+        sql = "SELECT error_count FROM db_sanofi_ccs.tab_filain WHERE sessionBot = '{}';".format(str(sessionBot))
         cursor.execute(sql)
         error_count = cursor.fetchall()
         print(error_count)
@@ -147,8 +139,7 @@ def handleBotError(sessionBot, intent, payload):
             sio.emit("bot_answer", payload)
 
         else:
-            sql = "UPDATE db_sanofi_ccs.tab_filain SET error_count = (error_count + 1) WHERE sessionBot = '{}';".format(
-                str(sessionBot))
+            sql = "UPDATE db_sanofi_ccs.tab_filain SET error_count = (error_count + 1) WHERE sessionBot = '{}';".format(str(sessionBot))
             cursor.execute(sql)
             sio.emit("bot_answer", payload)
 
@@ -163,13 +154,11 @@ def transbordoBot(sessionBot, mobile):
         qryD = "SELECT mobile FROM db_sanofi_ccs.tab_prior WHERE mobile='" + mobile + "' LIMIT 1;"
         curD.execute(qryD)
         if (curD.rowcount == 1):
-            qryE = "UPDATE db_sanofi_ccs.tab_filain SET status = 7 WHERE sessionBot = '{}';".format(
-                str(sessionBot))
+            qryE = "UPDATE db_sanofi_ccs.tab_filain SET status = 7 WHERE sessionBot = '{}';".format(str(sessionBot))
             curE.execute(qryE)
 
         else:
-            qryE = "UPDATE db_sanofi_ccs.tab_filain SET status = 1 WHERE sessionBot = '{}';".format(
-                str(sessionBot))
+            qryE = "UPDATE db_sanofi_ccs.tab_filain SET status = 1 WHERE sessionBot = '{}';".format(str(sessionBot))
             curE.execute(qryE)
 
         print('> Usuario removido do atendimento bot')
@@ -182,11 +171,13 @@ def transbordoBot(sessionBot, mobile):
 
 def encerraBot(sessionid):
     try:
-        sql = "UPDATE db_sanofi_ccs.tab_filain SET status = 1 WHERE sessionBot = '{}';".format(
-            str(sessionid))
-        cursor.execute(sql)
+        conn = mariadb.connect(host='localhost', user='admin', password='GmtB0kCs*Fic', database='db_sanofi_ccs')
+        conn.autocommit = True
+        cur = conn.cursor(buffered=True)
+        sql = "UPDATE db_sanofi_ccs.tab_filain SET status = '1' WHERE sessionBot = '{}';".format(str(sessionid))
+        cur.execute(sql)
+        conn.close()
         print('> Usuario removido do atendimento bot')
-
     except:
         print(">> encerraBot exception")
         syslog.syslog(">> Exception: " + str(sys.exc_info()))
@@ -196,12 +187,12 @@ def encerraBot(sessionid):
 def timeout_filain():
     try:
         job_sentinel_timeout.pause()
-        conn = mariadb.connect(host='localhost', user='admin',
-                               password='GmtB0kCs*Fic', database='db_sanofi_ccs')
+        conn = mariadb.connect(host='localhost', user='admin', password='GmtB0kCs*Fic', database='db_sanofi_ccs')
         cur = conn.cursor(buffered=True)
         sql = "SELECT mobile, sessionBot, TIMESTAMPDIFF(MINUTE,dtin,NOW()) as tempo, origem, name FROM db_sanofi_ccs.tab_filain where status = 5;"
         cur.execute(sql)
         timeDiff = cur.fetchall()
+        conn.close()
         for time in timeDiff:
             if(time[2] >= 2):
                 encerraBot(time[1])
@@ -252,8 +243,7 @@ def sentinel_newmessages():
             _body_caption = str(rs[7])
             _body_url = str(rs[8])
             #print(str(datetime.now()) + " >> Verificando Se Mobile Está em Atendimento: " + _mobile)
-            qryB = "SELECT sessionid, fkto, fkname, name FROM db_sanofi_ccs.tab_atendein WHERE mobile='" + \
-                _mobile + "' LIMIT 1;"
+            qryB = "SELECT sessionid, fkto, fkname, name FROM db_sanofi_ccs.tab_atendein WHERE mobile='" + _mobile + "' LIMIT 1;"
             curB.execute(qryB)
             if (curB.rowcount == 0):
                 #print(str(datetime.now()) + " >> Mobile Não Esta em Atendimento, Verificando na Fila: " + _mobile)
@@ -261,18 +251,14 @@ def sentinel_newmessages():
                 curC.execute(qryC)
                 resultC = curC.fetchall()
                 if (curC.rowcount == 0):
-                    print(str(datetime.now(
-                    )) + " >> Mobile Não Encontrado, Inserir na Fila e Notificar o Usuário: " + _mobile)
-                    qryD = "SELECT mobile FROM db_sanofi_ccs.tab_prior WHERE mobile='" + \
-                        _mobile + "' LIMIT 1;"
+                    print(str(datetime.now()) + " >> Mobile Não Encontrado, Inserir na Fila e Notificar o Usuário: " + _mobile)
+                    qryD = "SELECT mobile FROM db_sanofi_ccs.tab_prior WHERE mobile='" + _mobile + "' LIMIT 1;"
                     curD.execute(qryD)
                     if (curD.rowcount == 1):
-                        qryE = "INSERT INTO db_sanofi_ccs.tab_filain (mobile, account, status, sessionBot) VALUES(" + \
-                            _mobile + ", 'prior', '5', UUID());"
+                        qryE = "INSERT INTO db_sanofi_ccs.tab_filain (mobile, account, status, sessionBot) VALUES(" + _mobile + ", 'prior', '5', UUID());"
                         curE.execute(qryE)
                     else:
-                        qryE = "INSERT INTO db_sanofi_ccs.tab_filain (mobile, status, sessionBot) VALUES(" + \
-                            _mobile + ", '5', UUID());"
+                        qryE = "INSERT INTO db_sanofi_ccs.tab_filain (mobile, status, sessionBot) VALUES(" + _mobile + ", '5', UUID());"
                         curE.execute(qryE)
                     # Enviando mensagem Welcome, se UID <> CHAT
                     if (_uid != "CHAT"):
@@ -282,30 +268,24 @@ def sentinel_newmessages():
                         # sio.emit("send_welcome", payload)
 
                 elif (resultC[0][5] == 5):
-                    print(str(datetime.now()) +
-                          " >> Mobile em Atendimento com bot: " + _mobile)
+                    print(str(datetime.now()) + " >> Mobile em Atendimento com bot: " + _mobile)
                     print(str(resultC[0]))
                     if _message_type == "chat":
                         qryC = "INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, toname, msgdir, msgtype, msgtext) VALUES(%s, %s, %s, %s, %s, %s, %s)"
-                        paramsC = (
-                            _id, str(resultC[0][6]), _mobile, "bot", "i", _message_type, _body_text)
+                        paramsC = (_id, str(resultC[0][6]), _mobile, "bot", "i", _message_type, _body_text)
                         curC.execute(qryC, paramsC)
 
                     else:
                         qryC = "INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
-                        paramsC = (_id, str(
-                            resultC[0][6]), _mobile, "bot", "i", _message_type, _body_url, _body_caption)
+                        paramsC = (_id, str(resultC[0][6]), _mobile, "bot", "i", _message_type, _body_url, _body_caption)
                         curC.execute(qryC, paramsC)
 
-                    qryC = "UPDATE db_sanofi_ccs.tab_waboxappin SET status=1 WHERE id='{}'".format(
-                        _id)
+                    qryC = "UPDATE db_sanofi_ccs.tab_waboxappin SET status=1 WHERE id='{}'".format(_id)
                     curC.execute(qryC)
-                    botAnswer(_id, str(resultC[0][10]), str(resultC[0][7]), str(resultC[0][6]), str(
-                        resultC[0][4]), _mobile, _message_type, _body_text, _body_url, _body_caption)
+                    botAnswer(_id, str(resultC[0][10]), str(resultC[0][7]), str(resultC[0][6]), str(resultC[0][4]), _mobile, _message_type, _body_text, _body_url, _body_caption)
 
             else:
-                print(str(datetime.now(
-                )) + " >> Mobile em Atendimento, Dispara Mensagem para Atendente: " + _mobile)
+                print(str(datetime.now()) + " >> Mobile em Atendimento, Dispara Mensagem para Atendente: " + _mobile)
                 for inat in curB:
                     _sessionid = inat[0]
                     _fkto = inat[1]
@@ -334,15 +314,13 @@ def sentinel_newmessages():
 
 # Persistences
 
-
 def persistence_dbcc():
     try:
         global dbcc
-        dbcc = mariadb.connect(host='localhost', user='admin',
-                               password='GmtB0kCs*Fic', database='db_sanofi_ccs')
+        dbcc = mariadb.connect(host='localhost', user='admin',password='GmtB0kCs*Fic', database='db_sanofi_ccs')
         dbcc.autocommit = True
         global cursor
-        cursor = dbcc.cursor()
+        cursor = dbcc.cursor(buffered=True)
         global curA
         curA = dbcc.cursor(buffered=True)
         global curB
@@ -352,19 +330,16 @@ def persistence_dbcc():
         global curD
         curD = dbcc.cursor(buffered=True)
         global curE
-        curE = dbcc.cursor()
-        print(str(datetime.now()) +
-              " >> Conectado no Banco de Dados MariaDB/MySQL....")
+        curE = dbcc.cursor(buffered=True)
+        print(str(datetime.now()) + " >> Conectado no Banco de Dados MariaDB/MySQL....")
         qry = "SELECT rtserver FROM db_sanofi_ccs.tab_config WHERE id=1;"
         cursor.execute(qry)
         for result in cursor:
             global rtserver
             rtserver = str(*result)
     except mariadb.Error as err:
-        syslog.syslog(
-            ">> Erro ao Conectar no Banco de Dados MariaDB/MySQL, Erro: " + str(err))
+        syslog.syslog(">> Erro ao Conectar no Banco de Dados MariaDB/MySQL, Erro: " + str(err))
         print(">> Erro ao Conectar no Banco de Dados MariaDB/MySQL, Erro: " + str(err))
-
 
 def persistence_rt():
     try:
@@ -374,21 +349,16 @@ def persistence_rt():
         syslog.syslog(">> Exception: " + str(sys.exc_info()))
         print(sys.exc_info())
 
-
 # Scheduled Task e Started
 sched = BackgroundScheduler()
 sched.start()
 
 # Add Job Scheduled
-job_sentinel_waendpoint = sched.add_job(
-    sentinel_waendpoint, 'interval', seconds=3)
-job_sentinel_clientsqueue = sched.add_job(
-    sentinel_clientsqueue, 'interval', seconds=2)
+job_sentinel_waendpoint = sched.add_job(sentinel_waendpoint, 'interval', seconds=3)
+job_sentinel_clientsqueue = sched.add_job(sentinel_clientsqueue, 'interval', seconds=2)
 job_sentinel_timeout = sched.add_job(timeout_filain, 'interval', seconds=5)
-job_sentinel_newmessage = sched.add_job(
-    sentinel_newmessages, 'interval', seconds=1)
-job_sentinel_monitor = sched.add_job(
-    sentinel_monitor, 'interval', seconds=1800)
+job_sentinel_newmessage = sched.add_job(sentinel_newmessages, 'interval', seconds=1)
+job_sentinel_monitor = sched.add_job(sentinel_monitor, 'interval', seconds=1800)
 
 if __name__ == '__main__':
     try:

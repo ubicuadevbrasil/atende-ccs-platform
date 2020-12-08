@@ -220,7 +220,7 @@ socket.on('bi-answer_new_prior', function (payload) {
 
 });
 
-socket.on('bi-atendein', function (payload) {
+socket.on('bi-atendein', async function (payload) {
 
     console.log(payload);
     if (payload.logs.length > 0 && payload.contacts.length > 0) {
@@ -229,65 +229,9 @@ socket.on('bi-atendein', function (payload) {
         var direction;
         var cx = contacts.length;
         var lx = logs.length;
-        for (i = 0; i < cx; i++) {
-            var _flagcamp = contacts[i].optAtendimento;
-            var _cnpj = contacts[i].cnpj;
-            var _tipo = contacts[i].tipo;
-            var atendir;
-            if (_tipo == 1) {
-                _tipo = "Multi";
-            } else if (_tipo == 2) {
-                _tipo = "Recorrente";
-            }
-            if (contacts[i].atendir == "in") {
-                atendir = "ion-reply";
-                atendircolor = 'color: red';
-                direction = "reply";
-            } else if (contacts[i].atendir == "out") {
-                atendir = "ion-forward";
-                atendircolor = 'color: green';
-                direction = "foward";
-            }
-            $('#chat' + contacts[i].mobile).empty();
 
-            if (contacts[i].account != null) {
-                if (document.getElementById("id" + contacts[i].mobile) == null) {
-                    var menu = '';
-                    menu += modalpis('', contacts[i].mobile, contacts[i].account, contacts[i].photo, atendir, atendircolor, direction, _tipo, _cnpj, _flagcamp);
-                    if (contacts[i].atendir == 'in') {
-                        $('#ulConversation').append(menu);
-                    } else if (contacts[i].atendir == 'out') {
-                        $('#ulConversation2').append(menu);
-                    }
-                }
-                var menu2 = '';
-                menu2 += chatbox1(contacts[i].mobile);
-                if (document.getElementById("chat" + contacts[i].mobile) == null) {
-                    $('#chat11').append(menu2);
-                }
-            } else {
-                if (document.getElementById("id" + contacts[i].mobile) == null) {
-                    var menu = '';
-                    menu += modalpis('', contacts[i].mobile, '', contacts[i].photo, atendir, atendircolor, direction, _tipo, _cnpj, _flagcamp);
-                    if (contacts[i].atendir == 'in') {
-                        $('#ulConversation').append(menu);
-                    } else if (contacts[i].atendir == 'out') {
-                        $('#ulConversation2').append(menu);
-                    }
-                }
-                var menu2 = '';
-                menu2 += chatbox1(contacts[i].mobile);
-                if (document.getElementById("chat" + contacts[i].mobile) == null) {
-                    $('#chat11').append(menu2);
-                }
-            }
+        await prepHist(logs, contacts, direction, cx, lx)
 
-            if (contacts[i].account != null) {
-                $('#ac' + contacts[i].mobile).show();
-            } else {
-                $('#ac' + contacts[i].mobile).hide();
-            }
-        }
         histmsg(contacts, logs);
     }
     socket.emit('add user', { fkid: sessionStorage.getItem('fkid'), fkname: sessionStorage.getItem('fkname') });
@@ -978,6 +922,67 @@ function uploadFiledoc(file) {
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function prepHist(logs, contacts, direction, cx, lx) {
+    return new Promise(function (resolve, reject) {
+        for (i = 0; i < cx; i++) {
+            var _flagcamp = contacts[i].optAtendimento;
+            var _cnpj = contacts[i].cnpj;
+            var _tipo = contacts[i].tipo;
+            var atendir;
+
+            if (_tipo == 1) {
+                _tipo = "Multi";
+            } else if (_tipo == 2) {
+                _tipo = "Recorrente";
+            }
+
+            if (contacts[i].atendir == "in") {
+                atendir = "ion-reply";
+                atendircolor = 'color: red';
+                direction = "reply";
+            } else if (contacts[i].atendir == "out") {
+                atendir = "ion-forward";
+                atendircolor = 'color: green';
+                direction = "foward";
+            }
+
+            $('#chat' + contacts[i].mobile).empty();
+
+            if (contacts[i].account != null) {
+                if (document.getElementById("id" + contacts[i].mobile) == null) {
+                    var menu = modalpis('', contacts[i].mobile, contacts[i].account, contacts[i].photo, atendir, atendircolor, direction, _tipo, _cnpj, _flagcamp);
+                    if (contacts[i].atendir == 'in') {
+                        $('#ulConversation').append(menu);
+                    } else if (contacts[i].atendir == 'out') {
+                        $('#ulConversation2').append(menu);
+                    }
+                }
+            } else {
+                if (document.getElementById("id" + contacts[i].mobile) == null) {
+                    var menu = modalpis('', contacts[i].mobile, '', contacts[i].photo, atendir, atendircolor, direction, _tipo, _cnpj, _flagcamp);
+                    if (contacts[i].atendir == 'in') {
+                        $('#ulConversation').append(menu);
+                    } else if (contacts[i].atendir == 'out') {
+                        $('#ulConversation2').append(menu);
+                    }
+                }
+            }
+
+            var menu2 = chatbox1(contacts[i].mobile);
+            if (document.getElementById("chat" + contacts[i].mobile) == null) {
+                $('#chat11').append(menu2);
+            }
+
+            if (contacts[i].account != null) {
+                $('#ac' + contacts[i].mobile).show();
+            } else {
+                $('#ac' + contacts[i].mobile).hide();
+            }
+        }
+        resolve('ok')
+    })
 }
 
 $("#btnlogout").on("click", function () {
