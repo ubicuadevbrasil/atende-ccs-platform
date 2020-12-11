@@ -3,9 +3,13 @@
 // Ubicua Js
 //
 
-function divatend(perfil, nome, usuario, id, a) {
+function divatend(perfil, nome, usuario, id, a, prierrou, pricancelamento, prirematricula, priretorno) {
     var msg = "<tr id='" + id + "'>";
     msg += "<td><span>" + a + "</span><span id='id" + a + "' style='display:none'>" + id + "</span></td>";
+    msg += "<td style='display:none'><span>" + a + "</span><span id='errou" + a + "' style='display:none'>" + prierrou + "</span></td>";
+    msg += "<td style='display:none'><span>" + a + "</span><span id='cancelamento" + a + "' style='display:none'>" + pricancelamento + "</span></td>";
+    msg += "<td style='display:none'><span>" + a + "</span><span id='rematricula" + a + "' style='display:none'>" + prirematricula + "</span></td>";
+    msg += "<td style='display:none'><span>" + a + "</span><span id='retorno" + a + "' style='display:none'>" + priretorno + "</span></td>";
     msg += "<td><span id='nm" + a + "'>" + nome + "</span></td>";
     msg += "<td><span id='us" + a + "'>" + usuario + "</span></td>";
     msg += "<td><span id='pf" + a + "'>" + perfil + "</span></td>";
@@ -17,6 +21,23 @@ function divatend(perfil, nome, usuario, id, a) {
     msg += "</td>";
     msg += "<td style='padding-left: 1.5vw'> ";
     msg += "<button class='buttonatend' onclick='openbox2(" + a + ")'><i class='fa fa-trash-o'></i></button>";
+    msg += "</td>";
+    msg += "</tr>";
+
+    return (msg);
+}
+
+function divblock(id, fkid, nome, data, a){
+    var dt = new Date(data) 
+    var utcTime = `${dt.getUTCHours()}:${dt.getUTCMinutes()}:${dt.getUTCSeconds()}`
+    var msg = "<tr id='" + id + "'>";
+    msg += "<td><span>" + a + "</span><span id='idunb" + a + "' style='display:none'>" + id + "</span></td>";
+    msg += "<td  style='display:none'><span >" + a + "</span><span id='fkidunb" + a + "' style='display:none'>" + fkid + "</span></td>";
+    msg += "<td><span id='unm" + a + "'>" + nome + "</span></td>";
+    msg += "<td><span id='udt" + a + "'>" + dt.toLocaleDateString() + "</span></td>";
+    msg += "<td><span id='uhr" + a + "'>" + utcTime + "</span></td>";
+    msg += "<td style='padding-left: 1.5vw'> ";
+    msg += "<button class='buttonatend' onclick='openboxU(" + a + ")'><i class='ion-ios-unlocked'></i></button>";
     msg += "</td>";
     msg += "</tr>";
 

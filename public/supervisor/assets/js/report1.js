@@ -123,10 +123,19 @@ socket.on('bi-report1toxlsx', function (payload) {
 });
 
 socket.on('bi-loginstoxlsx', function (payload) {
-    console.log('Receive Socket');
     $('#btnLogins').removeClass('form-loading');
     document.getElementById("modaltitle4").href = payload.url;
     $('#modalubc2').modal();
+});
+
+socket.on('bi-blocktoxls', function (payload) {
+    $('#btnBloqueio').removeClass('form-loading');
+    if (payload.url != "") {
+        document.getElementById("modaltitle4").href = payload.url;
+        $('#modalubc2').modal();
+    } else {
+        alert("Sem dados de bloqueio neste periodo")
+    }
 });
 
 socket.on('bi-historyone', function (payload) {
@@ -364,6 +373,15 @@ function openhist(data) {
     socket.emit('bi-historyone', payload);
 }
 
+function formatDateRange(date) {
+    let dateRange = date.map(date => {
+        let dt = date.split("/")
+        return new Date(`${dt[1]}/${dt[0]}/${dt[2]}`).toISOString()
+    })
+
+    return dateRange
+}
+
 $('#btnbusca').on('click', function () {
     checkNext = "True";
     if ($('#iCEL').val() != "" || $('#iCPF').val() != "" || $('#iNPED').val() != "" || $('#daterange-1').val() != "") {
@@ -395,6 +413,20 @@ $('#btnLogins').on('click', function () {
         socket.emit('bi-loginstoxlsx', globalqry4);
     } else {
         $('#btnLogins').removeClass('form-loading');
+        alert("Periodo de Data não selecionado")
+    }
+});
+
+$('#btnBloqueio').on('click', function () {
+    $('#btnBloqueio').addClass('form-loading');
+    var date_range = $('#daterange-1').val() 
+
+    if (date_range != "") {
+        date_range = formatDateRange(String($('#daterange-1').val()).split("-").map(date => date.trim()));
+        console.log(date_range)
+        socket.emit('bi-blocktoxls', { dt: date_range })
+    } else {
+        $('#btnBloqueio').removeClass('form-loading');
         alert("Periodo de Data não selecionado")
     }
 });

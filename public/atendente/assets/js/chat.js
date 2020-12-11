@@ -575,6 +575,10 @@ socket.on('bi-find_register', function (payload) {
     }
 })
 
+socket.on('bi-usertimeout', function(payload){
+    onbtnlogout();
+});
+
 function createTime(myTime) {
     var date = myTime.split(' ')[0];
     date = date.split('-');
@@ -1336,5 +1340,28 @@ $("#callAll").on("click", function () {
     }
 });
 
+// Encerra timeout
 
+var timeout = setTimeout(function () {
+    console.log("Timeout 2h")
+    var payload = {
+        fkid: sessionStorage.getItem('fkid'),
+        fkname: sessionStorage.getItem('fkname'),
+    };
+    socket.emit('bi-usertimeout', payload);
+}, 7200000);
 
+$(document).on('mousemove', function () {
+    if (timeout !== null) {
+        clearTimeout(timeout);
+    }
+
+    timeout = setTimeout(function () {
+        console.log("Timeout 2h")
+        var payload = {
+            fkid: sessionStorage.getItem('fkid'),
+            fkname: sessionStorage.getItem('fkname'),
+        };
+        socket.emit('bi-usertimeout', payload);
+    }, 7200000);
+});

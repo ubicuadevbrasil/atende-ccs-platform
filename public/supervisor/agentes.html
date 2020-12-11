@@ -168,6 +168,27 @@
           </table>
         </div>
       </div>
+
+      <div class="panel panel-dark">
+        <div class="panel-heading panel-ranger" style="background-color: #d42424;">
+          <span class="panel-title whitetext">Atendentes Bloqueados</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nome do Usuário</th>
+                <th>Data </th>
+                <th>Horario</th>
+                <th>Desbloquear</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyb">
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -283,11 +304,74 @@
             <div><i class="ion-person"></i></div>
             <div><input id='edtuser' type="text" class="page-signup-form-control form-control" placeholder="Usuario">
             </div>
+          </div> <br>
+          <div class="text-xs-center bigtext">
+            <span><i class="ion-clipboard"></i> Prioridades </span>
+          </div> <br>
+          <div class="gridmodal3">
+            <!-- Retorno ao Curso -->
+            <div><i class="ion-information-circled"></i></div>
+            <div><input readonly type="text" class="page-signup-form-control form-control"
+                placeholder="Retorno ao curso"></div>
+            <div><input id='priretorno' onkeydown="return false" type="number" min="1" max="4"
+                class="page-signup-form-control form-control"></div>
+
+            <!-- Rematrícula   -->
+            <div><i class="ion-information-circled"></i></div>
+            <div><input readonly type="text" class="page-signup-form-control form-control" placeholder="Rematrícula">
+            </div>
+            <div><input id='prirematricula' onkeydown="return false" type="number" min="1" max="4"
+                class="page-signup-form-control form-control"></div>
+
+            <!-- Cancelamento/trancamento -->
+            <div><i class="ion-information-circled"></i></div>
+            <div><input readonly type="text" class="page-signup-form-control form-control"
+                placeholder="Cancelamento/trancamento">
+            </div>
+            <div><input id='pricancelamento' onkeydown="return false" type="number" min="1" max="4"
+                class="page-signup-form-control form-control"></div>
+
+            <!-- Errou as opções ou não respondeu -->
+            <div><i class="ion-information-circled"></i></div>
+            <div><input readonly type="text" class="page-signup-form-control form-control"
+                placeholder="Errou as opções ou não respondeu">
+            </div>
+            <div><input id='prierrou' onkeydown="return false" type="number" min="1" max="4"
+                class="page-signup-form-control form-control"></div>
           </div>
         </div>
         <div class="modal-footer" style="margin-top: 5vh;">
           <button id='canceledt' type="button" class="btn" data-dismiss="modal" style="width: 90px;">Cancelar</button>
           <button id='cedtatend' type="button" class="btn btn-primary" style="width: 90px;">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modal-unblock" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">×</button>
+          <h4 class="modal-title" id="myModalLabel">Desbloqueio</h4>
+        </div>
+        <div class="modal-body">
+          <div class="text-xs-center bigtext">
+            <span><i class="ion-ios-unlocked"></i> Desbloquear atendente</span>
+          </div>
+          <div class="gridmodal">
+            <span id="unb-id" style="display: none;"></span>
+            <div><i class="ion-person"></i></div>
+            <div><input id='unb-name' type="text" class="page-signup-form-control form-control" placeholder="Usuario"
+                readonly></div>
+            <div><i class="ion-information-circled"></i></div>
+            <div><textarea id='unb-motivo' class="page-signup-form-control form-control" placeholder="Motivo"
+                style="resize: none; min-height: 15vh;"></textarea></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="margin-top: 5vh;">
+          <button type="button" class="btn" data-dismiss="modal" style="width: 90px;">Cancelar</button>
+          <button id='btnunblock' type="button" class="btn btn-primary" style="width: 110px;">Desbloquear</button>
         </div>
       </div>
     </div>

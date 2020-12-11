@@ -33,6 +33,13 @@ tbody > tr:hover {
   align-items: center;
 }
 
+.gridmodal3 {
+  display: grid;
+  grid-template-columns: 5% 85% 10%;
+  margin-top: 0vh;
+  font-size: 20px;
+}
+
 .gridradio {
   display: grid;
   grid-template-columns: 1fr 1fr;
