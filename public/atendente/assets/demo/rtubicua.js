@@ -58,7 +58,10 @@
           alert('Usuário Inválido !');
         } else if (payload.response == 5) {
           alert('Login Não Autorizado !');
-        } else if (payload.response == -1) {
+        } else if (payload.response == 9) {
+          alert('Seu login está bloqueado por inatividade, consulte seu supervisor para liberação.');
+        } 
+         else if (payload.response == -1) {
           socket.disconnect(true);
         }
       });

@@ -1,5 +1,11 @@
 var ida = 0;
+var idunb = 0;
+var fkidunb = 0;
 var idcontato = 0;
+var prierrou = 0;
+var pricancelamento = 0;
+var prirematricula = 0;
+var priretorno = 0;
 var json;
 var operador = sessionStorage.getItem('fkname');
 var socket = io.connect();
@@ -18,6 +24,7 @@ socket.on('connect', function () {
     console.log('-----------------------------------------------------------------------------------');
 
     socket.emit('bi-listagents', { fkid: 'a05c3708-32b3-11e8-9d7a-000c29369337' });
+    socket.emit('bi-listblock', { fkid: 'a05c3708-32b3-11e8-9d7a-000c29369337' });
 
     socket.emit('bi-training');
 
@@ -29,10 +36,10 @@ socket.on('connect', function () {
 
         if (buscaval == "") {
             for (a = 0; a < cx; a++) {
-                var teste = a;
                 var menu = '';
                 var perfil = getperfil(json[a].perfil);
-                menu += divatend(perfil, json[a].nome, json[a].usuario, json[a].id, teste);
+                var { cancelamento, retorno, rematricula, fallback } = JSON.parse(json[a].prioridades)
+                menu += divatend(perfil, json[a].nome, json[a].usuario, json[a].id, a, fallback, cancelamento, rematricula, retorno);
                 $('#tbodyz').append(menu);
             }
         } else {
@@ -45,9 +52,18 @@ socket.on('connect', function () {
                 searchtip(perfil, nome, user, id, jsonteste);
             }
         }
-
     });
 
+    socket.on('bi-listblock', function (payload) {
+        var json = JSON.parse(payload);
+        $("#tbodyb").empty();
+        for (let i = 0; i < json.length; i++) {
+            const element = json[i];
+            var menu = '';
+            menu += divblock(element.id, element.fkid_atendente, element.nome_atendente, element.data_bloqueio, i);
+            $('#tbodyb').append(menu);
+        }
+    });
 });
 
 socket.on('disconnect', function () {
@@ -123,12 +139,37 @@ $('#cedtatend').on('click', function () {
         var nome = $('#edtnome').val();
         var user = $('#edtuser').val();
 
-        socket.emit('upd_agent', { id: ida, pwd: false, perfil: perfil, nome: nome, usuario: user });
-        ida = 0;
+        let arr = [$('#priretorno').val(), $('#prirematricula').val(), $('#pricancelamento').val(), $('#prierrou').val()]
+        let check = true
 
-        $('#modal-default2').modal();
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < arr.length; j++) {
+                const element = arr[j];
+                if(i != j){
+                    console.log(i, j)
+                    console.log(arr[i], element, arr[i] == element);
+                    if (arr[i] == element) {
+                        check = false
+                        break
+                    } 
+                }
+            } 
+        }
+        
+        if (check) {
+            var prijson = {
+                "cancelamento": $('#pricancelamento').val(),
+                "retorno": $('#priretorno').val(),
+                "rematricula": $('#prirematricula').val(),
+                "fallback": $('#prierrou').val()
+            }
+            socket.emit('upd_agent', { id: ida, pwd: false, perfil: perfil, nome: nome, usuario: user, prijson: JSON.stringify(prijson) });
+            ida = 0;
+            $('#modal-default2').modal('hide');
+        } else {
+            alert("Os niveis de prioridade não podem ser iguais")
+        }
     }
-
 });
 
 $("#btntreinamento").on('click', function () {
@@ -148,6 +189,24 @@ $('#buscarlista').keyup(function () {
     socket.emit('bi-listagents', { fkid: 'a05c3708-32b3-11e8-9d7a-000c29369337' });
 });
 
+$("#btnunblock").on('click', function () {
+    var motivo = $('#unb-motivo').val()
+    $('#unb-motivo').val('')
+
+    if (motivo.length > 0) {
+        $('#modal-unblock').modal('hide');
+        socket.emit('unblock_agent', {
+            id: idunb,
+            fkid_atendente: fkidunb,
+            fkid_supervisor: sessionStorage.getItem("fkid"),
+            fkname_supervisor: sessionStorage.getItem("fkname"),
+            motivo: motivo
+        })
+    } else {
+        alert("Por favor informe o motivo.");
+    }
+});
+
 function searchtip(perfil, nome, user, id, jsonteste) {
     var input, filter;
     input = document.getElementById("buscarlista");
@@ -165,9 +224,20 @@ function openbox1(box) {
     var perfil = $('#pf' + box).text();
     var nome = $('#nm' + box).text();
     var user = $('#us' + box).text();
+
     ida = $('#id' + box).text();
+    prierrou = $('#errou' + box).text();
+    pricancelamento = $('#cancelamento' + box).text();
+    prirematricula = $('#rematricula' + box).text();
+    priretorno = $('#retorno' + box).text();
+    gbox = box
     $('#edtnome').val(nome);
     $('#edtuser').val(user);
+    $('#prierrou').val(prierrou);
+    $('#pricancelamento').val(pricancelamento);
+    $('#prirematricula').val(prirematricula);
+    $('#priretorno').val(priretorno);
+
     // Tipo da Conta
     if (perfil == "Supervisor") {
         $("[name=tcedt]").val(["2"]);
@@ -196,4 +266,12 @@ function openbox3(box) {
     $('#edtsenhac').val('');
     $('#modal-default1').modal();
 
+}
+
+function openboxU(box) {
+    idunb = $('#idunb' + box).text();
+    fkidunb = $('#fkidunb' + box).text();
+    var nome = $("#unm" + box).text();
+    $('#unb-name').val(nome);
+    $('#modal-unblock').modal();
 }
