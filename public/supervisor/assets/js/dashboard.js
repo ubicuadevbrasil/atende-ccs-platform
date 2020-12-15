@@ -15,7 +15,7 @@ socket.on('sentinel_clients_queue', function (payload) {
     $("#AtendimentoEncerrados").text(payload[2].total);
     if (payload[1].total > 0) {
         $("#btntempo").show();
-        // Calculando tempo em fila
+        //Calculando tempo em fila
         var _time = payload[4].total;
         var _minutes = _time / 60;
         var _rmin = Math.floor(_minutes);
@@ -31,14 +31,19 @@ socket.on('sentinel_clients_queue', function (payload) {
     } else {
         $("#btntempo").hide();
     }
-    var tempmed = payload[3].total;
-    var atendeIn = payload[0].total;
-    var media = Math.round(tempmed / atendeIn);
-    if (media > 0) {
-    } else {
-        media = 0;
-    }
-    $("#TempoMedio").text(media + " minutos");
+    // var tempmed = payload[3].total;
+    // var atendeIn = payload[0].total;
+    // var media = Math.round(tempmed / atendeIn);
+    // if (media > 0) {
+    // } else {
+    //     media = 0;
+    // }
+    // $("#TempoMedio").text(media + " minutos");
+
+    let seconds = payload[3].total;
+    let timeEdt = new Date(seconds * 1000).toISOString().substr(11, 8)
+    let timeText = timeEdt.split(":")[0] + ":" + timeEdt.split(":")[1]
+    $("#TempoMedio").text(timeText);
 });
 
 socket.on('sentinel_clients_alive', function (payload) {
@@ -70,7 +75,7 @@ socket.on('sentinel_clients_alive', function (payload) {
 });
 
 socket.on('view_agents', function (payload) {
-    console.log(payload)
+    //console.log(payload)
     var ta = JSON.parse(payload);
     for (i = 0; i < ta.length; i++) {
         $('#' + ta[i].atendimentos + ta[i].fkto).text(ta[i].total);
