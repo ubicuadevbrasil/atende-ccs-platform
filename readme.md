@@ -1,7 +1,0 @@
-CCS_MOBILE = "5511944919944@c.us"
-CCS_CDN_FILE = "https://cdn-homolog.ubicuacloud.com.com/file/"
-CCS_CDN_BASE = "https://cdn-homolog.ubicuacloud.com.com/base64/"
-CCS_OPTIONSKEY = "/etc/letsencrypt/live/ccs-homolog.ubicuacloud.com.br/privkey.pem"
-CCS_OPTIONSCERT = "/etc/letsencrypt/live/ccs-homolog.ubicuacloud.com.br/fullchain.pem"
-CCS_EXTENSION = "https://extensao-homolog.ubicuacloud.com.br/client"
-CCS_REPORT = "https://ccs-homolog.ubicuacloud.com.br/supervisor/report/"

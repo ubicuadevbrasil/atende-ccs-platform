@@ -60,7 +60,6 @@ app.get('/', function (req, res) {
 	}
 })
 
-// Request HTTPS
 app.get('/.well-known/acme-challenge/GXWwzwd5XBYsP0nuC-_b_sblfG-aaKG3BAIsbX3tc94', function (req, res) {
 	res.send('GXWwzwd5XBYsP0nuC-_b_sblfG-aaKG3BAIsbX3tc94.WJdCUT79yCG6vkn1fZDc6qfJm78Ksc0SohKQIFQfIhM');
 });
@@ -112,7 +111,7 @@ app.post('/api/v1/message', function (req, res, next) {
 					////console.log('======================================\n');
 					////console.log(_body_text);
 					////console.log('======================================\n\n');
-					var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_text, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
+					var qry = 'INSERT INTO db_cruzeiro_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_text, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
 					var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_text";
 					dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_text], function (err, rows, fields) {
 						if (err) {
@@ -131,7 +130,7 @@ app.post('/api/v1/message', function (req, res, next) {
 					var _body_size = req.body.message.body.size;
 					var _body_thumb = req.body.message.body.thumb;
 					var _body_url = req.body.message.body.url;
-					var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size, body_thumb, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
+					var qry = 'INSERT INTO db_cruzeiro_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size, body_thumb, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
 					var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_thumb, _body_url";
 					dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_thumb, _body_url], function (err, rows, fields) {
 						if (err) {
@@ -151,7 +150,7 @@ app.post('/api/v1/message', function (req, res, next) {
 					var _body_duration = req.body.message.body.duration;
 					var _body_thumb = req.body.message.body.thumb;
 					var _body_url = req.body.message.body.url;
-					var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size, body_duration, body_thumb, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
+					var qry = 'INSERT INTO db_cruzeiro_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size, body_duration, body_thumb, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
 					var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_duration, _body_thumb, _body_url";
 					dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_duration, _body_thumb, _body_url], function (err, rows, fields) {
 						if (err) {
@@ -170,7 +169,7 @@ app.post('/api/v1/message', function (req, res, next) {
 					var _body_size = req.body.message.body.size;
 					var _body_duration = req.body.message.body.duration;
 					var _body_url = req.body.message.body.url;
-					var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size, body_duration, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
+					var qry = 'INSERT INTO db_cruzeiro_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size, body_duration, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
 					var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_duration, _body_url";
 					dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_duration, _body_url], function (err, rows, fields) {
 						if (err) {
@@ -189,7 +188,7 @@ app.post('/api/v1/message', function (req, res, next) {
 					var _body_size = req.body.message.body.size;
 					var _body_duration = req.body.message.body.duration;
 					var _body_url = req.body.message.body.url;
-					var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size, body_duration, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
+					var qry = 'INSERT INTO db_cruzeiro_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size, body_duration, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
 					var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_duration, _body_url";
 					dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_duration, _body_url], function (err, rows, fields) {
 						if (err) {
@@ -208,7 +207,7 @@ app.post('/api/v1/message', function (req, res, next) {
 					var _body_size = req.body.message.body.size;
 					var _body_thumb = req.body.message.body.thumb;
 					var _body_url = req.body.message.body.url;
-					var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size,  body_thumb, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
+					var qry = 'INSERT INTO db_cruzeiro_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_caption, body_mimetype, body_size,  body_thumb, body_url, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
 					var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_thumb, _body_url";
 					dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_caption, _body_mimetype, _body_size, _body_thumb, _body_url], function (err, rows, fields) {
 						if (err) {
@@ -224,7 +223,7 @@ app.post('/api/v1/message', function (req, res, next) {
 				} else {
 					var _body_contact = req.body.message.body.contact;
 					var _body_vcard = req.body.message.body.vcard;
-					var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_contact, body_vcard, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
+					var qry = 'INSERT INTO db_cruzeiro_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_contact, body_vcard, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
 					var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_contact, _body_vcard";
 					dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_contact, _body_vcard], function (err, rows, fields) {
 						if (err) {
@@ -242,7 +241,7 @@ app.post('/api/v1/message', function (req, res, next) {
 					var _body_lng = req.body.message.body.lng;
 					var _body_lat = req.body.message.body.lat;
 					var _body_thumb = req.body.message.body.thumb;
-					var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_name, body_lng, body_lat, body_thumb, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
+					var qry = 'INSERT INTO db_cruzeiro_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_name, body_lng, body_lat, body_thumb, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
 					var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_name, _body_lng, _body_lat, _body_thumb";
 					dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_name, _body_lng, _body_lat, _body_thumb], function (err, rows, fields) {
 						if (err) {
@@ -255,7 +254,7 @@ app.post('/api/v1/message', function (req, res, next) {
 			}
 		}
 
-		dbcc.query("UPDATE db_sanofi_ccs.tab_config SET waendpoint=? WHERE id=1", [_hostin]);
+		dbcc.query("UPDATE db_cruzeiro_ccs.tab_config SET waendpoint=? WHERE id=1", [_hostin]);
 		res.sendStatus(200);
 	} else if (_event == "ack") {
 		log("ACK Received", req.body);
@@ -283,13 +282,13 @@ app.post('/api/v2/message', function (req, res, next) {
 		var _message_uid = req.body.message_uid;
 		if (_message_type === "chat") {
 			var _body_text = emoji.unifiedToHTML(req.body.body_text);
-			var qry = 'INSERT INTO db_sanofi_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_text, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
+			var qry = 'INSERT INTO db_cruzeiro_ccs.tab_waboxappin (id, host, uid, dtin, contact_uid, contact_name, contact_type, message_dtm, message_uid, message_cuid, message_dir, message_type, message_ack, body_text, status) VALUES(uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)';
 			var params = "_host, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_text";
 			dbcc.query(qry, [_hostin, _uid, _dtin, _contact_uid, _contact_name, _contact_type, _message_dtm, _message_uid, _message_cuid, _message_dir, _message_type, _message_ack, _body_text], function (err, rows, fields) {
 				if (err) {
 					log("Erro ao Receber Mensagem do BRA: " + err);
 				} else {
-					dbcc.query("UPDATE db_sanofi_ccs.tab_config SET waendpoint=? WHERE id=1", [_hostin]);
+					dbcc.query("UPDATE db_cruzeiro_ccs.tab_config SET waendpoint=? WHERE id=1", [_hostin]);
 					log("Nova Mensagem Recebida BRA...");
 				}
 			});
@@ -319,7 +318,7 @@ app.get('/api/ubicua/report', function (req, res, next) {
 		if ((username == 'ubicua') && (password == '1zvzrAFyIwKhWqIoyRU9whpdBYoK')) {
 			dbcc.query('CALL rt_painelop();', function (err, result) {
 				if (err) {
-					//console.log(err)
+					console.log(err)
 					res.json({ status: 'falha', resultado: err });
 				} else {
 					res.json({ status: '200', resultado: result });
@@ -345,7 +344,7 @@ app.post('/api/smi/recordMsg', function (req, res) {
 		req.body.message.message_type,
 		req.body.message.body_text
 	]
-	dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(UUID(), ?, ?, ?, ?, ?, ?, ?, ?)", params, function (err, result) {
+	dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(UUID(), ?, ?, ?, ?, ?, ?, ?, ?)", params, function (err, result) {
 		if (err) { console.log(err); }
 		log("Novo Registro LOG Inserido", _id);
 	});
@@ -375,7 +374,7 @@ app.post('/api/smi/insertFila', async function (req, res) {
 			msg: _message,
 		}
 
-		dbcc.query("INSERT INTO db_sanofi_ccs.tab_filain (mobile, name, sessionBot) VALUES(?, ?, ?)", params, function (err, result) {
+		dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_filain (mobile, name) VALUES(?, ?, ?)", params, function (err, result) {
 			if (err) { console.log(err); }
 			log("Novo Registro LOG Inserido", _id);
 		});
@@ -393,7 +392,6 @@ app.post('/api/smi/insertFila', async function (req, res) {
 	}
 })
 
-// API Report Tracking
 app.get('/tracking/api/:dtini/:dtfim', function (req, res) {
 
 	var _dtini = req.params.dtini + ' 00:00:00';
@@ -416,7 +414,7 @@ app.get('/tracking/api/:dtini/:dtfim', function (req, res) {
 		if ((username == 'cruzeiro') && (password == 'vvP83m22Qg6qeYTJ')) {
 			dbcc.query("INSERT INTO tab_api_log (dtable, log) VALUES('tracking', 'granted');");
 			var results = [];
-			dbcc.query("SELECT db_sanofi_ccs.tab_encerrain.*, db_sanofi_ccs.tab_statusen.descricao AS statusd FROM db_sanofi_ccs.tab_encerrain LEFT JOIN db_sanofi_ccs.tab_statusen ON ( db_sanofi_ccs.tab_encerrain.status = db_sanofi_ccs.tab_statusen.id) WHERE db_sanofi_ccs.tab_encerrain.dtin BETWEEN ? AND ? ORDER BY db_sanofi_ccs.tab_encerrain.dtin", [_dtini, _dtfim], function (err, rows, fields) {
+			dbcc.query("SELECT db_cruzeiro_ccs.tab_encerrain.*, db_cruzeiro_ccs.tab_statusen.descricao AS statusd FROM db_cruzeiro_ccs.tab_encerrain LEFT JOIN db_cruzeiro_ccs.tab_statusen ON ( db_cruzeiro_ccs.tab_encerrain.status = db_cruzeiro_ccs.tab_statusen.id) WHERE db_cruzeiro_ccs.tab_encerrain.dtin BETWEEN ? AND ? ORDER BY db_cruzeiro_ccs.tab_encerrain.dtin", [_dtini, _dtfim], function (err, rows, fields) {
 				res.send(JSON.stringify(rows));
 			});
 		} else {
@@ -428,7 +426,6 @@ app.get('/tracking/api/:dtini/:dtfim', function (req, res) {
 	}
 });
 
-// API Report Pedidos
 app.get('/requests/api/:dtini/:dtfim', function (req, res) {
 
 	var _dtini = req.params.dtini + ' 00:00:00';
@@ -463,7 +460,6 @@ app.get('/requests/api/:dtini/:dtfim', function (req, res) {
 	}
 });
 
-// API Report Pedidos
 app.get('/requests/api/logins', function (req, res) {
 	var auth = req.headers['authorization'];
 	////console.log("Authorization Header is: ", auth);
@@ -488,31 +484,11 @@ app.get('/requests/api/logins', function (req, res) {
 	}
 });
 
-// Function recusa mensagens de Grupo WhatsApp
-function onrefusegroup(admin) {
-
-	var _mobile = admin;
-	var _message = "Prezado Cliente,\n\nEsse canal não permite mensagens a partir de Grupo WhatsApp.";
-	dbcc.query("SELECT uuid() as UUID;", function (err, id) {
-		var _custom_uid = id[0].UUID;
-		let teste = {
-			infra: _mobileUid,
-			id: _mobile + '@c.us',
-			msg: _message,
-			media: 'chat'
-		}
-		request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
-		});
-	});
-}
-
-// Core Chat Room
 var numUsers = 0;
-// WA ENDPOINT OUT
 var _host = "LON";
+
 io.on('connection', function (socket) {
 
-	// VARIABLE GLOBAL
 	var addedUser = false;
 
 	socket.on('new message', function (payload) {
@@ -573,7 +549,7 @@ io.on('connection', function (socket) {
 		dbcc.query("SELECT uuid() as UUID;", async function (err, id) {
 			var _custom_uid = id[0].UUID;
 			////console.log("> UUID PRONTO");
-			dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+			dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 				if (result.length > 0) {
 					// Armazenando Log da Conversa
 					var _id = _custom_uid;
@@ -582,43 +558,26 @@ io.on('connection', function (socket) {
 					var _fromname = result[0].fkname;
 					var _toid = result[0].mobile;
 					var _toname = result[0].name;
-					var _sessionBot = result[0].sessionBot;
-					var _origem = result[0].origem
 					var _msgdir = "o";
 					var _msgtype = _type;
 					var _msgtext = _message;
-					if (_sessionBot != "" && _sessionBot != null && _origem == "smi") {
-						let teste = {
-							id: _custom_uid,
-							sessionId: _sessionBot,
-							msg: _message,
-						}
-						request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
-							////console.log(teste)
-							log("Response SMI", body);
-							var _response = body;
-							if (_response === 'ok') { }
-						});
-						dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
-							log("Novo Registro LOG Inserido", _id);
-						});
-					} else {
-						let teste = {
-							infra: _mobileUid,
-							id: _mobile + '@c.us',
-							msg: _message,
-							media: 'chat'
-						}
-						request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
-							////console.log(teste)
-							log("Response WABOXAPP", body);
-							var _response = body;
-							if (_response === 'ok') { }
-						});
-						dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
-							log("Novo Registro LOG Inserido", _id);
-						});
+
+					let teste = {
+						infra: _mobileUid,
+						id: _mobile + '@c.us',
+						msg: _message,
+						media: 'chat'
 					}
+					request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
+						////console.log(teste)
+						log("Response WABOXAPP", body);
+						var _response = body;
+						if (_response === 'ok') { }
+					});
+					dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
+						log("Novo Registro LOG Inserido", _id);
+					});
+
 				}
 			});
 
@@ -630,11 +589,10 @@ io.on('connection', function (socket) {
 		var _mobile = payload.mobile;
 		var _type = payload.type;
 		var _sessionid = payload.sessionid;
-		var _message = "Olá, nosso horário de atendimento é das 09:00 as 18:00 de segunda a sexta-feira.\n\nEsse canal é exclusivo para atendimento de rematrícula, retorno ao curso e cancelamento/trancamento.\n\nAguarde enquanto já iremos lhe atender.\n\nPara agilizar, informe RGM, CPF e nome da instituição.";
+		var _message = "Olá,\n\nO nosso horário de atendimento via WhatsApp é das 09:00 às 18:00, de segunda a sexta.\n\nEste canal é EXCLUSIVO para atendimentos de REMATRICULA e RETORNO AO CURSO, para demais assuntos, por gentileza, acessar os canais oficiais de sua Instituição.\n\nEsclarecemos que estamos com um volume superior à nossa capacidade de atendimento, por isso pode haver demora nas respostas. Aguarde que você será atendido.\nPara agilizar seu atendimento, seguem algumas respostas rápidas que identificamos em nossos atendimentos.\nREMATRICULA\nPor favor, realizar pela ÁREA DO ALUNO, seguindo o passo a passo a seguir:\nhttp://passos.cruzeirodosuleducacional.edu.br/\nCaso você esteja INADIMPLENTE, realizar o pagamento pelo seguinte caminho:\nÁREA DO ALUNO > FINANCEIRO > FAZER ACORDO\\nPara retornar aos estudos, por favor, acesse o site de sua Instituição, seguindo o passo a passo a seguir:\nhttp://passosregresso.cruzeirodosuleducacional.edu.br/\nCaso você esteja INADIMPLENTE, realizar o pagamento pelo seguinte caminho:\nÁREA DO ALUNO > FINANCEIRO > FAZER ACORDO\nPARA OUTROS ASSUNTOS, AGUARDE O ATENDIMENTO.\nAgradecemos a sua compreensão.\n\nPara agilizar nosso fluxo, informe o seu RGM ou CPF e o nome da sua Instituição.";
 
-		dbcc.query("SELECT * FROM db_sanofi_ccs.tab_filain WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+		dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_filain WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 			if (result.length > 0) {
-				var _sessionBot = result[0].sessionBot;
 				dbcc.query("SELECT uuid() as UUID;", function (err, id) {
 					var _custom_uid = id[0].UUID;
 					var _id = _custom_uid;
@@ -646,135 +604,24 @@ io.on('connection', function (socket) {
 					var _msgtext = _message;
 
 					if (_host == "LON") {
-						if (_sessionBot != "" && _sessionBot != null) {
-							let teste = {
-								id: _custom_uid,
-								sessionId: _sessionBot,
-								msg: _message,
-							}
-							request.post({ url: 'https://dashboard-homolog.ubicuacloud.com.br/cruzeiro_m7/api/wsfMsg', form: teste }, function (err, httpResponse, body) {
-								log("Response SMI Welcome", body);
-								var _response = body;
-								if (_response === 'ok') { }
-							});
-							dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
-								log("Novo Registro LOG Inserido", _id);
-							});
-						} else {
-							let teste = {
-								infra: _mobileUid,
-								id: _mobile + '@c.us',
-								msg: _message,
-								media: 'chat'
-							}
-							request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
-								log("Response WABOXAPP Welcome", body);
-								var _response = body;
-								if (_response === 'ok') { }
-							});
-							dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, fromid, fromname, toid, msgdir, msgtype, msgtext, sessionid, dt) VALUES(?, ?, ?, ?, ?, ?, ?, ?, TIMESTAMPADD(MINUTE, 1, NOW()))", [_id, _fromid, _fromname, _toid, _msgdir, _msgtype, _msgtext, _sessionid], function (err, result) {
-								log("Novo Registro LOG Inserido", _id);
-							});
+						let teste = {
+							infra: _mobileUid,
+							id: _mobile + '@c.us',
+							msg: _message,
+							media: 'chat'
 						}
+						request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
+							log("Response WABOXAPP Welcome", body);
+							var _response = body;
+							if (_response === 'ok') { }
+						});
+						dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logs (id, fromid, fromname, toid, msgdir, msgtype, msgtext, sessionid, dt) VALUES(?, ?, ?, ?, ?, ?, ?, ?, TIMESTAMPADD(MINUTE, 1, NOW()))", [_id, _fromid, _fromname, _toid, _msgdir, _msgtype, _msgtext, _sessionid], function (err, result) {
+							log("Novo Registro LOG Inserido", _id);
+						});
 					}
 				});
 			}
 		});
-	});
-
-	socket.on('bot_answer', async function (payload) {
-		console.log(payload)
-		var _sessionBot = payload.sessionBot;
-		var _toname = payload.name
-		var _toid = payload.mobile;
-		var _origem = payload.origem
-		var _msgtext = payload.response
-		var _fromid = String(_mobileUid).replace("@c.us", "")
-		var _fromname = "bot";
-		var _msgdir = "o";
-		var _msgtype = "chat";
-
-		if (_sessionBot != "" && _sessionBot != null && _origem == "smi") {
-			for (let i = 0; i < _msgtext.length; i++) {
-				let _id = uuidv4();
-				let element = _msgtext[i];
-
-				let formDataSMI = {
-					id: _custom_uid,
-					sessionId: _sessionBot,
-					msg: _message,
-				}
-
-				let messageReq = await sendMessageSMI(formDataSMI, _id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element)
-			}
-
-		} else {
-			console.log('Envio Pro Zap');
-			for (let i = 0; i < _msgtext.length; i++) {
-				let _id = uuidv4();
-				let element = _msgtext[i];
-
-				let formDataWPP = {
-					infra: _mobileUid,
-					id: _toid + '@c.us',
-					msg: element,
-					media: 'chat'
-				}
-				console.log(formDataWPP);
-				let messageReq = await sendMessageWPP(formDataWPP, _id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element)
-			}
-		}
-
-
-		function sendMessageWPP(formData, _id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element) {
-			return new Promise((resolve, reject) => {
-				setTimeout(() => {
-					request.post({ url: process.env.CCS_EXTENSION, form: formData }, function (err, httpResponse, body) {
-						if (err) { console.log(err) }
-
-						dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element], function (err, result) {
-							if (err) { console.log(err) }
-							log("SendmessageWPP - Novo Registro LOG Inserido", _id);
-							// dbcc.query("UPDATE db_sanofi_ccs.tab_waboxappin SET status=1 WHERE id=?", [_id]);
-
-							resolve({ httpResponse, body, result })
-						});
-					})
-				}, 1000);
-			})
-		}
-
-		function sendMessageSMI(formDataSMI, _id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element) {
-			return new Promise((resolve, reject) => {
-				request.post({ url: 'https://dashboard-homolog.ubicuacloud.com.br/cruzeiro_m7/api/wsfMsg', form: teste }, function (err, httpResponse, body) {
-					////console.log(teste)
-					log("Response SMI", body);
-					var _response = body;
-					if (_response === 'ok') {
-						dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionBot, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, element], function (err, result) {
-							log("SendmessageSMI - Novo Registro LOG Inserido", _id);
-							resolve(result)
-						});
-					}
-				});
-
-			})
-		}
-	});
-
-	socket.on('timeout_bot', function (payload) {
-		var _mobile = payload.mobile
-
-		let formData = {
-			infra: _mobileUid,
-			id: _mobile + '@c.us',
-			msg: payload.timeout_response,
-			media: 'chat'
-		}
-
-		request.post({ url: ubcExtensionUrl, form: formData }, function (err, httpResponse, body) {
-			log("Timeout fila", payload.sessionBot);
-		})
 	});
 
 	socket.on('send_timeout', function (payload) {
@@ -810,7 +657,7 @@ io.on('connection', function (socket) {
 								var _msgdir = "o";
 								var _msgtype = _type;
 								var _msgtext = _message;
-								dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, fromid, fromname, toid, msgdir, msgtype, msgtext, sessionid, dt) VALUES(?, ?, ?, ?, ?, ?, ?, ?, TIMESTAMPADD(MINUTE, 1, NOW()))", [_id, _fromid, _fromname, _toid, _msgdir, _msgtype, _msgtext, _sessionid], function (err, result) {
+								dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logs (id, fromid, fromname, toid, msgdir, msgtype, msgtext, sessionid, dt) VALUES(?, ?, ?, ?, ?, ?, ?, ?, TIMESTAMPADD(MINUTE, 1, NOW()))", [_id, _fromid, _fromname, _toid, _msgdir, _msgtype, _msgtext, _sessionid], function (err, result) {
 									log("Novo Registro LOG Inserido", _id);
 								});
 							}
@@ -821,7 +668,6 @@ io.on('connection', function (socket) {
 		});
 	});
 
-	// CRUD Atendente/Supervisor
 	socket.on('bi-listagents', function (payload) {
 		dbcc.query("SELECT * FROM tab_usuarios WHERE status=1 ORDER BY nome", [], function (err, result) {
 			if (result.length > 0) {
@@ -867,9 +713,9 @@ io.on('connection', function (socket) {
 		var _nome = payload.nome;
 		var _usuario = payload.usuario;
 		var _senha = payload.senha;
-		var _prioridades = '{"cancelamento":1,"retorno":2,"rematricula":3,"fallback":4}'
-		dbcc.query("INSERT INTO tab_usuarios (id, perfil, nome, usuario, senha, prioridades) VALUES(uuid(), ?, ?, ?, MD5(?), ?)", [_perfil, _nome, _usuario, _senha, _prioridades], function (err, result) {
+		dbcc.query("INSERT INTO tab_usuarios (id, perfil, nome, usuario, senha) VALUES(uuid(), ?, ?, ?, MD5(?))", [_perfil, _nome, _usuario, _senha], function (err, result) {
 			dbcc.query("SELECT * FROM tab_usuarios WHERE status=1", [], function (err, result) {
+				if (err) { console.log(err); }
 				if (result.length > 0) {
 					var _agents = JSON.stringify(result);
 					socket.emit('bi-listagents', _agents);
@@ -882,12 +728,11 @@ io.on('connection', function (socket) {
 		////console.log(payload);
 		var _id = payload.id;
 		var _pwd = payload.pwd;
-		var _prioridades = payload.prijson
 		if (_pwd == false) {
 			var _perfil = payload.perfil;
 			var _nome = payload.nome;
 			var _usuario = payload.usuario;
-			dbcc.query("UPDATE tab_usuarios SET perfil=?, nome=?, usuario=?, prioridades=? WHERE id=?", [_perfil, _nome, _usuario ,_prioridades, _id], function (err, result) {
+			dbcc.query("UPDATE tab_usuarios SET perfil=?, nome=?, usuario=? WHERE id=?", [_perfil, _nome, _usuario, _id], function (err, result) {
 				dbcc.query("SELECT * FROM tab_usuarios WHERE status=1", [], function (err, result) {
 					if (result.length > 0) {
 						var _agents = JSON.stringify(result);
@@ -921,7 +766,6 @@ io.on('connection', function (socket) {
 		});
 	});
 
-	// CRUD Status de Atendimento
 	socket.on('bi-liststa', function (payload) {
 
 		dbcc.query("SELECT * FROM tab_statusen WHERE status=1 ORDER BY descricao", [], function (err, result) {
@@ -952,11 +796,11 @@ io.on('connection', function (socket) {
 		var _descricao = payload.descricao;
 		dbcc.query("UPDATE tab_statusen SET descricao=? WHERE id=?", [_descricao, _id], function (err, result) {
 			if (err) {
-				//console.log(err)
+				console.log(err)
 			}
 			dbcc.query("SELECT * FROM tab_statusen WHERE status=1", [], function (err, result) {
 				if (err) {
-					//console.log(err)
+					console.log(err)
 				}
 				if (result.length > 0) {
 					var _status = JSON.stringify(result);
@@ -971,11 +815,11 @@ io.on('connection', function (socket) {
 		var _id = payload.id;
 		dbcc.query("UPDATE tab_statusen SET status=0 WHERE id=?", [_id], function (err, result) {
 			if (err) {
-				//console.log(err)
+				console.log(err)
 			}
 			dbcc.query("SELECT * FROM tab_statusen WHERE status=1", [], function (err, result) {
 				if (err) {
-					//console.log(err)
+					console.log(err)
 				}
 				if (result.length > 0) {
 					var _status = JSON.stringify(result);
@@ -1020,8 +864,8 @@ io.on('connection', function (socket) {
 					log("Response WABOXAPP", body);
 					var _response = body;
 					if (_response === 'ok') {
-						//dbcc.query("INSERT INTO  db_sanofi_ccs.tab_sikmedia (id, toid, typefile, hashfile, descfile) VALUES(?, ?, ?, ?, ?)", [_custom_uid, _mobile, _type, _hashfile, _descfile]);
-						dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+						//dbcc.query("INSERT INTO  db_cruzeiro_ccs.tab_sikmedia (id, toid, typefile, hashfile, descfile) VALUES(?, ?, ?, ?, ?)", [_custom_uid, _mobile, _type, _hashfile, _descfile]);
+						dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 							if (result.length > 0) {
 								// Armazenando Log da Conversa
 								var _id = _custom_uid;
@@ -1034,7 +878,7 @@ io.on('connection', function (socket) {
 								var _msgtype = _type;
 								var _msgurl = cdn + _hashfile;
 								var _msgcaption = _descfile;
-								dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgurl, _msgcaption], function (err, result) {
+								dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgurl, _msgcaption], function (err, result) {
 									log("Novo Registro LOG Inserido", _id);
 								});
 							}
@@ -1044,8 +888,8 @@ io.on('connection', function (socket) {
 			} else {
 				log("Response BRA");
 				var _message = cdn + _hashfile;
-				dbcc.query("INSERT INTO db_sanofi_ccs.tab_outbound (mobile, msg) VALUES(?, ?);", [_mobile + "@c.us", _message], function (err, result) {
-					dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+				dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_outbound (mobile, msg) VALUES(?, ?);", [_mobile + "@c.us", _message], function (err, result) {
+					dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 						if (result.length > 0) {
 							// Armazenando Log da Conversa
 							var _id = _custom_uid;
@@ -1058,7 +902,7 @@ io.on('connection', function (socket) {
 							var _msgtype = _type;
 							var _msgurl = cdn + _hashfile;
 							var _msgcaption = _descfile;
-							dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgurl, _msgcaption], function (err, result) {
+							dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgurl, _msgcaption], function (err, result) {
 								log("Novo Registro LOG Inserido", _id);
 							});
 						}
@@ -1068,30 +912,12 @@ io.on('connection', function (socket) {
 		});
 	});
 
-	function loadBase64(hashFile, fileType) {
-		return new Promise(function (resolve, reject) {
-			request.get({ url: process.env.CCS_CDN_BASE + hashFile }, function (err, httpResponse, body) {
-				if (err) {
-					//console.log(err)
-					//reject(err)
-				}
-				if (fileType == 'image') {
-					resolve('data:image/jpeg;base64,' + body)
-				} else if (fileType == 'video') {
-					resolve('data:video/mp4;base64,' + body)
-				} else if (fileType == 'audio') {
-					resolve('data:audio/mp3;base64,' + body)
-				}
-			})
-		})
-	}
-
 	socket.on('send_register', function (payload) {
 		////console.log(payload);
 		var _mobile = payload.mobile;
 		var _name = payload.name;
-		dbcc.query("UPDATE db_sanofi_ccs.tab_atendein SET name=? WHERE mobile=?", [_name, _mobile]);
-		dbcc.query("SELECT sessionid, mobile, name, account, photo FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+		dbcc.query("UPDATE db_cruzeiro_ccs.tab_atendein SET name=? WHERE mobile=?", [_name, _mobile]);
+		dbcc.query("SELECT sessionid, mobile, name, account, photo FROM db_cruzeiro_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 			if (result.length > 0) {
 				var _sessionid = result[0].sessionid;
 				var _mobile = result[0].mobile;
@@ -1112,11 +938,9 @@ io.on('connection', function (socket) {
 		var _status = payload.status;
 		var _cnpj = payload.cnpj;
 		var _atendir = payload.atendir;
-		var _pilar = payload.pilar;
-		var _modalidade = payload.modalidade;
-		dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+		dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 			if (err) {
-				//console.log(err)
+				console.log(err)
 			};
 			if (result.length > 0) {
 				var _sessionid = result[0].sessionid;
@@ -1129,16 +953,14 @@ io.on('connection', function (socket) {
 				var _fkto = result[0].fkto;
 				var _fkname = result[0].fkname;
 				var _transfer = result[0].transfer;
-				var _sessionBot = result[0].sessionBot
-				var _optAtendimento = result[0].optAtendimento
-				dbcc.query("INSERT INTO db_sanofi_ccs.tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer, pilar, modalidade, sessionBot, optAtendimento) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _dtat, _name, _account, _photo, _fkto, _fkname, _status, _cnpj, _atendir, _transfer, _pilar, _modalidade, _sessionBot, _optAtendimento], function (err, result) {
+				dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _dtat, _name, _account, _photo, _fkto, _fkname, _status, _cnpj, _atendir, _transfer], function (err, result) {
 					if (err) {
-						//console.log(err)
+						console.log(err)
 					};
-					dbcc.query("DELETE FROM db_sanofi_ccs.tab_atendein WHERE sessionid=?", [_sessionid]);
+					dbcc.query("DELETE FROM db_cruzeiro_ccs.tab_atendein WHERE sessionid=?", [_sessionid]);
 					dbcc.query("UPDATE tab_logs SET stread = 1 WHERE fromid = '?' AND stread = 0;", [_mobile], function (err, result) {
 						if (err) {
-							//console.log(err)
+							console.log(err)
 						};
 					});
 					payload = { sessionid: _sessionid, mobile: _mobile };
@@ -1165,17 +987,13 @@ io.on('connection', function (socket) {
 	socket.on('get_cliInfo', function (payload) {
 		console.log(payload)
 		var _mobile = payload.mobile;
-		dbcc.query("SELECT NAME,cnpj,pilar,modalidade FROM tab_encerrain WHERE mobile = ? ORDER BY dten DESC LIMIT 1", [_mobile], function (err, result) {
+		dbcc.query("SELECT NAME,cnpj FROM tab_encerrain WHERE mobile = ? ORDER BY dten DESC LIMIT 1", [_mobile], function (err, result) {
 			if (result.length > 0) {
 				var _nome = result[0].NAME;
 				var _cpf = result[0].cnpj;
-				var _pilar = result[0].pilar;
-				var _modalidade = result[0].modalidade;
 				payload = {
 					nome: _nome,
-					cpf: _cpf,
-					pilar: _pilar,
-					modalidade: _modalidade
+					cpf: _cpf
 				};
 				socket.emit('get_cliInfo', payload);
 			}
@@ -1184,7 +1002,7 @@ io.on('connection', function (socket) {
 
 	socket.on('bi-find_register', function (payload) {
 		var _mobile = payload.mobile;
-		dbcc.query("SELECT sessionid, mobile, name, account, photo FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+		dbcc.query("SELECT sessionid, mobile, name, account, photo FROM db_cruzeiro_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 			if (result.length > 0) {
 				var _sessionid = result[0].sessionid;
 				var _mobile = result[0].mobile;
@@ -1199,7 +1017,7 @@ io.on('connection', function (socket) {
 
 	socket.on('bi-atendein', function (payload) {
 		log("EVENT: bi-atendein", payload);
-		dbcc.query("SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome, A.sessionBot, A.optAtendimento FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin", [payload.fkid], function (err, result) {
+		dbcc.query("SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin", [payload.fkid], function (err, result) {
 			if (result.length > 0) {
 				var _contacts = JSON.stringify(result);
 				var _sessionlist = "";
@@ -1208,14 +1026,6 @@ io.on('connection', function (socket) {
 						_sessionlist += "'" + result[i].sessionid + "'";
 					} else {
 						_sessionlist += "'" + result[i].sessionid + "',";
-					}
-				}
-				_sessionlist += ","
-				for (i = 0; i < result.length; i++) {
-					if (result.length - 1 == i) {
-						_sessionlist += "'" + result[i].sessionBot + "'";
-					} else {
-						_sessionlist += "'" + result[i].sessionBot + "',";
 					}
 				}
 				dbcc.query("SELECT sessionid, dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY sessionid, dt;", function (err, result) {
@@ -1276,7 +1086,7 @@ io.on('connection', function (socket) {
 			// TransferenciaOk armazena Logs
 			dbcc.query("SELECT uuid() as UUID;", function (err, id) {
 				var _custom_uid = id[0].UUID;
-				dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+				dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 					if (result.length > 0) {
 						// Armazenando Log da Conversa
 						var _id = _custom_uid;
@@ -1289,7 +1099,7 @@ io.on('connection', function (socket) {
 						var _msgtype = "transfer";
 						var _msgtext = _message;
 						var _atendir = result[0].atendir;
-						dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
+						dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
 							log("Novo Registro LOG de Transferência Inserido", _id);
 							if (err) {
 								log(err);
@@ -1341,7 +1151,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-historyone', function (payload) {
-		dbcc.query("SELECT sessionid, dtin, mobile, account, photo, sessionBot FROM tab_encerrain WHERE sessionid=? ORDER BY dtin DESC LIMIT 1", [payload.sessionid], function (err, result) {
+		dbcc.query("SELECT sessionid, dtin, mobile, account, photo FROM tab_encerrain WHERE sessionid=? ORDER BY dtin DESC LIMIT 1", [payload.sessionid], function (err, result) {
 			if (result.length > 0) {
 				var _contacts = JSON.stringify(result);
 				var _sessionlist = "";
@@ -1352,15 +1162,6 @@ io.on('connection', function (socket) {
 						_sessionlist += "'" + result[i].sessionid + "'";
 					} else {
 						_sessionlist += "'" + result[i].sessionid + "',";
-					}
-				}
-				_sessionlist += ","
-				for (i = 0; i < result.length; i++) {
-					if (result.length - 1 == i) {
-						//console.log('opa');
-						_sessionlist += "'" + result[i].sessionBot + "'";
-					} else {
-						_sessionlist += "'" + result[i].sessionBot + "',";
 					}
 				}
 				////console.log("SESSIONLIST [" + _sessionlist + "]");
@@ -1384,7 +1185,7 @@ io.on('connection', function (socket) {
 
 		////console.log('Request Last History, Mobile: ' + payload.mobile + '...');
 		////console.log(payload);
-		dbcc.query("SELECT sessionid, dtin, mobile, account, photo, sessionBot FROM tab_encerrain WHERE mobile=? AND dtin BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() + INTERVAL 1 DAY ORDER BY dtin DESC", [payload.mobile], function (err, result) {
+		dbcc.query("SELECT sessionid, dtin, mobile, account, photo FROM tab_encerrain WHERE mobile=? AND dtin BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() + INTERVAL 1 DAY ORDER BY dtin DESC", [payload.mobile], function (err, result) {
 			if (result.length > 0) {
 				var _contacts = JSON.stringify(result);
 				var _sessionlist = "";
@@ -1395,15 +1196,6 @@ io.on('connection', function (socket) {
 						_sessionlist += "'" + result[i].sessionid + "'";
 					} else {
 						_sessionlist += "'" + result[i].sessionid + "',";
-					}
-				}
-				_sessionlist += ","
-				for (i = 0; i < result.length; i++) {
-					if (result.length - 1 == i) {
-						//console.log('opa');
-						_sessionlist += "'" + result[i].sessionBot + "'";
-					} else {
-						_sessionlist += "'" + result[i].sessionBot + "',";
 					}
 				}
 				////console.log("SESSIONLIST [" + _sessionlist + "]");
@@ -1473,7 +1265,7 @@ io.on('connection', function (socket) {
 					} catch (err) {
 						log("Error writing to file ", err);
 					}
-					var payload = { url: "https://ccs.cruzeirodosul-aluno.com.br/supervisor/report/" + _namexlsx };
+					var payload = { url: "https://ccs-promocao.cruzeirodosul-aluno.com.br/supervisor/report/" + _namexlsx };
 					socket.emit('bi-report1toxlsx', payload);
 				});
 			}
@@ -1544,7 +1336,7 @@ io.on('connection', function (socket) {
 					} catch (err) {
 						log("Error writing to file ", err);
 					}
-					var payload = { url: "https://ccs.cruzeirodosul-aluno.com.br/supervisor/report/" + _namexlsx };
+					var payload = { url: "https://ccs-promocao.cruzeirodosul-aluno.com.br/supervisor/report/" + _namexlsx };
 					socket.emit('bi-loginstoxlsx', payload);
 				});
 			}
@@ -1561,7 +1353,7 @@ io.on('connection', function (socket) {
 				if (result.length > 0) {
 					try {
 						var columns = Object.keys(result[0]).map((element) => {
-							return { header: element, key: element, width: 10}
+							return { header: element, key: element, width: 10 }
 						});
 						var wb = new excel.Workbook;
 						var ws = wb.addWorksheet('report');
@@ -1585,7 +1377,7 @@ io.on('connection', function (socket) {
 			}
 		});
 	})
-	
+
 	socket.on('bi-report1', function (payload) {
 
 		////console.log('Request Report 1, Parameters: ' + payload.params + '...');
@@ -1699,26 +1491,8 @@ io.on('connection', function (socket) {
 		var _fkto = payload.fkid;
 		var _fkname = payload.fkname;
 		console.log(payload);
-		var prioridades = await getPrioridades(_fkto)
-		let { cancelamento, retorno, rematricula, fallback } = JSON.parse(prioridades)
-		var query = `SELECT mobile, dtin, account, photo, sessionBot, intent, optAtendimento FROM tab_filain
-		WHERE status=1 
-		ORDER BY
-		CASE origem
-			  WHEN 'smi' THEN 1
-			  WHEN 'wpp' THEN 2
-		END,
-		CASE intent
-			WHEN 'cancelamento-ou-trancamento' THEN ${cancelamento}
-			WHEN 'retorno-ao-curso' THEN ${retorno}
-			WHEN 'rematricula' THEN ${rematricula}
-			WHEN 'transbordo-fallback' THEN ${fallback}
-			WHEN 'select-opt' THEN ${fallback}
-		END,
-		dtin DESC
-		LIMIT 1`
+		var query = `SELECT mobile, dtin, account, photo FROM tab_filain WHERE status=1 ORDER BY dtin DESC LIMIT 1`
 		console.log(query)
-		// old query = "SELECT mobile, dtin, account, photo, sessionBot, intent, optAtendimento FROM tab_filain WHERE status=1 ORDER BY dtin LIMIT 1;"
 		dbcc.query(query, [], async function (err, result) {
 			if (err) {
 				log(err);
@@ -1728,11 +1502,8 @@ io.on('connection', function (socket) {
 				var _account = result[0].account;
 				var _photo = result[0].photo;
 				var _atendir = result[0].atendir;
-				var _fonte = result[0].fonte;
-				var _sessionBot = result[0].sessionBot;
-				var _optAtendimento = result[0].optAtendimento;
 
-				await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _fonte, _sessionBot, _optAtendimento)
+				await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir)
 				socket.emit('bi-answer_new_queue', payload);
 
 			}
@@ -1744,7 +1515,7 @@ io.on('connection', function (socket) {
 		var _fkto = payload.fkid;
 		var _fkname = payload.fkname;
 		console.log(payload);
-		dbcc.query('SELECT mobile, dtin, account, photo, sessionBot, intent, optAtendimento FROM tab_filain WHERE status=7 ORDER BY dtin LIMIT 1;', [], async function (err, result) {
+		dbcc.query('SELECT mobile, dtin, account, photo FROM tab_filain WHERE status=7 ORDER BY dtin LIMIT 1;', [], async function (err, result) {
 			if (err) {
 				log(err);
 			} else {
@@ -1753,10 +1524,7 @@ io.on('connection', function (socket) {
 				var _account = result[0].account;
 				var _photo = result[0].photo;
 				var _atendir = result[0].atendir;
-				var _fonte = result[0].fonte;
-				var _sessionBot = result[0].sessionBot;
-				var _optAtendimento = result[0].optAtendimento;
-				await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _fonte, _sessionBot, _optAtendimento)
+				await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir)
 				socket.emit('bi-answer_new_prior', payload);
 
 			}
@@ -1779,11 +1547,11 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-usertimeout', function (payload) {
-		var query1 = "UPDATE db_sanofi_ccs.tab_usuarios SET bloqueado = 'sim' WHERE id = ?"
+		var query1 = "UPDATE db_cruzeiro_ccs.tab_usuarios SET bloqueado = 'sim' WHERE id = ?"
 		var params1 = [payload.fkid]
 		dbcc.query(query1, params1, function (err, result) {
 			if (err) { console.log(err); }
-			var query2 = "INSERT INTO db_sanofi_ccs.tab_timeout(id,fkid_atendente,nome_atendente) VALUES(UUID(),?,?)"
+			var query2 = "INSERT INTO db_cruzeiro_ccs.tab_timeout(id,fkid_atendente,nome_atendente) VALUES(UUID(),?,?)"
 			var params2 = [payload.fkid, payload.fkname]
 			dbcc.query(query2, params2, function (err, result) {
 				if (err) { console.log(err); }
@@ -1817,14 +1585,14 @@ io.on('connection', function (socket) {
 				var _msgurl = payload.body_url;
 				var _msgcaption = payload.body_caption;
 				if (payload.message_type == "chat") {
-					dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
+					dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
 						if (err) {
 							console.log(err)
 						}
 						log("Novo Registro LOG Inserido", _id);
 					});
 				} else {
-					dbcc.query("INSERT INTO db_sanofi_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgurl, _msgcaption], function (err, result) {
+					dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgurl, _msgcaption], function (err, result) {
 						if (err) {
 							console.log(err)
 						}
@@ -1838,7 +1606,7 @@ io.on('connection', function (socket) {
 		if (_fkonline == false) {
 			socket.emit('sentinel_message_user_offline', payload);
 		} else {
-			dbcc.query("UPDATE db_sanofi_ccs.tab_waboxappin SET status=1 WHERE id=?", [payload.id]);
+			dbcc.query("UPDATE db_cruzeiro_ccs.tab_waboxappin SET status=1 WHERE id=?", [payload.id]);
 		}
 	});
 
@@ -1846,7 +1614,6 @@ io.on('connection', function (socket) {
 		socket.broadcast.emit('sentinel_confirm_send', payload);
 	});
 
-	// Checking Clients is Alive
 	socket.on('sentinel_clients_alive', function () {
 		////console.log("\n\n");
 		////console.log("----------------------------------------------------");
@@ -1865,7 +1632,6 @@ io.on('connection', function (socket) {
 		////console.log("---------------------------------------------------------------------------------------------------------------\n");
 	});
 
-	// Checking Clients on Queue
 	socket.on('sentinel_clients_queue', function (payload) {
 		//////console.log("\n\n");
 		//////console.log("----------------------------------------------------");
@@ -1873,7 +1639,7 @@ io.on('connection', function (socket) {
 		//////console.log("----------------------------------------------------");
 		//////console.log("Sentinel Clients Queue");
 		//////console.log("---------------------------------------------------------------------------------------------------------------");
-		dbcc.query('SELECT * FROM db_sanofi_ccs.vw_fila;', [], function (err, result) {
+		dbcc.query('SELECT * FROM db_cruzeiro_ccs.vw_fila;', [], function (err, result) {
 			socket.broadcast.emit('sentinel_clients_queue', result);
 		});
 		//////console.log(payload);
@@ -1912,7 +1678,7 @@ io.on('connection', function (socket) {
 		var _app = payload.app;
 		if (_key == "a02c7f8c8bf9635037eb5653302f8b84") {
 			dbcc.query('SELECT * FROM tab_usuarios WHERE usuario=? LIMIT 1', [_fkname], function (err, result) {
-				//console.log(err);
+				console.log(err);
 				if (result.length > 0) {
 					// Validando Perfil
 					if (_app == 3) {
@@ -1972,7 +1738,6 @@ io.on('connection', function (socket) {
 		}
 	});
 
-	// when the client emits 'add user', this listens and executes
 	socket.on('add user', async function (payload) {
 		if (addedUser) return;
 
@@ -2003,26 +1768,22 @@ io.on('connection', function (socket) {
 		//});
 	});
 
-	// when the client emits 'typing', we broadcast it to others
 	socket.on('alive', function () {
 		onalive(socket.id);
 	});
 
-	// when the client emits 'typing', we broadcast it to others
 	socket.on('typing', function () {
 		socket.broadcast.emit('typing', {
 			username: socket.username
 		});
 	});
 
-	// when the client emits 'stop typing', we broadcast it to others
 	socket.on('stop typing', function () {
 		socket.broadcast.emit('stop typing', {
 			username: socket.username
 		});
 	});
 
-	// when the user disconnects.. perform this
 	socket.on('disconnect', async function () {
 		if (addedUser) {
 			--numUsers;
@@ -2052,7 +1813,7 @@ io.on('connection', function (socket) {
 
 	socket.on('sentinel_waendpoint', function (payload) {
 		//////console.log('sentinel_waendpoint................' + _host);
-		dbcc.query("SELECT waendpoint FROM db_sanofi_ccs.tab_config WHERE id=1", [], function (err, result) {
+		dbcc.query("SELECT waendpoint FROM db_cruzeiro_ccs.tab_config WHERE id=1", [], function (err, result) {
 			_host = result[0].waendpoint;
 			socket.broadcast.emit('waendpoint', { server: _host });
 		});
@@ -2109,7 +1870,7 @@ io.on('connection', function (socket) {
 		var _dtin = getTimestamp();
 		var _account = null;
 		var _photo = null;
-		dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+		dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 			if (result.length == 0) {
 				dbcc.query("SELECT uuid() as UUID;", function (err, id) {
 					var _sessionid = id[0].UUID;
@@ -2168,9 +1929,9 @@ io.on('connection', function (socket) {
 		var _mobile = payload.mobile;
 		var _atendir = 'out';
 		var _dtin = getTimestamp();
-		dbcc.query("SELECT * FROM db_sanofi_ccs.tab_filain WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+		dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_filain WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 			if (result.length == 0) {
-				dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+				dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 					if (result.length == 0) {
 						dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, fkto, fkname, atendir) VALUES(UUID(), ?, ?, ?, ?, ?)", [_mobile, _dtin, _fkto, _fkname, _atendir],
 							function (err, result) {
@@ -2195,6 +1956,24 @@ io.on('connection', function (socket) {
 			}
 		});
 	});
+
+	function loadBase64(hashFile, fileType) {
+		return new Promise(function (resolve, reject) {
+			request.get({ url: process.env.CCS_CDN_BASE + hashFile }, function (err, httpResponse, body) {
+				if (err) {
+					console.log(err)
+					//reject(err)
+				}
+				if (fileType == 'image') {
+					resolve('data:image/jpeg;base64,' + body)
+				} else if (fileType == 'video') {
+					resolve('data:video/mp4;base64,' + body)
+				} else if (fileType == 'audio') {
+					resolve('data:audio/mp3;base64,' + body)
+				}
+			})
+		})
+	}
 
 	function getLoginsInfo(fkid, date) {
 		return new Promise(function (resolve, reject) {
@@ -2232,7 +2011,7 @@ io.on('connection', function (socket) {
 						dbcc.query("SELECT * FROM tab_ativo WHERE mobile='" + _celular + "' and status = 0;", function (err, result) {
 							if (err) { console.log(err) }
 							if (result.length < 1) {
-								dbcc.query("INSERT INTO db_sanofi_ccs.tab_ativo (id, nome, rgm_aluno, cpf, mobile, filename, quantidade) VALUES (?,?,?,?,?,?,?);", [_id, _nome, _rgm_aluno, _cpf, _celular, _filename, _quantidade], function (err, result) {
+								dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_ativo (id, nome, rgm_aluno, cpf, mobile, filename, quantidade) VALUES (?,?,?,?,?,?,?);", [_id, _nome, _rgm_aluno, _cpf, _celular, _filename, _quantidade], function (err, result) {
 									if (err) { console.log(err) }
 									dbcc.query("SELECT * FROM tab_ativo WHERE status=0", [], function (err, result) {
 										if (err) { console.log(err) }
@@ -2253,9 +2032,9 @@ io.on('connection', function (socket) {
 		})
 	}
 
-	function insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _fonte, _sessionBot, _optAtendimento) {
+	function insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir) {
 		return new Promise(function (resolve, reject) {
-			dbcc.query("SELECT * FROM db_sanofi_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+			dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 				if (err) throw err
 				if (result.length == 0) {
 					dbcc.query("UPDATE tab_filain SET status=2 WHERE mobile=" + _mobile, function (err, id) {
@@ -2263,13 +2042,13 @@ io.on('connection', function (socket) {
 					});
 					dbcc.query("SELECT UUID() AS UUID;", [], function (err, result) {
 						var _sessionid = result[0].UUID;
-						dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot, optAtendimento) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname, _sessionBot, _optAtendimento], function (err, result) {
+						dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname) VALUES(?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname], function (err, result) {
 							console.log(result)
 							if (err) {
 								log("Erro ao Encaminhar Usuário para Atendimento, Erro: " + err);
 							} else {
 								dbcc.query("DELETE FROM tab_filain WHERE mobile=" + _mobile);
-								payload = { sessionid: _sessionid, mobile: _mobile, account: _account, photo: _photo, atendir: _atendir, fonte: _fonte };
+								payload = { sessionid: _sessionid, mobile: _mobile, account: _account, photo: _photo, atendir: _atendir };
 								resolve(payload)
 							}
 						});
@@ -2281,7 +2060,7 @@ io.on('connection', function (socket) {
 
 	function insertLogReg(id, nome, status) {
 		return new Promise(function (resolve, reject) {
-			dbcc.query("INSERT INTO db_sanofi_ccs.tab_logins (id,fkid,fkname,status) VALUES (UUID(), ?, ?, ?)", [id, nome, status], function (err, result) {
+			dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logins (id,fkid,fkname,status) VALUES (UUID(), ?, ?, ?)", [id, nome, status], function (err, result) {
 				if (err) {
 					console.log(err)
 				} else {
@@ -2300,11 +2079,28 @@ io.on('connection', function (socket) {
 	}
 
 	function updateMailing(mobile) {
-		dbcc.query("UPDATE db_sanofi_ccs.tab_ativo SET status=1 WHERE mobile=" + mobile + "", function (err, res) {
+		dbcc.query("UPDATE db_cruzeiro_ccs.tab_ativo SET status=1 WHERE mobile=" + mobile + "", function (err, res) {
 			return res
 		});
 	}
 });
+
+function onrefusegroup(admin) {
+
+	var _mobile = admin;
+	var _message = "Prezado Cliente,\n\nEsse canal não permite mensagens a partir de Grupo WhatsApp.";
+	dbcc.query("SELECT uuid() as UUID;", function (err, id) {
+		var _custom_uid = id[0].UUID;
+		let teste = {
+			infra: _mobileUid,
+			id: _mobile + '@c.us',
+			msg: _message,
+			media: 'chat'
+		}
+		request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
+		});
+	});
+}
 
 function onkill() {
 	////console.log(new Date() + " >> onKill acionando!");
@@ -2315,7 +2111,7 @@ function onalive(fkid) {
 
 	pool.getConnection(function (err, connection) {
 		if (err) log(err);
-		connection.query('UPDATE db_sanofi_ccscore.tab_fila SET alive=now() WHERE fkid=?', [fkid], function (err, results) {
+		connection.query('UPDATE db_cruzeiro_ccscore.tab_fila SET alive=now() WHERE fkid=?', [fkid], function (err, results) {
 			if (err) log(err);
 			log('::::::::::::::::: ID ATUALIZOU ALIVE...' + fkid);
 		});
@@ -2344,20 +2140,6 @@ function findInAtende(mobile) {
 				resolve(0)
 			} else {
 				resolve(1)
-			}
-		});
-	})
-}
-
-function getPrioridades(id){
-	return new Promise(function (resolve, reject) {
-		dbcc.query("SELECT prioridades FROM tab_usuarios WHERE id = ?;", [id], function (err, result) {
-			if (err) { console.log(err) }
-			console.log(result)
-			if (result.length > 0) {
-				resolve(result[0].prioridades)
-			} else {
-				resolve("{}")
 			}
 		});
 	})

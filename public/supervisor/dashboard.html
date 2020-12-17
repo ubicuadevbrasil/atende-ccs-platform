@@ -130,85 +130,146 @@
     <div class="page-header">
       <h1 class="ion-ios-pulse"> Dashboard</h1>
     </div>
+
     <!-- Stats -->
-    <div class="col-md-3">
-      <div class="box darken" style="background-color: #C653C6; color: #FFFFFF">
-        <div class="box-cell p-x-3 p-y-1">
-          <div class="font-weight-semibold font-size-12">Aguardando na Fila</div>
-          <div id="" class="font-weight-bold font-size-20" style="display: inline-block;">
-            <span><span id="aguardando">0</span>&nbsp&nbsp&nbsp<button id="btntempo"
-                class="btn btn-sm btn-rounded btn-outline" style="backgrond-color: #FFFFFF; color: #FFFFFF;"><i
-                  class="fa fa-clock-o"></i>&nbsp;&nbsp;<span id="taf"
-                  style="color: #FFFFFF;font-weight: bold;">0</span></button><span>
+
+    <div class="ubcDashGrid">
+      <div>
+        <div class="box darken" style="background-color: #C653C6; color: #FFFFFF">
+          <div class="box-cell p-x-3 p-y-1">
+            <div class="font-weight-semibold font-size-12">Aguardando na Fila</div>
+            <div id="" class="font-weight-bold font-size-20" style="display: inline-block;">
+              <span><span id="aguardando">0</span>&nbsp&nbsp&nbsp<button id="btntempo"
+                  class="btn btn-sm btn-rounded btn-outline" style="backgrond-color: #FFFFFF; color: #FFFFFF;"><i
+                    class="fa fa-clock-o"></i>&nbsp;&nbsp;<span id="taf"
+                    style="color: #FFFFFF;font-weight: bold;">0</span></button><span>
+            </div>
+            <i class="box-bg-icon middle right font-size-52 ion-ios-people"></i>
           </div>
-          <i class="box-bg-icon middle right font-size-52 ion-ios-people"></i>
+        </div>
+      </div>
+
+      <div>
+        <div class=" box bg-success darken">
+          <div class="box-cell p-x-3 p-y-1">
+            <div class="font-weight-semibold font-size-12">Em Atendimento</div>
+            <div id="" class="font-weight-bold font-size-20">
+              <h1 id="EmAtendimento">0</h1>
+            </div>
+            <i class="box-bg-icon middle right font-size-52 ion-ios-box"></i>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="box bg-warning darken">
+          <div class="box-cell p-x-3 p-y-1">
+            <div class="font-weight-semibold font-size-12">Encerrados</div>
+            <div class="font-weight-bold font-size-20">
+              <h1 id="AtendimentoEncerrados">0</h1>
+            </div>
+            <i class="box-bg-icon middle right font-size-52 ion-android-done"></i>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="box bg-info darken">
+          <div class="box-cell p-x-3 p-y-1">
+            <div class="font-weight-semibold font-size-12">Tempo Médio de Atendimento</div>
+            <div class="font-weight-bold font-size-20">
+              <small class="font-weight-light"></small>
+              <h1 id="TempoMedio">0</h1>
+            </div>
+            <i class="box-bg-icon middle right font-size-52 ion-arrow-graph-up-right"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teste -->
+
+      <div>
+        <div class="box darken" style="background-color: #C653C6; color: #FFFFFF">
+          <div class="box-cell p-x-3 p-y-1">
+            <div class="font-weight-semibold font-size-12">Aguardando na Fila ( Prioritários )</div>
+            <div id="" class="font-weight-bold font-size-20" style="display: inline-block;">
+              <span><span id="aguardandoPrior">0</span>&nbsp&nbsp&nbsp<button id="btntempoPrior"
+                  class="btn btn-sm btn-rounded btn-outline" style="backgrond-color: #FFFFFF; color: #FFFFFF;"><i
+                    class="fa fa-clock-o"></i>&nbsp;&nbsp;<span id="tafPrior"
+                    style="color: #FFFFFF;font-weight: bold;">0</span></button><span>
+            </div>
+            <i class="box-bg-icon middle right font-size-52 ion-ios-people"></i>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class=" box bg-success darken">
+          <div class="box-cell p-x-3 p-y-1">
+            <div class="font-weight-semibold font-size-12">Em Atendimento ( Prioritários )</div>
+            <div id="" class="font-weight-bold font-size-20">
+              <h1 id="EmAtendimentoPrior">0</h1>
+            </div>
+            <i class="box-bg-icon middle right font-size-52 ion-ios-box"></i>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="box bg-warning darken">
+          <div class="box-cell p-x-3 p-y-1">
+            <div class="font-weight-semibold font-size-12">Encerrados ( Prioritários )</div>
+            <div class="font-weight-bold font-size-20">
+              <h1 id="AtendimentoEncerradosPrior">0</h1>
+            </div>
+            <i class="box-bg-icon middle right font-size-52 ion-android-done"></i>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="box bg-info darken">
+          <div class="box-cell p-x-3 p-y-1">
+            <div class="font-weight-semibold font-size-12">Tempo Médio de Atendimento ( Prioritários )</div>
+            <div class="font-weight-bold font-size-20">
+              <small class="font-weight-light"></small>
+              <h1 id="TempoMedioPrior">0</h1>
+            </div>
+            <i class="box-bg-icon middle right font-size-52 ion-arrow-graph-up-right"></i>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="col-md-3"">
-         <div class=" box bg-success darken">
-      <div class="box-cell p-x-3 p-y-1">
-        <div class="font-weight-semibold font-size-12">Em Atendimento</div>
-        <div id="" class="font-weight-bold font-size-20">
-          <h1 id="EmAtendimento">0</h1>
-        </div>
-        <i class="box-bg-icon middle right font-size-52 ion-ios-box"></i>
-      </div>
-    </div>
-  </div>
+    <!-- Fim -->
 
-  <div class="col-md-3">
-    <div class="box bg-warning darken">
-      <div class="box-cell p-x-3 p-y-1">
-        <div class="font-weight-semibold font-size-12">Encerrados</div>
-        <div class="font-weight-bold font-size-20">
-          <h1 id="AtendimentoEncerrados">0</h1>
+    </br>
+    </br>
+    </br>
+    </br>
+    <div class="col-md-12">
+      <div class="panel panel-danger panel-dark">
+        <div class="panel-heading panel-ranger">
+          <span class="panel-title">Atendentes Online</span>
         </div>
-        <i class="box-bg-icon middle right font-size-52 ion-android-done"></i>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-3">
-    <div class="box bg-info darken">
-      <div class="box-cell p-x-3 p-y-1">
-        <div class="font-weight-semibold font-size-12">Tempo Médio de Atendimento</div>
-        <div class="font-weight-bold font-size-20">
-          <small class="font-weight-light"></small>
-          <h1 id="TempoMedio">0</h1>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Usuário</th>
+                <th>Logado</th>
+                <th>Em Atendimento</th>
+                <th>Encerrados</th>
+                <th>Deslogar</td>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+            </tbody>
+          </table>
         </div>
-        <i class="box-bg-icon middle right font-size-52 ion-arrow-graph-up-right"></i>
       </div>
     </div>
-  </div>
-  </br>
-  </br>
-  </br>
-  </br>
-  <div class="col-md-12">
-    <div class="panel panel-danger panel-dark">
-      <div class="panel-heading panel-ranger">
-        <span class="panel-title">Atendentes Online</span>
-      </div>
-      <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Usuário</th>
-              <th>Logado</th>
-              <th>Em Atendimento</th>
-              <th>Encerrados</th>
-              <th>Deslogar</td>
-            </tr>
-          </thead>
-          <tbody id="tbody">
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
   </div>
   </div>
 

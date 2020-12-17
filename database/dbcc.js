@@ -13,7 +13,7 @@ var db_config = {
     host: 'localhost',
     user: 'admin',
     password: 'GmtB0kCs*Fic',
-    database: 'db_sanofi_ccs'
+    database: 'db_cruzeiro_ccs'
 };
 
 

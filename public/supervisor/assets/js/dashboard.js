@@ -13,9 +13,13 @@ socket.on('sentinel_clients_queue', function (payload) {
     $("#EmAtendimento").text(payload[0].total);
     $("#aguardando").text(payload[1].total);
     $("#AtendimentoEncerrados").text(payload[2].total);
+    // Prioritarios
+    $("#EmAtendimentoPrior").text(payload[6].total);
+    $("#aguardandoPrior").text(payload[5].total);
+    $("#AtendimentoEncerradosPrior").text(payload[7].total);
     if (payload[1].total > 0) {
         $("#btntempo").show();
-        //Calculando tempo em fila
+        // Calculando tempo em fila
         var _time = payload[4].total;
         var _minutes = _time / 60;
         var _rmin = Math.floor(_minutes);
@@ -31,6 +35,24 @@ socket.on('sentinel_clients_queue', function (payload) {
     } else {
         $("#btntempo").hide();
     }
+    if (payload[5].total > 0) {
+        $("#btntempoPrior").show();
+        // Calculando tempo em fila
+        var _time = payload[9].total;
+        var _minutes = _time / 60;
+        var _rmin = Math.floor(_minutes);
+        var _total = _rmin * 60;
+        var _seconds = _time - _total;
+        if (_time < 60) {
+            $("#tafPrior").text(_time + " segundos");
+        } else if (_time > 60 && _time < 120) {
+            $("#tafPrior").text(_rmin + " minuto e " + _seconds + " segundos");
+        } else {
+            $("#tafPrior").text(_rmin + " minutos e " + _seconds + " segundos");
+        }
+    } else {
+        $("#btntempoPrior").hide();
+    }
     // var tempmed = payload[3].total;
     // var atendeIn = payload[0].total;
     // var media = Math.round(tempmed / atendeIn);
@@ -44,6 +66,20 @@ socket.on('sentinel_clients_queue', function (payload) {
     let timeEdt = new Date(seconds * 1000).toISOString().substr(11, 8)
     let timeText = timeEdt.split(":")[0] + ":" + timeEdt.split(":")[1]
     $("#TempoMedio").text(timeText);
+
+    // var tempmedPrior = payload[8].total;
+    // var atendeInPrior = payload[6].total;
+    // var mediaPrior = Math.round(tempmedPrior / atendeInPrior);
+    // if (mediaPrior > 0) {
+    // } else {
+    //     mediaPrior = 0;
+    // }
+    // $("#TempoMedioPrior").text(mediaPrior + " minutos");
+
+    let secondsPrior = payload[8].total;
+    let timeEdtPrior = new Date(secondsPrior * 1000).toISOString().substr(11, 8)
+    let timeTextPrior = timeEdtPrior.split(":")[0] + ":" + timeEdtPrior.split(":")[1]
+    $("#TempoMedioPrior").text(timeTextPrior);
 });
 
 socket.on('sentinel_clients_alive', function (payload) {

@@ -124,3 +124,9 @@ td > table > .myTablebg {
 td > table{
     border-top-color: #ececec !important;
   }
+
+  .ubcDashGrid{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 1vw;
+  }

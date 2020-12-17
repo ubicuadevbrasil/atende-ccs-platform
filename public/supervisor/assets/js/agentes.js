@@ -2,10 +2,6 @@ var ida = 0;
 var idunb = 0;
 var fkidunb = 0;
 var idcontato = 0;
-var prierrou = 0;
-var pricancelamento = 0;
-var prirematricula = 0;
-var priretorno = 0;
 var json;
 var operador = sessionStorage.getItem('fkname');
 var socket = io.connect();
@@ -36,10 +32,10 @@ socket.on('connect', function () {
 
         if (buscaval == "") {
             for (a = 0; a < cx; a++) {
+                var teste = a;
                 var menu = '';
                 var perfil = getperfil(json[a].perfil);
-                var { cancelamento, retorno, rematricula, fallback } = JSON.parse(json[a].prioridades)
-                menu += divatend(perfil, json[a].nome, json[a].usuario, json[a].id, a, fallback, cancelamento, rematricula, retorno);
+                menu += divatend(perfil, json[a].nome, json[a].usuario, json[a].id, teste);
                 $('#tbodyz').append(menu);
             }
         } else {
@@ -139,36 +135,9 @@ $('#cedtatend').on('click', function () {
         var nome = $('#edtnome').val();
         var user = $('#edtuser').val();
 
-        let arr = [$('#priretorno').val(), $('#prirematricula').val(), $('#pricancelamento').val(), $('#prierrou').val()]
-        let check = true
-
-        for (let i = 0; i < 4; i++) {
-            for (let j = 0; j < arr.length; j++) {
-                const element = arr[j];
-                if(i != j){
-                    console.log(i, j)
-                    console.log(arr[i], element, arr[i] == element);
-                    if (arr[i] == element) {
-                        check = false
-                        break
-                    } 
-                }
-            } 
-        }
-        
-        if (check) {
-            var prijson = {
-                "cancelamento": $('#pricancelamento').val(),
-                "retorno": $('#priretorno').val(),
-                "rematricula": $('#prirematricula').val(),
-                "fallback": $('#prierrou').val()
-            }
-            socket.emit('upd_agent', { id: ida, pwd: false, perfil: perfil, nome: nome, usuario: user, prijson: JSON.stringify(prijson) });
-            ida = 0;
-            $('#modal-default2').modal('hide');
-        } else {
-            alert("Os niveis de prioridade não podem ser iguais")
-        }
+        socket.emit('upd_agent', { id: ida, pwd: false, perfil: perfil, nome: nome, usuario: user });
+        ida = 0;
+        $('#modal-default2').modal('hide');
     }
 });
 
@@ -226,17 +195,9 @@ function openbox1(box) {
     var user = $('#us' + box).text();
 
     ida = $('#id' + box).text();
-    prierrou = $('#errou' + box).text();
-    pricancelamento = $('#cancelamento' + box).text();
-    prirematricula = $('#rematricula' + box).text();
-    priretorno = $('#retorno' + box).text();
     gbox = box
     $('#edtnome').val(nome);
     $('#edtuser').val(user);
-    $('#prierrou').val(prierrou);
-    $('#pricancelamento').val(pricancelamento);
-    $('#prirematricula').val(prirematricula);
-    $('#priretorno').val(priretorno);
 
     // Tipo da Conta
     if (perfil == "Supervisor") {
