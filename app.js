@@ -1491,7 +1491,7 @@ io.on('connection', function (socket) {
 		var _fkto = payload.fkid;
 		var _fkname = payload.fkname;
 		console.log(payload);
-		var query = `SELECT mobile, dtin, account, photo FROM tab_filain WHERE status=1 ORDER BY dtin DESC LIMIT 1`
+		var query = `SELECT mobile, dtin, account, photo FROM tab_filain WHERE status=1 ORDER BY dtin LIMIT 1`
 		console.log(query)
 		dbcc.query(query, [], async function (err, result) {
 			if (err) {
