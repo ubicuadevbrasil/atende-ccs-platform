@@ -180,12 +180,12 @@ socket.on('bi-answer_new_queue', async function (payload) {
             $('#ac' + numac).hide();
         }
         console.log('SLEEP ATIVADO');
-        await sleep(2000)
+        await sleep(4000)
         console.log('SLEEP DESATIVADO');
         socket.emit('bi-atendein', { fkid: sessionStorage.getItem('fkid') });
     } else {
         console.log('SLEEP ATIVADO');
-        await sleep(2000)
+        await sleep(4000)
         console.log('SLEEP DESATIVADO');
         socket.emit('bi-atendein', { fkid: sessionStorage.getItem('fkid') });
     }

@@ -484,6 +484,39 @@ app.get('/requests/api/logins', function (req, res) {
 	}
 });
 
+app.get('/requests/api/logins', function (req, res, next) {
+	var auth = req.headers['authorization'];
+	////console.log("Authorization Header is: ", auth);
+	////console.log(req.body);
+	if (!auth) {
+		res.statusCode = 401;
+		res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
+		res.end('Sorry! Invalid Authentication.');
+	} else if (auth) {
+		var tmp = auth.split(' ');
+		var buf = new Buffer(tmp[1], 'base64');
+		var plain_auth = buf.toString();
+		////console.log("Decoded Authorization ", plain_auth);
+		var creds = plain_auth.split(':');
+		var username = creds[0];
+		var password = creds[1];
+		if ((username == 'ubicua') && (password == '1zvzrAFyIwKhWqIoyRU9whpdBYoK')) {
+			dbcc.query('SELECT * FROM tab_filain;', function (err, result) {
+				if (err) {
+					console.log(err)
+					res.json({ status: 'falha', resultado: err });
+				} else {
+					res.json({ status: '200', resultado: result });
+				}
+			});
+		} else {
+			res.statusCode = 401;
+			res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
+			res.end('Sorry! Unauthorized Access.');
+		}
+	}
+})
+
 var numUsers = 0;
 var _host = "LON";
 
@@ -1028,7 +1061,7 @@ io.on('connection', function (socket) {
 						_sessionlist += "'" + result[i].sessionid + "',";
 					}
 				}
-				dbcc.query("SELECT sessionid, dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY sessionid, dt;", function (err, result) {
+				dbcc.query("SELECT sessionid, dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY dt;", function (err, result) {
 					var _logs = JSON.stringify(result);
 					socket.emit('bi-atendein', { contacts: _contacts, logs: _logs });
 				});
@@ -1140,7 +1173,7 @@ io.on('connection', function (socket) {
 					}
 				}
 				////console.log("SESSIONLIST [" + _sessionlist + "]");
-				dbcc.query("SELECT sessionid, DATE_ADD(dt, INTERVAL 3 HOUR) as dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY sessionid, dt;", function (err, result) {
+				dbcc.query("SELECT sessionid, DATE_ADD(dt, INTERVAL 3 HOUR) as dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY dt;", function (err, result) {
 					var _logs = JSON.stringify(result);
 					socket.emit('bi-atendein', { contacts: _contacts, logs: _logs });
 				});
