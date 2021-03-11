@@ -461,61 +461,28 @@ app.get('/requests/api/:dtini/:dtfim', function (req, res) {
 });
 
 app.get('/requests/api/logins', function (req, res) {
-	var auth = req.headers['authorization'];
-	////console.log("Authorization Header is: ", auth);
-	if (!auth) {
-		res.statusCode = 401;
-		res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
-		res.end('Sorry! Invalid Authentication.');
-	} else if (auth) {
-
-		var tmp = auth.split(' ');
-		var buf = new Buffer(tmp[1], 'base64');
-		var plain_auth = buf.toString();
-		////console.log("Decoded Authorization ", plain_auth);
-		var creds = plain_auth.split(':');
-		var username = creds[0];
-		var password = creds[1];
-		if ((username == 'cruzeiro') && (password == 'APsxrRvv4mzX33pB')) {
-			dbcc.query("SELECT * FROM tab_logins WHERE fkid != '2';", function (err, rows, fields) {
-				res.send(JSON.stringify(rows));
-			});
-		}
-	}
+    var { datainicio, datafim } = req.query
+    var auth = req.headers['authorization'];
+    ////console.log("Authorization Header is: ", auth);
+    if (!auth) {
+        res.statusCode = 401;
+        res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
+        res.end('Sorry! Invalid Authentication.');
+    } else if (auth) {
+        var tmp = auth.split(' ');
+        var buf = new Buffer(tmp[1], 'base64');
+        var plain_auth = buf.toString();
+        ////console.log("Decoded Authorization ", plain_auth);
+        var creds = plain_auth.split(':');
+        var username = creds[0];
+        var password = creds[1];
+        if ((username == 'ubicua') && (password == 'APsxrRvv4mzX33pB')) {
+            dbcc.query("SELECT * FROM tab_logins WHERE date BETWEEN ? and ? and fkid != '2';", [datainicio, datafim], function (err, rows, fields) {
+                res.send(JSON.stringify(rows));
+            });
+        }
+    }
 });
-
-app.get('/requests/api/logins', function (req, res, next) {
-	var auth = req.headers['authorization'];
-	////console.log("Authorization Header is: ", auth);
-	////console.log(req.body);
-	if (!auth) {
-		res.statusCode = 401;
-		res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
-		res.end('Sorry! Invalid Authentication.');
-	} else if (auth) {
-		var tmp = auth.split(' ');
-		var buf = new Buffer(tmp[1], 'base64');
-		var plain_auth = buf.toString();
-		////console.log("Decoded Authorization ", plain_auth);
-		var creds = plain_auth.split(':');
-		var username = creds[0];
-		var password = creds[1];
-		if ((username == 'ubicua') && (password == '1zvzrAFyIwKhWqIoyRU9whpdBYoK')) {
-			dbcc.query('SELECT * FROM tab_filain;', function (err, result) {
-				if (err) {
-					console.log(err)
-					res.json({ status: 'falha', resultado: err });
-				} else {
-					res.json({ status: '200', resultado: result });
-				}
-			});
-		} else {
-			res.statusCode = 401;
-			res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
-			res.end('Sorry! Unauthorized Access.');
-		}
-	}
-})
 
 var numUsers = 0;
 var _host = "LON";
