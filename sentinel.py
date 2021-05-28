@@ -182,10 +182,10 @@ sched = BackgroundScheduler()
 sched.start()
 
 # Add Job Scheduled
-job_sentinel_waendpoint = sched.add_job(sentinel_waendpoint, 'interval', seconds=3)
-job_sentinel_clientsqueue = sched.add_job(sentinel_clientsqueue, 'interval', seconds=2)
-job_sentinel_newmessage = sched.add_job(sentinel_newmessages, 'interval', seconds=1)
-job_sentinel_monitor = sched.add_job(sentinel_monitor, 'interval', seconds=1800)
+job_sentinel_waendpoint = sched.add_job(sentinel_waendpoint, 'interval', seconds=5)
+job_sentinel_clientsqueue = sched.add_job(sentinel_clientsqueue, 'interval', seconds=5)
+job_sentinel_newmessage = sched.add_job(sentinel_newmessages, 'interval', seconds=5)
+#job_sentinel_monitor = sched.add_job(sentinel_monitor, 'interval', seconds=1800)
 
 if __name__ == '__main__':
     try:
