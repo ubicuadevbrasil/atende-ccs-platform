@@ -6,23 +6,17 @@
 default:
   image: node:latest
 
-
-job:
-  script:
-    # provide a shell script as argument for this keyword.
-    - echo "Hello World"
-
-run-npm:
-  script:
-    - npm i
-    - echo 'Teste'
+# run-npm:
+#   script:
+#     - npm i
+#     - echo 'Teste'
 
 create-env:
   script:
-    - cat > .env
-    - Teste
+    -> cat > .env
+    Teste
 
-start-node:
-  script:
-    - node app.js
-    - echo 'Foi'
+# start-node:
+#   script:
+#     - node app.js
+#     - echo 'Foi'
