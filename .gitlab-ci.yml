@@ -13,19 +13,7 @@ default:
 
 create-env:
   script:
-    -> printf 
-    'CCS_MOBILE = "5511961834601@c.us"
-    CCS_CDN_FILE = "https://cdn-homolog.ubicuacloud.com.com/file/"
-    CCS_CDN_BASE = "https://cdn-homolog.ubicuacloud.com.com/base64/"
-    CCS_OPTIONSKEY = "/etc/letsencrypt/live/ccs-homolog.ubicuacloud.com.br/privkey.pem"
-    CCS_OPTIONSCERT = "/etc/letsencrypt/live/ccs-homolog.ubicuacloud.com.br/fullchain.pem"
-    CCS_EXTENSION = "https://extensao-homolog.ubicuacloud.com.br/client"
-    CCS_REPORT = "https://ccs-homolog.ubicuacloud.com.br/supervisor/report/"
-    SMI_API = "https://cruzeirodosul.ex-aluno-edu.com.br/cruzeiro_m7/api/wsfMsg"
-    DB_HOST = "localhost"
-    DB_USER = "admin"
-    DB_PASSWORD = "GmtB0kCs*Fic"
-    DB_DATABASE = "db_cruzeiro_ccs"' > .env
+    - printf 'CCS_MOBILE = "5511961834601@c.us"\nCCS_CDN_FILE = "https://cdn-homolog.ubicuacloud.com.com/file/"\nCCS_CDN_BASE = "https://cdn-homolog.ubicuacloud.com.com/base64/"\nCCS_OPTIONSKEY = "/etc/letsencrypt/live/ccs-homolog.ubicuacloud.com.br/privkey.pem"\nCCS_OPTIONSCERT = "/etc/letsencrypt/live/ccs-homolog.ubicuacloud.com.br/fullchain.pem"\nCCS_EXTENSION = "https://extensao-homolog.ubicuacloud.com.br/client"\nCCS_REPORT = "https://ccs-homolog.ubicuacloud.com.br/supervisor/report/"\nSMI_API = "https://cruzeirodosul.ex-aluno-edu.com.br/cruzeiro_m7/api/wsfMsg"\nDB_HOST = "localhost"\nDB_USER = "admin"\nDB_PASSWORD = "GmtB0kCs*Fic"\nDB_DATABASE = "db_cruzeiro_ccs"' > .env
 
 # start-node:
 #   script:
