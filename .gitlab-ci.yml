@@ -13,7 +13,7 @@ default:
 
 create-env:
   script:
-    - cat > .env Teste
+    - echo 'TESTEE' > .env
 
 # start-node:
 #   script:
