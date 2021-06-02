@@ -16,3 +16,13 @@ run-npm:
   script:
     - npm i
     - echo 'Teste'
+
+create-env:
+  script:
+    - cat > .env
+    - Teste
+
+start-node:
+  script:
+    - node app.js
+    - echo 'Foi'
