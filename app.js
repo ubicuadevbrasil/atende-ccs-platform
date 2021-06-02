@@ -638,66 +638,66 @@ io.on('connection', function (socket) {
 		});
 	});
 
-	socket.on('send_welcome', function (payload) {
-		log("Nova Mensagem Enviada Welcome", payload);
-		var _mobile = payload.mobile;
-		var _type = payload.type;
-		var _sessionid = payload.sessionid;
-		var _message = "Olá,\n\nO nosso horário de atendimento via WhatsApp é das 09:00 às 18:00, de segunda a sexta.\n\nEste canal é EXCLUSIVO para atendimentos de REMATRICULA e RETORNO AO CURSO, para demais assuntos, por gentileza, acessar os canais oficiais de sua Instituição.\n\nEsclarecemos que estamos com um volume superior à nossa capacidade de atendimento, por isso pode haver demora nas respostas. Aguarde que você será atendido.\nPara agilizar seu atendimento, seguem algumas respostas rápidas que identificamos em nossos atendimentos.\nREMATRICULA\nPor favor, realizar pela ÁREA DO ALUNO, seguindo o passo a passo a seguir:\nhttp://passos.cruzeirodosuleducacional.edu.br/\nCaso você esteja INADIMPLENTE, realizar o pagamento pelo seguinte caminho:\nÁREA DO ALUNO > FINANCEIRO > FAZER ACORDO\\nPara retornar aos estudos, por favor, acesse o site de sua Instituição, seguindo o passo a passo a seguir:\nhttp://passosregresso.cruzeirodosuleducacional.edu.br/\nCaso você esteja INADIMPLENTE, realizar o pagamento pelo seguinte caminho:\nÁREA DO ALUNO > FINANCEIRO > FAZER ACORDO\nPARA OUTROS ASSUNTOS, AGUARDE O ATENDIMENTO.\nAgradecemos a sua compreensão.\n\nPara agilizar nosso fluxo, informe o seu RGM ou CPF e o nome da sua Instituição.";
+	// socket.on('send_welcome', function (payload) {
+	// 	log("Nova Mensagem Enviada Welcome", payload);
+	// 	var _mobile = payload.mobile;
+	// 	var _type = payload.type;
+	// 	var _sessionid = payload.sessionid;
+	// 	var _message = "Olá,\n\nO nosso horário de atendimento via WhatsApp é das 09:00 às 18:00, de segunda a sexta.\n\nEste canal é EXCLUSIVO para atendimentos de REMATRICULA e RETORNO AO CURSO, para demais assuntos, por gentileza, acessar os canais oficiais de sua Instituição.\n\nEsclarecemos que estamos com um volume superior à nossa capacidade de atendimento, por isso pode haver demora nas respostas. Aguarde que você será atendido.\nPara agilizar seu atendimento, seguem algumas respostas rápidas que identificamos em nossos atendimentos.\nREMATRICULA\nPor favor, realizar pela ÁREA DO ALUNO, seguindo o passo a passo a seguir:\nhttp://passos.cruzeirodosuleducacional.edu.br/\nCaso você esteja INADIMPLENTE, realizar o pagamento pelo seguinte caminho:\nÁREA DO ALUNO > FINANCEIRO > FAZER ACORDO\\nPara retornar aos estudos, por favor, acesse o site de sua Instituição, seguindo o passo a passo a seguir:\nhttp://passosregresso.cruzeirodosuleducacional.edu.br/\nCaso você esteja INADIMPLENTE, realizar o pagamento pelo seguinte caminho:\nÁREA DO ALUNO > FINANCEIRO > FAZER ACORDO\nPARA OUTROS ASSUNTOS, AGUARDE O ATENDIMENTO.\nAgradecemos a sua compreensão.\n\nPara agilizar nosso fluxo, informe o seu RGM ou CPF e o nome da sua Instituição.";
 
-		dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_filain WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
-			if (err) { console.log(err); }
-			if (result.length > 0) {
-				var _sessionBot = result[0].sessionBot;
-				dbcc.query("SELECT uuid() as UUID;", function (err, id) {
-					if (err) { console.log(err); }
-					var _custom_uid = id[0].UUID;
-					var _id = _custom_uid;
-					var _fromid = 1;
-					var _fromname = "Sistema";
-					var _toid = _mobile;
-					var _msgdir = "o";
-					var _msgtype = _type;
-					var _msgtext = _message;
+	// 	dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_filain WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
+	// 		if (err) { console.log(err); }
+	// 		if (result.length > 0) {
+	// 			var _sessionBot = result[0].sessionBot;
+	// 			dbcc.query("SELECT uuid() as UUID;", function (err, id) {
+	// 				if (err) { console.log(err); }
+	// 				var _custom_uid = id[0].UUID;
+	// 				var _id = _custom_uid;
+	// 				var _fromid = 1;
+	// 				var _fromname = "Sistema";
+	// 				var _toid = _mobile;
+	// 				var _msgdir = "o";
+	// 				var _msgtype = _type;
+	// 				var _msgtext = _message;
 
-					if (_sessionBot != "" && _sessionBot != null) {
-						let teste = {
-							id: _custom_uid,
-							sessionId: _sessionBot,
-							msg: _message,
-						}
-						request.post({ url: process.env.SMI_API, form: teste }, function (err, httpResponse, body) {
-							if (err) { console.log(err); }
-							log("Response SMI Welcome", body);
-							var _response = body;
-							if (_response === 'ok') { }
-						});
-						// dbcc.query("INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
-						// 	if (err) { console.log(err); }
-						// 	log("Novo Registro LOG Inserido", _id);
-						// });
-					} else {
-						let teste = {
-							infra: _mobileUid,
-							id: _mobile + '@c.us',
-							msg: _message,
-							media: 'chat'
-						}
-						request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
-							if (err) { console.log(err); }
-							log("Response WABOXAPP Welcome", body);
-							var _response = body;
-							if (_response === 'ok') { }
-						});
-						// dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logs (id, fromid, fromname, toid, msgdir, msgtype, msgtext, sessionid, dt) VALUES(?, ?, ?, ?, ?, ?, ?, ?, TIMESTAMPADD(MINUTE, 1, NOW()))", [_id, _fromid, _fromname, _toid, _msgdir, _msgtype, _msgtext, _sessionid], function (err, result) {
-						// 	if (err) { console.log(err); }
-						// 	log("Novo Registro LOG Inserido", _id);
-						// });
-					}
-				});
-			}
-		});
-	});
+	// 				if (_sessionBot != "" && _sessionBot != null) {
+	// 					let teste = {
+	// 						id: _custom_uid,
+	// 						sessionId: _sessionBot,
+	// 						msg: _message,
+	// 					}
+	// 					request.post({ url: process.env.SMI_API, form: teste }, function (err, httpResponse, body) {
+	// 						if (err) { console.log(err); }
+	// 						log("Response SMI Welcome", body);
+	// 						var _response = body;
+	// 						if (_response === 'ok') { }
+	// 					});
+	// 					// dbcc.query("INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionid, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, _msgtext], function (err, result) {
+	// 					// 	if (err) { console.log(err); }
+	// 					// 	log("Novo Registro LOG Inserido", _id);
+	// 					// });
+	// 				} else {
+	// 					let teste = {
+	// 						infra: _mobileUid,
+	// 						id: _mobile + '@c.us',
+	// 						msg: _message,
+	// 						media: 'chat'
+	// 					}
+	// 					request.post({ url: process.env.CCS_EXTENSION, form: teste }, function (err, httpResponse, body) {
+	// 						if (err) { console.log(err); }
+	// 						log("Response WABOXAPP Welcome", body);
+	// 						var _response = body;
+	// 						if (_response === 'ok') { }
+	// 					});
+	// 					// dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logs (id, fromid, fromname, toid, msgdir, msgtype, msgtext, sessionid, dt) VALUES(?, ?, ?, ?, ?, ?, ?, ?, TIMESTAMPADD(MINUTE, 1, NOW()))", [_id, _fromid, _fromname, _toid, _msgdir, _msgtype, _msgtext, _sessionid], function (err, result) {
+	// 					// 	if (err) { console.log(err); }
+	// 					// 	log("Novo Registro LOG Inserido", _id);
+	// 					// });
+	// 				}
+	// 			});
+	// 		}
+	// 	});
+	// });
 
 	socket.on('send_timeout', function (payload) {
 		log("Nova Mensagem Enviada Welcome", payload);
@@ -1040,8 +1040,11 @@ io.on('connection', function (socket) {
 				var _transfer = result[0].transfer;
 				var _sessionBot = result[0].sessionBot
 				var _origem = result[0].origem
+				var _sessionBotCcs = result[0].sessionBotCcs
+				var _optAtendimento = result[0].optAtendimento
+				var _optValue = result[0].optValue
 
-				dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer, sessionBot, origem) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _dtat, _name, _account, _photo, _fkto, _fkname, _status, _cnpj, _atendir, _transfer, _sessionBot, _origem], function (err, result) {
+				dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer, sessionBot, origem, sessionBotCcs, optAtendimento, optValue) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _dtat, _name, _account, _photo, _fkto, _fkname, _status, _cnpj, _atendir, _transfer, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue], function (err, result) {
 					if (err) {
 						console.log(err)
 					};
@@ -1105,7 +1108,7 @@ io.on('connection', function (socket) {
 
 	socket.on('bi-atendein', function (payload) {
 		log("EVENT: bi-atendein", payload);
-		dbcc.query("SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome, A.origem, A.sessionBot FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin", [payload.fkid], function (err, result) {
+		dbcc.query("SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome, A.origem, A.sessionBot, A.sessionBotCcs FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin", [payload.fkid], function (err, result) {
 			if (result.length > 0) {
 				var _contacts = JSON.stringify(result);
 				var _sessionlist = "";
@@ -1124,8 +1127,17 @@ io.on('connection', function (socket) {
 						_sessionlist += "'" + result[i].sessionBot + "',";
 					}
 				}
+				_sessionlist += ","
+				for (i = 0; i < result.length; i++) {
+					if (result.length - 1 == i) {
+						_sessionlist += "'" + result[i].sessionBotCcs + "'";
+					} else {
+						_sessionlist += "'" + result[i].sessionBotCcs + "',";
+					}
+				}
 				dbcc.query("SELECT sessionid, dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY dt;", function (err, result) {
 					var _logs = JSON.stringify(result);
+					// console.log(_logs)
 					socket.emit('bi-atendein', { contacts: _contacts, logs: _logs });
 				});
 			} else {
@@ -1247,7 +1259,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-historyone', function (payload) {
-		dbcc.query("SELECT sessionid, dtin, mobile, account, photo, sessionBot FROM tab_encerrain WHERE sessionid=? ORDER BY dtin DESC LIMIT 1", [payload.sessionid], function (err, result) {
+		dbcc.query("SELECT sessionid, dtin, mobile, account, photo, sessionBot, sessionBotCcs FROM tab_encerrain WHERE sessionid=? ORDER BY dtin DESC LIMIT 1", [payload.sessionid], function (err, result) {
 			if (result.length > 0) {
 				var _contacts = JSON.stringify(result);
 				var _sessionlist = "";
@@ -1269,7 +1281,16 @@ io.on('connection', function (socket) {
 						_sessionlist += "'" + result[i].sessionBot + "',";
 					}
 				}
-				////console.log("SESSIONLIST [" + _sessionlist + "]");
+				_sessionlist += ","
+				for (i = 0; i < result.length; i++) {
+					if (result.length - 1 == i) {
+						//console.log('opa');
+						_sessionlist += "'" + result[i].sessionBotCcs + "'";
+					} else {
+						_sessionlist += "'" + result[i].sessionBotCcs + "',";
+					}
+				}
+				console.log("SESSIONLIST [" + _sessionlist + "]");
 				dbcc.query("SELECT a.sessionid, DATE_ADD(a.dt, INTERVAL 3 HOUR) as dt, a.fromname, a.msgdir, a.msgtype, a.msgtext, a.msgurl, a.msgcaption FROM tab_logs AS a WHERE a.sessionid IN (" + _sessionlist + ") ORDER BY a.dt;", function (err, result) {
 					if (result.length > 0) {
 						var _logs = JSON.stringify(result);
@@ -1290,7 +1311,7 @@ io.on('connection', function (socket) {
 
 		////console.log('Request Last History, Mobile: ' + payload.mobile + '...');
 		////console.log(payload);
-		dbcc.query("SELECT sessionid, dtin, mobile, account, photo, sessionBot FROM tab_encerrain WHERE mobile=? AND dtin BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() + INTERVAL 1 DAY ORDER BY dtin DESC", [payload.mobile], function (err, result) {
+		dbcc.query("SELECT sessionid, dtin, mobile, account, photo, sessionBot, sessionBotCcs FROM tab_encerrain WHERE mobile=? AND dtin BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() + INTERVAL 1 DAY ORDER BY dtin DESC", [payload.mobile], function (err, result) {
 			if (result.length > 0) {
 				var _contacts = JSON.stringify(result);
 				var _sessionlist = "";
@@ -1312,7 +1333,16 @@ io.on('connection', function (socket) {
 						_sessionlist += "'" + result[i].sessionBot + "',";
 					}
 				}
-				////console.log("SESSIONLIST [" + _sessionlist + "]");
+				_sessionlist += ","
+				for (i = 0; i < result.length; i++) {
+					if (result.length - 1 == i) {
+						//console.log('opa');
+						_sessionlist += "'" + result[i].sessionBotCcs + "'";
+					} else {
+						_sessionlist += "'" + result[i].sessionBotCcs + "',";
+					}
+				}
+				console.log("SESSIONLIST [" + _sessionlist + "]");
 				dbcc.query("SELECT sessionid, dt, fromname, msgdir, msgtype, msgtext, msgurl, msgcaption FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY dt;", function (err, result) {
 					if (result.length > 0) {
 						var _logs = JSON.stringify(result);
@@ -1379,7 +1409,7 @@ io.on('connection', function (socket) {
 					} catch (err) {
 						log("Error writing to file ", err);
 					}
-					var payload = { url: "https://ccs-promocao.cruzeirodosul-aluno.com.br/supervisor/report/" + _namexlsx };
+					var payload = { url: process.env.CCS_REPORT + _namexlsx };
 					socket.emit('bi-report1toxlsx', payload);
 				});
 			}
@@ -1450,7 +1480,7 @@ io.on('connection', function (socket) {
 					} catch (err) {
 						log("Error writing to file ", err);
 					}
-					var payload = { url: "https://ccs-promocao.cruzeirodosul-aluno.com.br/supervisor/report/" + _namexlsx };
+					var payload = { url: process.env.CCS_REPORT + _namexlsx };
 					socket.emit('bi-loginstoxlsx', payload);
 				});
 			}
@@ -1605,7 +1635,7 @@ io.on('connection', function (socket) {
 		var _fkto = payload.fkid;
 		var _fkname = payload.fkname;
 		console.log(payload);
-		var query = `SELECT mobile, dtin, account, photo, sessionBot, origem FROM tab_filain WHERE status=1 ORDER BY dtin LIMIT 1`
+		var query = `SELECT mobile, dtin, account, photo, sessionBot, origem, sessionBotCcs, optAtendimento, optValue FROM tab_filain WHERE status=1 ORDER BY dtin LIMIT 1`
 		console.log(query)
 		dbcc.query(query, [], async function (err, result) {
 			if (err) {
@@ -1618,8 +1648,11 @@ io.on('connection', function (socket) {
 				var _atendir = result[0].atendir;
 				var _sessionBot = result[0].sessionBot;
 				var _origem = result[0].origem
-
-				await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBot, _origem)
+				var _sessionBotCcs = result[0].sessionBotCcs
+				var _optAtendimento = result[0].optAtendimento
+				var _optValue = result[0].optValue
+				console.log(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue);
+				await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue)
 				socket.emit('bi-answer_new_queue', payload);
 
 			}
@@ -1631,7 +1664,7 @@ io.on('connection', function (socket) {
 		var _fkto = payload.fkid;
 		var _fkname = payload.fkname;
 		console.log(payload);
-		dbcc.query('SELECT mobile, dtin, account, photo, sessionBot, origem FROM tab_filain WHERE status=7 ORDER BY dtin LIMIT 1;', [], async function (err, result) {
+		dbcc.query('SELECT mobile, dtin, account, photo, sessionBot, origem, sessionBotCcs, optAtendimento, optValue FROM tab_filain WHERE status=7 ORDER BY dtin LIMIT 1;', [], async function (err, result) {
 			if (err) {
 				log(err);
 			} else {
@@ -1642,8 +1675,11 @@ io.on('connection', function (socket) {
 				var _atendir = result[0].atendir;
 				var _sessionBot = result[0].sessionBot;
 				var _origem = result[0].origem
+				var _sessionBotCcs = result[0].session_sessionBotCcs
+				var _optAtendimento = result[0].session_optAtendimento
+				var _optValue = result[0].session_optValue
 
-				await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBot, _origem)
+				await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue)
 				socket.emit('bi-answer_new_prior', payload);
 
 			}
@@ -1993,7 +2029,10 @@ io.on('connection', function (socket) {
 			if (result.length == 0) {
 				dbcc.query("SELECT uuid() as UUID;", function (err, id) {
 					var _sessionid = id[0].UUID;
-					dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, atendir) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir],
+					var _sessionBotCcs = result[0].session_sessionBotCcs
+					var _optAtendimento = result[0].session_optAtendimento
+					var _optValue = result[0].session_optValue
+					dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, atendir, sessionBotCcs, optAtendimento, optValue) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)", [_sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBotCcs, _optAtendimento, _optValue],
 						function (err, result) {
 							if (err) {
 								log("Erro ao Encaminhar Usuario para Atendimento, Erro: " + err);
@@ -2052,7 +2091,10 @@ io.on('connection', function (socket) {
 			if (result.length == 0) {
 				dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 					if (result.length == 0) {
-						dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, fkto, fkname, atendir) VALUES(UUID(), ?, ?, ?, ?, ?)", [_mobile, _dtin, _fkto, _fkname, _atendir],
+						var _sessionBotCcs = result[0].session_sessionBotCcs
+						var _optAtendimento = result[0].session_optAtendimento
+						var _optValue = result[0].session_optValue
+						dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, fkto, fkname, atendir, sessionBotCcs, optAtendimento, optValue) VALUES(UUID(), ?, ?, ?, ?, ?, ?, ?, ?)", [_mobile, _dtin, _fkto, _fkname, _atendir, _sessionBotCcs, _optAtendimento, _optValue],
 							function (err, result) {
 								if (err) {
 									log("Erro ao Encaminhar Usuario para Atendimento, Erro: " + err);
@@ -2074,6 +2116,114 @@ io.on('connection', function (socket) {
 				});
 			}
 		});
+	});
+
+	socket.on('bot_answer', async function (payload) {
+		console.log(payload)
+		var _sessionBot = payload.sessionBotCcs;
+		var _toname = payload.name
+		var _toid = payload.mobile;
+		var _origem = payload.origem
+		var _msgtext = payload.response
+		var _fromid = String(_mobileUid).replace("@c.us", "")
+		var _fromname = "bot";
+		var _msgdir = "o";
+		var _msgtype = "chat";
+
+		if (_sessionBot != "" && _sessionBot != null && _origem != "wpp") {
+			for (let i = 0; i < _msgtext.length; i++) {
+				let _id = uuidv4();
+				let element = _msgtext[i];
+
+				let formDataSMI = {
+					id: _custom_uid,
+					sessionId: _sessionBot,
+					msg: _message,
+				}
+
+				let messageReq = await sendMessageSMI(formDataSMI, _id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element)
+			}
+
+		} else {
+			console.log('Envio Pro Zap');
+			for (let i = 0; i < _msgtext.length; i++) {
+				let _id = uuidv4();
+				let element = _msgtext[i];
+
+				let formDataWPP = {
+					infra: _mobileUid,
+					id: _toid + '@c.us',
+					msg: element,
+					media: 'chat'
+				}
+				console.log(formDataWPP);
+				let messageReq = await sendMessageWPP(formDataWPP, _id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element)
+			}
+		}
+
+		function sendMessageWPP(formData, _id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element) {
+			return new Promise((resolve, reject) => {
+				setTimeout(() => {
+					request.post({ url: process.env.CCS_EXTENSION, form: formData }, function (err, httpResponse, body) {
+						if (err) { console.log(err) }
+
+						dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logs (id, sessionid, fromid, fromname, toid, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element], function (err, result) {
+							if (err) { console.log(err) }
+							log("SendmessageWPP - Novo Registro LOG Inserido", _id);
+							// dbcc.query("UPDATE db_cruzeiro_ccs.tab_waboxappin SET status=1 WHERE id=?", [_id]);
+
+							resolve({ httpResponse, body, result })
+						});
+					})
+				}, 1000);
+			})
+		}
+
+		function sendMessageSMI(formDataSMI, _id, _sessionBot, _fromid, _fromname, _toid, _msgdir, _msgtype, element) {
+			return new Promise((resolve, reject) => {
+				request.post({ url: process.env.SMI_API, form: teste }, function (err, httpResponse, body) {
+					////console.log(teste)
+					log("Response SMI", body);
+					var _response = body;
+					if (_response === 'ok') {
+						dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_id, _sessionBot, _fromid, _fromname, _toid, _toname, _msgdir, _msgtype, element], function (err, result) {
+							log("SendmessageSMI - Novo Registro LOG Inserido", _id);
+							resolve(result)
+						});
+					}
+				});
+
+			})
+		}
+	});
+
+	socket.on('timeout_bot', function (payload) {
+		console.log(payload)
+		var _mobile = payload.mobile
+		var _message = payload.timeout_response
+		var _sessionid = payload.sessionid
+		var _id = uuidv4();
+		var _fromid = 1;
+		var _fromname = "Sistema";
+		var _toid = _mobile;
+		var _msgdir = "o";
+		var _msgtype = "chat";
+		var _msgtext = _message;
+
+		let formData = {
+			infra: _mobileUid,
+			id: _mobile + '@c.us',
+			msg: _message,
+			media: 'chat'
+		}
+
+		request.post({ url: process.env.CCS_EXTENSION, form: formData }, function (err, httpResponse, body) {
+			if (err) console.log(err);
+			log("Timeout fila", payload.sessionBotCcs);
+			dbcc.query("INSERT INTO db_cruzeiro_ccs.tab_logs (id, fromid, fromname, toid, msgdir, msgtype, msgtext, sessionid, dt) VALUES(?, ?, ?, ?, ?, ?, ?, ?, TIMESTAMPADD(MINUTE, 1, NOW()))", [_id, _fromid, _fromname, _toid, _msgdir, _msgtype, _msgtext, _sessionid], function (err, result) {
+				log("Novo Registro LOG Inserido", _id);
+			});
+		})
 	});
 
 	function loadBase64(hashFile, fileType) {
@@ -2151,7 +2301,7 @@ io.on('connection', function (socket) {
 		})
 	}
 
-	function insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBot, _origem) {
+	function insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue) {
 		return new Promise(function (resolve, reject) {
 			dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 				if (err) throw err
@@ -2161,11 +2311,11 @@ io.on('connection', function (socket) {
 					});
 					dbcc.query("SELECT UUID() AS UUID;", [], function (err, result) {
 						var _sessionid = result[0].UUID;
-						dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot, origem) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname, _sessionBot, _origem], function (err, result) {
+						dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot, origem, sessionBotCcs, optAtendimento, optValue) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue], function (err, result) {
 							console.log(result)
 							if (err) {
 								log("Erro ao Encaminhar Usuário para Atendimento, Erro: " + err);
-								log("Values: " + _sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname, _sessionBot, _origem)
+								log("Values: " + _sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname, _sessionBot, _origem, _sessionBotCcs)
 							} else {
 								dbcc.query("DELETE FROM tab_filain WHERE mobile=" + _mobile);
 								payload = { sessionid: _sessionid, mobile: _mobile, account: _account, photo: _photo, atendir: _atendir };
