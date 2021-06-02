@@ -59,7 +59,7 @@ function histmsg(contacts, logs) {
   var lx = logs.length;
   for (a = 0; a < lx; a++) {
     for (i = 0; i < cx; i++) {
-      if ((contacts[i].sessionid == logs[a].sessionid) || (contacts[i].sessionBot == logs[a].sessionid)) {
+      if ((contacts[i].sessionid == logs[a].sessionid) || (contacts[i].sessionBot == logs[a].sessionid) || (contacts[i].sessionBotCcs == logs[a].sessionid)) {
         if (logs[a].msgdir === 'i') {
           if (logs[a].msgtype === 'chat') {
             var btime2 = conversor_remessa(logs[a].dt);

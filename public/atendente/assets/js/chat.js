@@ -57,6 +57,7 @@ socket.on("get_cliInfo", function (payload) {
 });
 
 socket.on('sentinel_clients_queue', function (payload) {
+    console.log(payload);
     var json = payload;
     let filaPrior = 0;
     let filaNorm = 0;
