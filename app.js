@@ -385,7 +385,7 @@ app.post('/api/smi/recordMsg', function (req, res) {
 })
 
 app.post('/api/smi/insertFila', async function (req, res) {
-	console.log(req.body);
+	console.log("INSERT FILA API REQ");
 	let mobile = req.body.message.uid;
 	let origem = req.body.message.origem
 	let ckFila = await findInFila(mobile);
@@ -408,20 +408,23 @@ app.post('/api/smi/insertFila', async function (req, res) {
 			sessionId: req.body.message.session,
 			msg: _message,
 		}
+		if (req.body.message.uid != null && req.body.message.uid != '55null' && req.body.message.uid != '' ) {
+			dbcc.query("INSERT INTO tab_filain (mobile, name, sessionBot, origem, status) VALUES(?, ?, ?, ?, '7')", params, function (err, result) {
+				if (err) { console.log(err); }
+				log("Novo Registro Fila API Inserido", _id);
+			});
 
-		dbcc.query("INSERT INTO tab_filain (mobile, name, sessionBot, origem) VALUES(?, ?, ?, ?)", params, function (err, result) {
-			if (err) { console.log(err); }
-			log("Novo Registro LOG Inserido", _id);
-		});
+			request.post({ url: process.env.SMI_API, form: teste }, function (err, httpResponse, body) {
+				log("Response SMI API FILA Welcome", body);
+				var _response = body;
+				if
+					(_response === 'ok') { }
+			});
+			res.send('ok')
+		}else{
+			res.send('erro')
+		}
 
-		request.post({ url: process.env.SMI_API, form: teste }, function (err, httpResponse, body) {
-			log("Response SMI Welcome", body);
-			var _response = body;
-			if
-				(_response === 'ok') { }
-		});
-
-		res.send('ok')
 	} else {
 		res.send('erro')
 	}
@@ -2119,6 +2122,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bot_answer', async function (payload) {
+		console.log('Bot Answer');
 		console.log(payload)
 		var _sessionBot = payload.sessionBotCcs;
 		var _toname = payload.name
@@ -2130,7 +2134,7 @@ io.on('connection', function (socket) {
 		var _msgdir = "o";
 		var _msgtype = "chat";
 
-		if (_sessionBot != "" && _sessionBot != null && _origem != "wpp") {
+		if (_origem != "wpp") {
 			for (let i = 0; i < _msgtext.length; i++) {
 				let _id = uuidv4();
 				let element = _msgtext[i];
