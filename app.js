@@ -32,6 +32,9 @@ const { promises } = require('dns');
 const { Promise } = require('q');
 const { Logger } = require('mongodb');
 
+// Routers
+const exportReqs = require('./routes/reports')
+
 var options = {
 	key: fs.readFileSync(process.env.CCS_OPTIONSKEY),
 	cert: fs.readFileSync(process.env.CCS_OPTIONSCERT)
@@ -51,6 +54,9 @@ io.origins('*:*')
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(cors());
+
+// Routes
+app.use('/exports/', exportReqs);
 
 app.get('/', function (req, res) {
 	if (req.hostname == "falecomacruzeiro.com.br") {
@@ -408,7 +414,7 @@ app.post('/api/smi/insertFila', async function (req, res) {
 			sessionId: req.body.message.session,
 			msg: _message,
 		}
-		if (req.body.message.uid != null && req.body.message.uid != '55null' && req.body.message.uid != '' ) {
+		if (req.body.message.uid != null && req.body.message.uid != '55null' && req.body.message.uid != '') {
 			dbcc.query("INSERT INTO tab_filain (mobile, name, sessionBot, origem, status) VALUES(?, ?, ?, ?, '7')", params, function (err, result) {
 				if (err) { console.log(err); }
 				log("Novo Registro Fila API Inserido", _id);
@@ -421,7 +427,7 @@ app.post('/api/smi/insertFila', async function (req, res) {
 					(_response === 'ok') { }
 			});
 			res.send('ok')
-		}else{
+		} else {
 			res.send('erro')
 		}
 

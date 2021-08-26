@@ -576,7 +576,7 @@ socket.on('bi-find_register', function (payload) {
     }
 })
 
-socket.on('bi-usertimeout', function(payload){
+socket.on('bi-usertimeout', function (payload) {
     onbtnlogout();
 });
 
