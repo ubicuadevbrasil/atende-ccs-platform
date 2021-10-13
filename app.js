@@ -1650,6 +1650,22 @@ io.on('connection', function (socket) {
 			if (err) {
 				log(err);
 			} else {
+				let mailInfo = await findMailInfo(result[0].mobile);
+
+				let mailName, mailCpf, mailRgm, mailInfoCad;
+
+				if (mailName != "" && mailName != null) {
+					mailName = mailInfo[0].nome;
+					mailCpf = mailInfo[0].cpf;
+					mailRgm = mailInfo[0].rgm_aluno;
+					mailInfoCad = "" + mailCpf + "/" + mailRgm + "";
+				} else {
+					mailName = "";
+					mailCpf = "";
+					mailRgm = "";
+					mailInfoCad = "";
+				}
+
 				var _mobile = result[0].mobile;
 				var _dtin = result[0].dtin;
 				var _account = result[0].account;
@@ -1660,8 +1676,11 @@ io.on('connection', function (socket) {
 				var _sessionBotCcs = result[0].sessionBotCcs
 				var _optAtendimento = result[0].optAtendimento
 				var _optValue = result[0].optValue
+				var _name = mailName;
+				var _mailInfo = mailInfoCad;
+
 				console.log(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue);
-				await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue)
+				await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue, _name, _mailInfo)
 				socket.emit('bi-answer_new_queue', payload);
 
 			}
@@ -1677,6 +1696,22 @@ io.on('connection', function (socket) {
 			if (err) {
 				log(err);
 			} else {
+				let mailInfo = await findMailInfo(result[0].mobile);
+
+				let mailName, mailCpf, mailRgm, mailInfoCad;
+
+				if (mailName != "" && mailName != null) {
+					mailName = mailInfo[0].nome;
+					mailCpf = mailInfo[0].cpf;
+					mailRgm = mailInfo[0].rgm_aluno;
+					mailInfoCad = "" + mailCpf + "/" + mailRgm + "";
+				} else {
+					mailName = "";
+					mailCpf = "";
+					mailRgm = "";
+					mailInfoCad = "";
+				}
+
 				var _mobile = result[0].mobile;
 				var _dtin = result[0].dtin;
 				var _account = result[0].account;
@@ -1687,8 +1722,10 @@ io.on('connection', function (socket) {
 				var _sessionBotCcs = result[0].session_sessionBotCcs
 				var _optAtendimento = result[0].session_optAtendimento
 				var _optValue = result[0].session_optValue
+				var _name = mailName;
+				var _mailInfo = mailInfoCad;
 
-				await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue)
+				await insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue, _name, _mailInfo)
 				socket.emit('bi-answer_new_prior', payload);
 
 			}
@@ -2311,7 +2348,14 @@ io.on('connection', function (socket) {
 		})
 	}
 
-	function insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue) {
+	function insertTabAtendeIn(_mobile, _dtin, _account, _photo, _fkto, _fkname, _atendir, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue, _name, _mailInfo) {
+		console.log('---------------------');
+		console.log('---------------------');
+		console.log('---------------------');
+		console.log('---------------------');
+		console.log('---------------------');
+		console.log('---------------------');
+		console.log(_name, _mailInfo);
 		return new Promise(function (resolve, reject) {
 			dbcc.query("SELECT * FROM db_cruzeiro_ccs.tab_atendein WHERE mobile=? LIMIT 1", [_mobile], function (err, result) {
 				if (err) throw err
@@ -2321,7 +2365,7 @@ io.on('connection', function (socket) {
 					});
 					dbcc.query("SELECT UUID() AS UUID;", [], function (err, result) {
 						var _sessionid = result[0].UUID;
-						dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot, origem, sessionBotCcs, optAtendimento, optValue) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue], function (err, result) {
+						dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name, mailInfo) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [_sessionid, _mobile, _dtin, _account, _photo, _fkto, _fkname, _sessionBot, _origem, _sessionBotCcs, _optAtendimento, _optValue, _name, _mailInfo], function (err, result) {
 							console.log(result)
 							if (err) {
 								log("Erro ao Encaminhar Usuário para Atendimento, Erro: " + err);
@@ -2428,6 +2472,19 @@ function findInAtende(mobile) {
 function findInfo(mobile) {
 	return new Promise(function (resolve, reject) {
 		dbcc.query("SELECT * FROM tab_atendein WHERE mobile = ?;", [mobile], function (err, result) {
+			if (err) { console.log(err) }
+			if (result.length > 0) {
+				resolve(result)
+			} else {
+				resolve(null)
+			}
+		});
+	})
+}
+
+function findMailInfo(mobile) {
+	return new Promise(function (resolve, reject) {
+		dbcc.query("SELECT nome,cpf,rgm_aluno FROM tab_mailing WHERE CONCAT('55',celular) = ? ORDER BY dtcadastro LIMIT 1;", [mobile], function (err, result) {
 			if (err) { console.log(err) }
 			if (result.length > 0) {
 				resolve(result)

@@ -32,7 +32,7 @@ router.get('/filain/', async function (req, res) {
                     var wb = new workbook();
                     var ws = wb.addWorksheet('report');
                     var fileLine = 2;
-                    var filePath = "/home/ubicua/cruzeiro-ccs-promo/public/supervisor/report/";
+                    var filePath = "/home/ubicua/chatcore/public/supervisor/report/";
                     var fileName = "fila" + Date.now() + ".xlsx";
                     console.log('Excel Create');
                     ws.getCell('A1').value = "mobile";
@@ -102,7 +102,7 @@ router.get('/atendein/', async function (req, res) {
                     var wb = new workbook();
                     var ws = wb.addWorksheet('report');
                     var fileLine = 2;
-                    var filePath = "/home/ubicua/cruzeiro-ccs-promo/public/supervisor/report/";
+                    var filePath = "/home/ubicua/chatcore/public/supervisor/report/";
                     var fileName = "atendimentos" + Date.now() + ".xlsx";
                     console.log('Excel Create');
                     ws.getCell('A1').value = "sessionid";
@@ -181,7 +181,7 @@ router.get('/timeout/:datein/:datefn', async function (req, res) {
                     var wb = new workbook();
                     var ws = wb.addWorksheet('report');
                     var fileLine = 2;
-                    var filePath = "/home/ubicua/cruzeiro-ccs-promo/public/supervisor/report/";
+                    var filePath = "/home/ubicua/chatcore/public/supervisor/report/";
                     var fileName = "timeout" + Date.now() + ".xlsx";
                     console.log('Excel Create');
                     ws.getCell('A1').value = "sessionid";
@@ -244,7 +244,7 @@ router.get('/encerrain/:datein/:datefn', async function (req, res) {
                     var wb = new workbook();
                     var ws = wb.addWorksheet('report');
                     var fileLine = 2;
-                    var filePath = "/home/ubicua/cruzeiro-ccs-promo/public/supervisor/report/";
+                    var filePath = "/home/ubicua/chatcore/public/supervisor/report/";
                     var fileName = "encerrados" + Date.now() + ".xlsx";
                     console.log('Excel Create');
                     ws.getCell('A1').value = "sessionid";
@@ -311,6 +311,58 @@ router.get('/encerrain/:datein/:datefn', async function (req, res) {
     }
 });
 
+// Export - Fila
+router.get('/status/encerramentos/', async function (req, res) {
+
+    let auth = req.headers['authorization'];
+    if (!auth) {
+        res.statusCode = 401;
+        res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
+        res.end('Sorry! Invalid Authentication.');
+    } else {
+        let authRes = await authUser(auth, 'exportAtendein', res);
+        if (authRes == 'ok') {
+            // Generate Excel
+            db.query("SELECT * FROM tab_statusen;", function (err, rows, fields) {
+                if (err) {
+                    console.log('Erro: ' + err);
+                } else {
+                    console.log('Running Excel');
+                    var workbook = excel.Workbook;
+                    var wb = new workbook();
+                    var ws = wb.addWorksheet('report');
+                    var fileLine = 2;
+                    var filePath = "/home/ubicua/chatcore/public/supervisor/report/";
+                    var fileName = "statusen" + Date.now() + ".xlsx";
+                    console.log('Excel Create');
+                    ws.getCell('A1').value = "id";
+                    ws.getCell('B1').value = "descricao";
+                    ws.getCell('C1').value = "pedido";
+                    ws.getCell('D1').value = "status";
+                    console.log('Run ForEach');
+                    foreachasync(rows, function (element, index) {
+                        ws.getCell('A' + fileLine).value = element.id;
+                        ws.getCell('B' + fileLine).value = element.descricao;
+                        ws.getCell('C' + fileLine).value = element.pedido;
+                        ws.getCell('D' + fileLine).value = element.status;
+                        fileLine = fileLine + 1;
+                    }).then(function () {
+                        try {
+                            console.log('File Written');
+                            wb.xlsx.writeFile(filePath + fileName).then(function () { });
+                        } catch (err) {
+                            console.log("Error writing to file ", err);
+                        }
+                        res.send(process.env.CCS_REPORT + fileName)
+                    });
+                }
+            });
+        } else if (authRes == 'error') {
+            res.send('error')
+        }
+    }
+});
+
 function authUser(auth, exportReq, res) {
     return new Promise(function (resolve, reject) {
         let temp = auth.split(' ');
@@ -320,7 +372,7 @@ function authUser(auth, exportReq, res) {
         let username = userCredentials[0];
         let password = userCredentials[1];
 
-        if ((username == 'teste') && (password == '123')) {
+        if ((username == 'cruzeiro') && (password == 'kyS5aEQmepR6KVB9')) {
             // Insert Req Log
             db.query("INSERT INTO tab_api_log (dtable, log) VALUES(" + exportReq + ", 'granted');");
             resolve('ok')

@@ -61,7 +61,12 @@ socket.on('sentinel_clients_queue', function (payload) {
     var json = payload;
     let filaPrior = 0;
     let filaNorm = 0;
-    if (payload.length > 5) { filaPrior = payload[5].total }
+    if (payload.length == 8) { 
+        filaPrior = payload[4].total 
+    }
+    if (payload.length == 9) { 
+        filaPrior = payload[5].total 
+    }
     if (payload.length > 1) { filaNorm = payload[1].total }
     //console.log(payload);
     if (payload[1].total > 0) {
