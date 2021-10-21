@@ -10,6 +10,11 @@ import syslog
 import mysql.connector as mariadb
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
+from tzlocal import get_localzone
+
+tz = get_localzone()
+print(tz)
+sched = BackgroundScheduler({'apscheduler.timezone': 'UTC'})
 
 sio = socketio.Client()
 start_timer = None
@@ -465,7 +470,7 @@ def encerraBot(sessionid):
         conn.close()
 
 # Scheduled Task e Started
-sched = BackgroundScheduler()
+#sched = BackgroundScheduler()
 sched.start()
 
 # Add Job Scheduled

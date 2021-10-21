@@ -16,7 +16,7 @@ const excel = require('exceljs');
 const foreachasync = require('foreachasync').forEachAsync;
 const helmet = require('helmet');
 
-const port = process.env.PORT || 443;
+const port = process.env.PORT || 80;
 
 process.env.TZ = 'Brazil/brt';
 //console.log(process.env)
@@ -44,8 +44,8 @@ var options = {
 var app = express();
 app.use(helmet());
 
-var server = require('https').createServer(options, app);
-// var server = require('http').createServer(app);
+// var server = require('https').createServer(options, app);
+var server = require('http').createServer(app);
 
 var io = require('socket.io')(server);
 
@@ -1719,9 +1719,9 @@ io.on('connection', function (socket) {
 				var _atendir = result[0].atendir;
 				var _sessionBot = result[0].sessionBot;
 				var _origem = result[0].origem
-				var _sessionBotCcs = result[0].session_sessionBotCcs
-				var _optAtendimento = result[0].session_optAtendimento
-				var _optValue = result[0].session_optValue
+				var _sessionBotCcs = result[0].sessionBotCcs
+				var _optAtendimento = result[0].optAtendimento
+				var _optValue = result[0].optValue
 				var _name = mailName;
 				var _mailInfo = mailInfoCad;
 
