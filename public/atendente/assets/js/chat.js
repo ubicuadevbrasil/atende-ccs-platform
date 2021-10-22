@@ -84,7 +84,7 @@ socket.on('bi-close_chat', function (payload) {
     $('#contatos').removeClass('form-loading');
     $('#id' + json.mobile).remove();
     $('#chat' + json.mobile).remove();
-    $("#imgchat11").attr('src', '');
+    $("#imgchat11").attr('src', 'https://cdn.ubicuacloud.com/file/null');
     $('#namchat11').text('');
 
     contactuid = "";
@@ -109,7 +109,7 @@ socket.on('bi-transferagent', function (payload) {
         $('#contatos').removeClass('form-loading');
         $('#id' + payload.mobile).remove();
         $('#chat' + payload.mobile).remove();
-        $("#imgchat11").attr('src', '');
+        $("#imgchat11").attr('src', 'https://cdn.ubicuacloud.com/file/null');
         $('#namchat11').text('');
         contactuid = "";
         hidedivs();
@@ -286,7 +286,7 @@ socket.on('sentinel_clients_alive', function (payload) {
         var _atendentesonline = JSON.parse(payload);
         $("#cbatendentesonline").empty().append("<option value='0'>Selecione</option>");
         for (i = 0; i < _atendentesonline.length; i++) {
-            if (_atendentesonline[i].fkid.length == 36) {
+            if (_atendentesonline[i].fkid && _atendentesonline[i].fkid.length == 36) {
                 if (sessionStorage.getItem('fkid') != _atendentesonline[i].fkid) {
                     var _option = document.createElement('option');
                     _option.value = _atendentesonline[i].fkid;

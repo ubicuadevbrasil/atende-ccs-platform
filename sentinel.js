@@ -12,6 +12,7 @@ const helmet = require('helmet');
 const port = process.env.PORT || 80;
 const io = require("socket.io-client");
 const socket = io("https://kainos.ubicuacloud.com.br");
+const schedule = require('node-schedule');
 
 // Function Platforma Ubicua
 require('./database/tools')();
@@ -27,12 +28,22 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(helmet());
 
-// Routes
+// Routes && Schedule
 
-function sentinelClientsqueue() {
+const job = schedule.scheduleJob('*/5 * * * * *', function () {
+    sentinelNewmessages()
+    sentinelAddUSer()
+    console.log('Executando a cada 5 Segundos');
+});
+
+function sentinelAddUSer() {
     return new Promise(async function (resolve, reject) {
-        console.log('sentinelClientsQueue');
-        socket.emit('sentinel_clients_queue');
+        console.log('sentinelAddUSer');
+        let data = {
+            'fkid': "2",
+            'fkname': "Sentinel RT Ubicua Platform v2 "
+        }
+        socket.emit('add user', data)
         resolve('finished');
     })
 }
@@ -91,26 +102,21 @@ function sentinelNewmessages() {
                         let paramsD = [message_mobile]
                         let priorList = await runDynamicQuery(queryD, paramsD);
                         if (priorList.length == 1) {
-                            let queryInsert = "INSERT INTO tab_filain (mobile, account, status, sessionBotCcs) VALUES(?, 'prior', '5', UUID());"
+                            let queryInsert = "INSERT INTO tab_filain (mobile, account, status, sessionBotCcs) VALUES(?, 'prior', '1', UUID());"
                             let paramsInsert = [message_mobile]
                             let insert = await runDynamicQuery(queryInsert, paramsInsert);
+                            socket.emit("send_welcome", { mobile: message_mobile })
                         } else {
-                            let queryInsert = "INSERT INTO tab_filain (mobile, status, sessionBotCcs) VALUES(?, '5', UUID());"
+                            let queryInsert = "INSERT INTO tab_filain (mobile, status, sessionBotCcs) VALUES(?, '1', UUID());"
                             let paramsInsert = [message_mobile]
                             let insert = await runDynamicQuery(queryInsert, paramsInsert);
-                        }
-                        if (message_uid != "CHAT") {
-                            let payload = [{
-                                "mobile": message_mobile,
-                                "type": "chat"
-                            }]
-                            socket.emit("send_welcome", payload)
+                            socket.emit("send_welcome", { mobile: message_mobile })
                         }
                     }
                 }
             }
-            resolve('finished')
         }
+        resolve('finished')
     })
 }
 

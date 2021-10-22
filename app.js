@@ -10,6 +10,7 @@ const md5 = require('md5');
 const bodyparser = require('body-parser');
 const cors = require('cors');
 const excel = require('exceljs');
+const schedule = require('node-schedule');
 const foreachasync = require('foreachasync').forEachAsync;
 const helmet = require('helmet');
 const port = process.env.PORT || 443;
@@ -55,7 +56,7 @@ io.on('connection', function (socket) {
 	//	SEND INFO FUNCTIONS
 
 	socket.on('send_chat', async function (payload) {
-		console.log("> Nova Mensagem Enviada", payload);
+		log("> Nova Mensagem Enviada", payload);
 		let mobile = payload.mobile;
 		// Search for client in tab_atendein
 		let getAtendeQuery = "SELECT * FROM tab_atendein WHERE mobile=? LIMIT 1";
@@ -90,9 +91,9 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('send_welcome', async function (payload) {
-		console.log("Nova Mensagem Enviada Welcome", payload);
+		log("Nova Mensagem Enviada Welcome", payload);
 		let mobile = payload.mobile;
-		let msgtext = "Olá,\n\nO nosso horário de atendimento via WhatsApp é das 09:00 às 18:00, de segunda a sexta.\n\nEste canal é EXCLUSIVO para atendimentos de REMATRICULA e RETORNO AO CURSO, para demais assuntos, por gentileza, acessar os canais oficiais de sua Instituição.\n\nEsclarecemos que estamos com um volume superior à nossa capacidade de atendimento, por isso pode haver demora nas respostas. Aguarde que você será atendido.\nPara agilizar seu atendimento, seguem algumas respostas rápidas que identificamos em nossos atendimentos.\nREMATRICULA\nPor favor, realizar pela ÁREA DO ALUNO, seguindo o passo a passo a seguir:\nhttp://passos.cruzeirodosuleducacional.edu.br/\nCaso você esteja INADIMPLENTE, realizar o pagamento pelo seguinte caminho:\nÁREA DO ALUNO > FINANCEIRO > FAZER ACORDO\\nPara retornar aos estudos, por favor, acesse o site de sua Instituição, seguindo o passo a passo a seguir:\nhttp://passosregresso.cruzeirodosuleducacional.edu.br/\nCaso você esteja INADIMPLENTE, realizar o pagamento pelo seguinte caminho:\nÁREA DO ALUNO > FINANCEIRO > FAZER ACORDO\nPARA OUTROS ASSUNTOS, AGUARDE O ATENDIMENTO.\nAgradecemos a sua compreensão.\n\nPara agilizar nosso fluxo, informe o seu RGM ou CPF e o nome da sua Instituição.";
+		let msgtext = "Olá, vai tomar no cú!";
 		// Extension Message Json
 		let messageJson = {
 			infra: _mobileUid,
@@ -104,7 +105,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('send_media', async function (payload) {
-		console.log("> Nova Media Enviada");
+		log("> Nova Media Enviada");
 		// Ext message params
 		let mobile = payload.mobile;
 		let type = payload.type;
@@ -162,7 +163,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('send_register', async function (payload) {
-		console.log("> Send Register")
+		log("> Send Register")
 		let mobile = payload.mobile;
 		let name = payload.name;
 		// Update tab_atendein
@@ -186,13 +187,13 @@ io.on('connection', function (socket) {
 	// AGENTS FUNCTIONS
 
 	socket.on('bi-listagents', async function (payload) {
-		console.log("> Listando Agentes...")
+		log("> Listando Agentes...")
 		let agentsList = await getAgents();
 		socket.emit('bi-listagents', agentsList);
 	});
 
 	socket.on('bi-listblock', async function (payload) {
-		console.log("> Litando Agentes Bloqueados...");
+		log("> Litando Agentes Bloqueados...");
 		let query = "SELECT * FROM tab_timeout WHERE data_desbloqueio IS NULL ORDER BY nome_atendente"
 		let blockedAgentsList = await runDynamicQuery(query, [])
 		if (blockedAgentsList.length > 0) {
@@ -202,7 +203,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('unblock_agent', async function (payload) {
-		console.log("> Desbloqueando Agente");
+		log("> Desbloqueando Agente");
 		// Update tab_usuarios
 		let unblockedUserQuery = "UPDATE tab_usuarios SET bloqueado = 'não' WHERE id = ?";
 		let unblockedUserParams = [payload.fkid_atendente];
@@ -226,7 +227,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('add_agent', async function (payload) {
-		console.log("> Adicionando novo agente...");
+		log("> Adicionando novo agente...");
 		// Add new Agent
 		let insertAgentQuery = "INSERT INTO tab_usuarios (id, perfil, nome, usuario, senha) VALUES(uuid(), ?, ?, ?, MD5(?))";
 		let insertAgentParams = [payload.perfil, payload.nome, payload.usuario, payload.senha];
@@ -237,7 +238,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('upd_agent', async function (payload) {
-		console.log("> Atualizando Agente...");
+		log("> Atualizando Agente...");
 		// Update Agente
 		if (payload.pwd == false) {
 			let updateAgentQuery = "UPDATE tab_usuarios SET perfil=?, nome=?, usuario=? WHERE id=?";
@@ -254,7 +255,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('del_agent', async function (payload) {
-		console.log("> Deletando Agente...");
+		log("> Deletando Agente...");
 		// Delete Agente
 		let deleteAgentQuery = "UPDATE tab_usuarios SET status=0 WHERE id=?";
 		let deleteAgentParams = [payload.id];
@@ -267,13 +268,13 @@ io.on('connection', function (socket) {
 	// STATUS ENCERRAMENTOS
 
 	socket.on('bi-liststa', async function (payload) {
-		console.log("> Lista status encerramento");
+		log("> Lista status encerramento");
 		let statusList = await getStausEnc();
 		socket.emit('bi-liststa', statusList);
 	});
 
 	socket.on('add_sta', async function (payload) {
-		console.log("> Adiciona Status Encerramentos");
+		log("> Adiciona Status Encerramentos");
 		// Insert Status Encerramento
 		let insertStatusEncQuery = "INSERT INTO tab_statusen (descricao, pedido) VALUES(?, ?)";
 		let insertStatusEncParams = [payload.descricao, payload.pedido];
@@ -284,7 +285,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('upd_sta', async function (payload) {
-		console.log("> Atualiza Status Encerramentos");
+		log("> Atualiza Status Encerramentos");
 		// Update Status Encerramento
 		let updateStatusEncQuery = "UPDATE tab_statusen SET descricao=? WHERE id=?";
 		let updateStatusEncParams = [payload.descricao, payload.id];
@@ -295,7 +296,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('del_sta', async function (payload) {
-		console.log("> Deleta Status Encerramentos");
+		log("> Deleta Status Encerramentos");
 		// Deleta Status Encerramento
 		let deleteStatusEncQuery = "UPDATE tab_statusen SET status=0 WHERE id=?";
 		let deleteStatusEncParams = [payload.id];
@@ -308,7 +309,7 @@ io.on('connection', function (socket) {
 	// BI-DIRECIONAL FUNCTIONS (CHAT)
 
 	socket.on('bi-close_chat', async function (payload) {
-		console.log('> Encerra atendimento');
+		log('> Encerra atendimento');
 		let mobile = payload.mobile;
 		let status = payload.status;
 		let cnpj = payload.cnpj;
@@ -353,7 +354,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-atendein', async function (payload) {
-		console.log("> Buscando Atendimentos");
+		log("> Buscando Atendimentos");
 		// Select from atendimento
 		let getFromAtendimentoQuery = "SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome, A.origem, A.sessionBot, A.sessionBotCcs FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin";
 		let getFromAtendimentoParams = [payload.fkid];
@@ -374,7 +375,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-answer_new_queue', async function (payload) {
-		console.log('> Iniciando novo atendimento')
+		log('> Iniciando novo atendimento')
 		let fkto = payload.fkid;
 		let fkname = payload.fkname;
 		// Select from fila
@@ -418,7 +419,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-answer_new_prior', async function (payload) {
-		console.log("> Iniciando novo atendimento prioritario");
+		log("> Iniciando novo atendimento prioritario");
 		let fkto = payload.fkid;
 		let fkname = payload.fkname;
 		// Select from fila
@@ -462,7 +463,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-transferagent', async function (payload) {
-		console.log('> Transferencia realizada');
+		log('> Transferencia realizada');
 		let mobile = payload.mobile;
 		let transferId = payload.fkid;
 		let transferName = payload.fkname;
@@ -471,7 +472,7 @@ io.on('connection', function (socket) {
 		let fkOnline = false;
 		for (var i in io.sockets.connected) {
 			let fkid = io.sockets.connected[i].fkid;
-			console.log(fkid, transferId);
+			log(fkid, transferId);
 			if (fkid === transferId) {
 				socket.to(i).emit('bi-transferok', payload);
 				fkOnline = true;
@@ -511,20 +512,20 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-transferok', async function (payload) {
-		console.log('> Transferencia finalizada');
+		log('> Transferencia finalizada');
 		// Buscar cliente em atendimento
 		let atendeinSelQuery = "SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome, A.origem FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.mobile=? GROUP BY mobile ORDER BY A.dtin";
 		let atendeinSelParams = [payload.mobile];
 		let atendeinSelList = await runDynamicQuery(atendeinSelQuery, atendeinSelParams);
 		if (atendeinSelList.length > 0) {
-			let contacts = JSON.stringify(result);
+			let contacts = JSON.stringify(atendeinSelList);
 			let sessionlist = "";
 			// Prep session array
-			for (i = 0; i < result.length; i++) {
-				if (result.length - 1 == i) {
-					sessionlist += "'" + result[i].sessionid + "'";
+			for (i = 0; i < atendeinSelList.length; i++) {
+				if (atendeinSelList.length - 1 == i) {
+					sessionlist += "'" + atendeinSelList[i].sessionid + "'";
 				} else {
-					sessionlist += "'" + result[i].sessionid + "',";
+					sessionlist += "'" + atendeinSelList[i].sessionid + "',";
 				}
 			}
 			// Get logs from history
@@ -542,12 +543,12 @@ io.on('connection', function (socket) {
 	//	DATATABLES
 
 	socket.on('bi-report1', async function (payload) {
-		console.log("> Datatable Report1");
+		log("> Datatable Report1");
 		let procedureQuery = 'CALL css_report("0","' + payload.transbordoDt + '","' + payload.params + '", "COUNT(*) as total");';
 		let procedureParams = [];
 		let procedureList = await runDynamicQuery(procedureQuery, procedureParams);
 		if (procedureList.length > 0) {
-			let count = result[1][0].total;
+			let count = procedureList[1][0].total;
 			if (count == 0) {
 				socket.emit('bi-report1', { count: 0, reportadata: '' });
 			} else {
@@ -582,12 +583,12 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-report2', async function (payload) {
-		console.log("> Datatable Report2");
+		log("> Datatable Report2");
 		let procedureQuery = 'CALL ccs_consulta("0","' + payload.transbordoDt + '","' + payload.params + '", "COUNT(*) as total");';
 		let procedureParams = [];
 		let procedureList = await runDynamicQuery(procedureQuery, procedureParams);
 		if (procedureList.length > 0) {
-			let count = result[1][0].total;
+			let count = procedureList[1][0].total;
 			if (count == 0) {
 				socket.emit('bi-report2', { count: 0, reportadata: '' });
 			} else {
@@ -624,18 +625,17 @@ io.on('connection', function (socket) {
 	// EXCEL DOWNLOADS
 
 	socket.on('bi-report1toxlsx', async function (payload) {
-		console.log("> Report1 to XLSX");
+		log("> Report1 to XLSX");
 		// Execute procedure
 		let procedureQuery = 'CALL css_report_excel("MAX","' + payload.transbordoDt + '","' + payload.params + '", "*");';
-		let procedureParams = [mobile];
+		let procedureParams = [payload.mobile];
 		let procedureList = await runDynamicQuery(procedureQuery, procedureParams);
-		if (procedureList.length > 0) {
+		if (procedureList[1].length > 0) {
 			// Create Worksheet
 			let workbook = excel.Workbook;
 			let wb = new workbook();
 			let ws = wb.addWorksheet('report');
 			let line = 2;
-			let path = "/home/ubicua/chatcore/public/supervisor/report/";
 			let path = process.env.CCS_PATH;
 			let namexlsx = "report" + Date.now() + ".xlsx";
 			// Create excel header
@@ -666,7 +666,7 @@ io.on('connection', function (socket) {
 				try {
 					wb.xlsx.writeFile(path + namexlsx).then(function () { });
 				} catch (err) {
-					console.log("> Error writing to file ", err);
+					log("> Error writing to file ", err);
 				}
 				var payload = { url: process.env.CCS_REPORT + namexlsx };
 				socket.emit('bi-report1toxlsx', payload);
@@ -675,9 +675,9 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-loginstoxlsx', async function (payload) {
-		console.log("> Logins to XLSX");
+		log("> Logins to XLSX");
 		let procedureQuery = "SELECT fkid, fkname, date, DATE_FORMAT(DATE, '%d/%m/%Y %H:%m:%s') AS dateForm FROM tab_logins WHERE fkid != '2' " + payload + " GROUP BY fkid, DATE(DATE);";
-		let procedureParams = [mobile];
+		let procedureParams = [payload.mobile];
 		let procedureList = await runDynamicQuery(procedureQuery, procedureParams);
 		if (procedureList.length > 0) {
 			// Create Worksheet
@@ -694,7 +694,7 @@ io.on('connection', function (socket) {
 			ws.getCell('E1').value = "Logout";
 			ws.getCell('F1').value = "Qtd Logouts";
 			// Async
-			foreachasync(result, async function (element, index) {
+			foreachasync(procedureList, async function (element, index) {
 				// Get more Info
 				let minLogin, maxLogout, contLogout;
 				let infoArr = await getLoginsInfo(element.fkid, element.date)
@@ -726,7 +726,7 @@ io.on('connection', function (socket) {
 				try {
 					wb.xlsx.writeFile(path + namexlsx).then(function () { });
 				} catch (err) {
-					console.log("> Error writing to file ", err);
+					log("> Error writing to file ", err);
 				}
 				socket.emit('bi-loginstoxlsx', { url: process.env.CCS_REPORT + namexlsx });
 			});
@@ -734,7 +734,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-blocktoxls', async function (payload) {
-		console.log("> Blocks to XLSX");
+		log("> Blocks to XLSX");
 		let procedureQuery = "SELECT * FROM tab_timeout WHERE data_bloqueio BETWEEN ? AND ? ORDER BY data_bloqueio DESC";
 		let procedureParams = [payload.dt[0], payload.dt[1]];
 		let procedureList = await runDynamicQuery(procedureQuery, procedureParams);
@@ -752,7 +752,7 @@ io.on('connection', function (socket) {
 				await wb.xlsx.writeFile(path + namexlsx);
 				socket.emit('bi-blocktoxls', { url: process.env.CCS_REPORT + namexlsx });
 			} catch (error) {
-				return next(error)
+				console.log(error);
 			}
 		} else {
 			socket.emit('bi-blocktoxls', { url: "" });
@@ -771,7 +771,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('sentinel_message_send', async function (payload) {
-		console.log('> Sentinel message');
+		log('> Sentinel message');
 		// Fix Payload
 		payload = payload[0]
 		// Boolean for On/Off
@@ -818,12 +818,11 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('sentinel_clients_queue', async function (payload) {
-		console.log('> Clients Queue');
 		// Get fila info
 		let vwFilaQuery = "SELECT * FROM vw_fila;";
 		let vwFilaParams = [];
 		let vwFilaList = await runDynamicQuery(vwFilaQuery, vwFilaParams);
-		socket.broadcast.emit('sentinel_clients_queue', result);
+		socket.broadcast.emit('sentinel_clients_queue', vwFilaList);
 		// Get agents params
 		let payload = [];
 		for (var i in io.sockets.connected) {
@@ -850,19 +849,19 @@ io.on('connection', function (socket) {
 	// HISTORY EVENTS
 
 	socket.on('bi-historyone', async function (payload) {
-		console.log("> Buscando historico de atendimento")
+		log("> Buscando historico de atendimento")
 		let contactsQuery = "SELECT sessionid, dtin, mobile, account, photo, sessionBot, sessionBotCcs FROM tab_encerrain WHERE sessionid=? ORDER BY dtin DESC LIMIT 1";
 		let contactsParams = [payload.sessionid];
 		let contactsList = await runDynamicQuery(contactsQuery, contactsParams);
 		if (contactsList.length > 0) {
 			let contacts = JSON.stringify(contactsList);
-			let sessionlist = await generateSessionArr(getFromAtendimentoList);
+			let sessionlist = await generateSessionArr(contactsList);
 
 			let logsQuery = "SELECT a.sessionid, DATE_ADD(a.dt, INTERVAL 3 HOUR) as dt, a.fromname, a.msgdir, a.msgtype, a.msgtext, a.msgurl, a.msgcaption FROM tab_logs AS a WHERE a.sessionid IN (" + sessionlist + ") ORDER BY a.dt;";
 			let logsParams = [];
 			let logsList = await runDynamicQuery(logsQuery, logsParams);
 			if (logsList.length > 0) {
-				let logs = JSON.stringify(result);
+				let logs = JSON.stringify(logsList);
 				socket.emit('bi-historyone', { contacts: contacts, logs: logs });
 			} else {
 				let bkpLogsQuery = "SELECT a.sessionid, DATE_ADD(a.dt, INTERVAL 3 HOUR) as dt, a.fromname, a.msgdir, a.msgtype, a.msgtext, a.msgurl, a.msgcaption FROM tab_logs_old AS a WHERE a.sessionid IN (" + sessionlist + ") ORDER BY a.dt;";
@@ -875,19 +874,19 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-lasthistory', async function (payload) {
-		console.log("> Busncao ultimo historico")
+		log("> Busncao ultimo historico")
 		let contactsQuery = "SELECT sessionid, dtin, mobile, account, photo, sessionBot, sessionBotCcs FROM tab_encerrain WHERE mobile=? AND dtin BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() + INTERVAL 1 DAY ORDER BY dtin DESC";
 		let contactsParams = [payload.mobile];
 		let contactsList = await runDynamicQuery(contactsQuery, contactsParams);
 		if (contactsList.length > 0) {
 			let contacts = JSON.stringify(contactsList);
-			let sessionlist = await generateSessionArr(getFromAtendimentoList);
+			let sessionlist = await generateSessionArr(contactsList);
 
-			let logsQuery = "SELECT sessionid, dt, fromname, msgdir, msgtype, msgtext, msgurl, msgcaption FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY dt;";
+			let logsQuery = "SELECT sessionid, dt, fromname, msgdir, msgtype, msgtext, msgurl, msgcaption FROM tab_logs WHERE sessionid IN (" + sessionlist + ") ORDER BY dt;";
 			let logsParams = [];
 			let logsList = await runDynamicQuery(logsQuery, logsParams);
 			if (logsList.length > 0) {
-				let logs = JSON.stringify(result);
+				let logs = JSON.stringify(logsList);
 				socket.emit('bi-lasthistory', { contacts: contacts, logs: logs });
 			} else {
 				let bkpLogsQuery = "SELECT sessionid, dt, fromname, msgdir, msgtype, msgtext, msgurl, msgcaption FROM tab_logs WHERE sessionid IN (" + _sessionlist + ") ORDER BY dt;";
@@ -904,7 +903,7 @@ io.on('connection', function (socket) {
 	//  ACTIVE FUNCTIONS
 
 	socket.on('bi-getmailing', async function (payload) {
-		console.log("> Get Active Mailing");
+		log("> Get Active Mailing");
 		let ativoQuery = "SELECT * FROM tab_ativo WHERE status=0 ORDER BY nome";
 		let ativoParams = [];
 		let ativoList = await runDynamicQuery(ativoQuery, ativoParams);
@@ -917,7 +916,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-mailativo', async function (payload) {
-		console.log("> Get Active Mailing");
+		log("> Get Active Mailing");
 		let ativoQuery = "SELECT * FROM tab_ativo WHERE status=0 ORDER BY nome";
 		let ativoParams = [];
 		let ativoList = await runDynamicQuery(ativoQuery, ativoParams);
@@ -930,7 +929,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-atendemail', async function (payload) {
-		console.log("> Answer Active Mailing");
+		log("> Answer Active Mailing");
 		let fkto = payload.fkid;
 		let fkname = payload.fkname;
 		let mobile = payload.mobile;
@@ -963,7 +962,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-addativo', async function (payload) {
-		console.log("> Get Add Active Mailing");
+		log("> Get Add Active Mailing");
 		for (i = 0; i < payload.length; i++) {
 			let nome = payload[i].nome;
 			let rgm_aluno = payload[i].rgm_aluno;
@@ -989,7 +988,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-callinput', async function (payload) {
-		console.log("> Call Input");
+		log("> Call Input");
 		let fkto = payload.fkid;
 		let fkname = payload.fkname;
 		let mobile = payload.mobile;
@@ -1023,7 +1022,7 @@ io.on('connection', function (socket) {
 	// AUTH FUNCTIONS
 
 	socket.on('bi-auth', async function (payload) {
-		console.log("Novo Login de Usuário", payload);
+		log("Novo Login de Usuário", payload);
 		let fkname = payload.fkname;
 		let fkpass = payload.fkpass;
 		let key = payload.key;
@@ -1064,12 +1063,12 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('force_disconnect', async function (payload) {
-		console.log("> Force Disconnect")
+		log("> Force Disconnect")
 		socket.to(payload.socketid).emit('force_disconnect');
 	});
 
 	socket.on('disconnect', async function () {
-		console.log("> Disconnect")
+		log("> Disconnect")
 		if (addedUser) {
 			// Logout User
 			--numUsers;
@@ -1083,7 +1082,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('add user', async function (payload) {
-		console.log("> User login");
+		log("> User login");
 		if (addedUser) return;
 		// Socket params
 		socket.fkid = payload.fkid;
@@ -1105,7 +1104,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-usertimeout', async function (payload) {
-		console.log("> User timeout");
+		log("> User timeout");
 		let updateUserQuery = "UPDATE tab_usuarios SET bloqueado = 'sim' WHERE id = ?";
 		let updateUserParams = [payload.fkid];
 		let updateUser = await runDynamicQuery(updateUserQuery, updateUserParams);
@@ -1124,17 +1123,17 @@ io.on('connection', function (socket) {
 	// FIND CLIENTS
 
 	socket.on('get_cliInfo', async function (payload) {
-		console.log("> Get cliente info")
+		log("> Get cliente info")
 		let getClientQuery = "SELECT NAME,cnpj FROM tab_encerrain WHERE mobile = ? ORDER BY dten DESC LIMIT 1";
 		let getClientParams = [payload.mobile];
 		let getClient = await runDynamicQuery(getClientQuery, getClientParams);
 		if (getClient.length > 0) {
-			socket.emit('get_cliInfo', { nome: result[0].NAME, cpf: result[0].cnpj });
+			socket.emit('get_cliInfo', { nome: getClient[0].NAME, cpf: getClient[0].cnpj });
 		}
 	});
 
 	socket.on('bi-find_register', async function (payload) {
-		console.log("> Find cliente register")
+		log("> Find cliente register")
 		let getClientQuery = "SELECT sessionid, mobile, name, account, photo FROM tab_atendein WHERE mobile=? LIMIT 1";
 		let getClientParams = [payload.mobile];
 		let getClientList = await runDynamicQuery(getClientQuery, getClientParams);
@@ -1151,7 +1150,7 @@ io.on('connection', function (socket) {
 	// TRAINING FUNCTIONS
 
 	socket.on('bi-training', async function () {
-		console.log("> Get training message");
+		log("> Get training message");
 		let getTreinamentoQuery = 'SELECT training from tab_treinamento where id="c102ba05-422c-11ea-8db1-000c290cc03d"';
 		let getTreinamentoParams = [];
 		let getTreinamento = await runDynamicQuery(getTreinamentoQuery, getTreinamentoParams);
@@ -1159,7 +1158,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('upd_training', async function (payload) {
-		console.log("> Update training message");
+		log("> Update training message");
 		let updTreinamentoQuery = 'UPDATE tab_treinamento SET training=? where id="c102ba05-422c-11ea-8db1-000c290cc03d"';
 		let updTreinamentoParams = [payload.bool.toString()];
 		let updTreinamento = await runDynamicQuery(updTreinamentoQuery, updTreinamentoParams);
@@ -1168,11 +1167,42 @@ io.on('connection', function (socket) {
 	// RENDER STATUS ENC
 
 	socket.on('bi-statusen', async function () {
-		console.log("> Get status enc");
+		log("> Get status enc");
 		let getStatusenQuery = 'SELECT * FROM tab_statusen WHERE status=1';
 		let getStatusenParams = [];
 		let getStatusenList = await runDynamicQuery(getStatusenQuery, getStatusenParams);
 		socket.emit('bi-statusen', JSON.stringify(getStatusenList));
+	});
+
+	// SCHEDULE CCS FILA
+
+	const job = schedule.scheduleJob('*/5 * * * * *', async function () {
+		// Get fila info
+		let vwFilaQuery = "SELECT * FROM vw_fila;";
+		let vwFilaParams = [];
+		let vwFilaList = await runDynamicQuery(vwFilaQuery, vwFilaParams);
+		socket.broadcast.emit('sentinel_clients_queue', vwFilaList);
+		// Get agents params
+		let payload = [];
+		for (var i in io.sockets.connected) {
+			let row = {
+				'socketid': i,
+				'fkid': io.sockets.connected[i].fkid,
+				'fkname': io.sockets.connected[i].fkname,
+				'fkon': io.sockets.connected[i].fkon,
+				'fkip': io.sockets.connected[i].fkip,
+				'fkstatus': io.sockets.connected[i].fkstatus
+			}
+			payload.push(row);
+		}
+		socket.broadcast.emit('sentinel_clients_alive', JSON.stringify(payload));
+		// Get agents info
+		let vwAgentsQuery = "SELECT * FROM vw_fila;";
+		let vwAgentsParams = [];
+		let vwAgentsList = await runDynamicQuery(vwAgentsQuery, vwAgentsParams);
+		if (vwAgentsList.length > 0) {
+			socket.broadcast.emit('view_agents', JSON.stringify(vwAgentsList));
+		}
 	});
 
 });

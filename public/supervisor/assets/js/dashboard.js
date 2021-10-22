@@ -76,19 +76,20 @@ socket.on('sentinel_clients_queue', function (payload) {
     // }
     // $("#TempoMedioPrior").text(mediaPrior + " minutos");
 
-    let secondsPrior = payload[8].total;
+    let secondsPrior = payload[7].total;
     let timeEdtPrior = new Date(secondsPrior * 1000).toISOString().substr(11, 8)
     let timeTextPrior = timeEdtPrior.split(":")[0] + ":" + timeEdtPrior.split(":")[1]
     $("#TempoMedioPrior").text(timeTextPrior);
 });
 
 socket.on('sentinel_clients_alive', function (payload) {
-    //console.log(payload)
+    console.log(payload)
     var tt = JSON.parse(payload);
     var _addtr;
     var _count = 1;
+    console.log(tt);
     for (i = 0; i < tt.length; i++) {
-        if (tt[i].fkid.length == 36) {
+        if (tt[i].fkid && tt[i].fkid.length == 36) {
             var _dt1 = new Date(tt[i].fkon);
             var _dt2 = new Date();
             var _timediff = Math.abs(_dt2.getTime() - _dt1.getTime());
