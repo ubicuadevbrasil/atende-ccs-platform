@@ -281,7 +281,7 @@ socket.on('waendpoint', function (payload) {
 });
 
 socket.on('sentinel_clients_alive', function (payload) {
-
+    console.log(payload);
     if (aton == 0) {
         var _atendentesonline = JSON.parse(payload);
         $("#cbatendentesonline").empty().append("<option value='0'>Selecione</option>");

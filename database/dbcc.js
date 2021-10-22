@@ -29,11 +29,11 @@ var connection = mysql_npm.createPool(db_config);
 connection.getConnection(function (err) {
     if (err) {
         // mysqlErrorHandling(connection, err);
-        console.log("\n\t *** Cannot establish a connection with the database. ***");
+        console.log("Cannot establish a connection with the database.");
 
         connection = reconnect(connection);
     } else {
-        console.log("\n\t *** New connection established with the database. ***")
+        console.log("New connection established with the database.")
     }
 });
 
