@@ -47,14 +47,6 @@ app.get('/', function (req, res) {
 	res.redirect('/atendente')
 })
 
-app.post('/api/sentinel/clientsQueue', function (req, res, next) {
-	console.log('Done');
-	io.on('connection', function (socket) {
-		socket.emit("bi-atendein", {});
-	});
-	res.send('Teste')
-})
-
 io.on('connection', function (socket) {
 
 	let numUsers = 0;
@@ -780,6 +772,8 @@ io.on('connection', function (socket) {
 
 	socket.on('sentinel_message_send', async function (payload) {
 		console.log('> Sentinel message');
+		// Fix Payload
+		payload = payload[0]
 		// Boolean for On/Off
 		let fkonline = false;
 		// Check for agents
@@ -787,7 +781,7 @@ io.on('connection', function (socket) {
 			let fkid = io.sockets.connected[i].fkid;
 			// Send message to Agent
 			if (fkid === payload.fkto || payload.fkto == "491b9564-2d79-11ea-978f-2e728ce88125") {
-				// Agent params
+				// Agent param
 				let id = payload.id;
 				let sessionid = payload.sessionid;
 				let fromid = payload.contact_uid;
@@ -812,14 +806,15 @@ io.on('connection', function (socket) {
 				// Emmit socket event
 				socket.to(i).emit('receive_chat', payload);
 				fkonline = true;
+				// Update message
+				if (fkonline != false) {
+					let updateMsgQuery = "UPDATE tab_waboxappin SET status=1 WHERE id=?";
+					let updateMsgParams = [payload.id];
+					let updateMsgList = await runDynamicQuery(updateMsgQuery, updateMsgParams);
+				}
 			}
 		}
-		// Update message
-		if (fkonline != false) {
-			let updateMsgQuery = "UPDATE tab_waboxappin SET status=1 WHERE id=?";
-			let updateMsgParams = [payload.id];
-			let updateMsgList = await runDynamicQuery(updateMsgQuery, updateMsgParams);
-		}
+
 	});
 
 	socket.on('sentinel_clients_queue', async function (payload) {
