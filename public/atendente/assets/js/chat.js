@@ -454,7 +454,7 @@ socket.on('bi-mailativo', function (payload) {
         for (i = 0; data.length > i; i++) {
             var callBtn = '<button type="button" class="btn btn-primary" onclick="atenderMailing(' + data[i].mobile + ')"><span class="ion-person-add"></span>&nbsp;&nbsp;Chamar</button>';
             //var sellBtn = '<button id="clibtn' + data[i].mobile + '" type="button" class="btn btn-success" onclick="addClientToAll(' + data[i].mobile + ')">Selecionar</button>';
-            var row = [data[i].nome, data[i].rgm_aluno, data[i].cpf, data[i].mobile, callBtn]
+            var row = [data[i].nome, data[i].banco, data[i].cpf, data[i].mobile, callBtn]
             dataSet.push(row);
         }
         //console.log(dataSet);
@@ -545,7 +545,9 @@ socket.on('bi-find_register', function (payload) {
                     pedidos: table,
                     atendir: _atendir,
                     pilar: $('#iPilar option:selected').val(),
-                    modalidade: $('#iModalidade option:selected').val()
+                    modalidade: $('#iModalidade option:selected').val(),
+                    protocolo: $('#iPROTOCOLO').val(),
+                    banco: $('#iBANCO').val()
                 }
                 $('#contatos').addClass('form-loading');
                 socket.emit('bi-close_chat', payload);
@@ -570,7 +572,9 @@ socket.on('bi-find_register', function (payload) {
                 pedidos: table,
                 atendir: _atendir,
                 pilar: $('#iPilar option:selected').val(),
-                modalidade: $('#iModalidade option:selected').val()
+                modalidade: $('#iModalidade option:selected').val(),
+                protocolo: $('#iPROTOCOLO').val(),
+                banco: $('#iBANCO').val()
             }
             $('#contatos').addClass('form-loading');
             socket.emit('bi-close_chat', payload);

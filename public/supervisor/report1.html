@@ -170,34 +170,65 @@
     <div id="panfil" class="panel">
       <div class="panel-body">
         <div class="gridnv1">
-          <div class="input-group" style="width: 220px;">
-            <span class="input-group-addon">
-              <i class="fa fa-building-o"></i>
-            </span>
-            <input id="iCPF" type="text" class="form-control" placeholder="CPF">
-          </div>
-          <div class="input-group" style="width: 220px;">
-            <span class="input-group-addon">
-              <i class="fa fa-mobile"></i>
-            </span>
-            <input id="iCEL" type="text" class="form-control" placeholder="Celular">
-          </div>
-          <div class="input-group" style="width: 220px;">
-            <span class="input-group-addon">
-              <i class="fa fa-id-card-o"></i>
-            </span>
-            <input id="iRGM" type="text" class="form-control" placeholder="Rgm Aluno">
-          </div>
+
           <div class="input-group" style="width: 220px;">
             <span class="input-group-addon">
               <i class="fa fa-calendar"></i>
             </span>
             <input type="text" id="daterange-1" class="form-control" placeholder="Período">
           </div>
-          <div></div>
+
+          <div class="input-group" style="width: 220px;">
+            <span class="input-group-addon">
+              <i class="fa fa-mobile"></i>
+            </span>
+            <input id="iPROTOCOLO" type="text" class="form-control" placeholder="Protocolo">
+          </div>
+
+          <div class="input-group" style="width: 220px;">
+            <span class="input-group-addon">
+              <i class="fa fa-mobile"></i>
+            </span>
+            <input id="iCEL" type="text" class="form-control" placeholder="Telefone">
+          </div>
+
+          <div class="input-group" style="width: 220px;">
+            <span class="input-group-addon">
+              <i class="fa fa-building-o"></i>
+            </span>
+            <input id="iCPF" type="text" class="form-control" placeholder="CPF">
+          </div>
+
           <div></div>
         </div>
         <div class="gridnv1" style="margin-top: 1vh">
+
+          <div class="input-group" style="width: 220px;">
+            <span class="input-group-addon">
+              <i class="fa fa-building-o"></i>
+            </span>
+            <select id="iCANAL" type="text" class="form-control" placeholder="Interação">
+              <option value="">Interação</option>
+              <option value="">Todas</option>
+              <option value="wpp">Wpp</option>
+              <option value="chat">ChatWeb</option>
+            </select>
+          </div>
+
+          <div class="input-group" style="width: 220px;">
+            <span class="input-group-addon">
+              <i class="fa fa-id-card-o"></i>
+            </span>
+            <input id="iNomeCliente" type="text" class="form-control" placeholder="Nome do Cliente">
+          </div>
+
+          <div class="input-group" style="width: 220px;">
+            <span class="input-group-addon">
+              <i class="fa fa-id-card-o"></i>
+            </span>
+            <input id="iBANCO" type="text" class="form-control" placeholder="Banco">
+          </div>
+
           <div class="input-group" style="width: 220px;">
             <span class="input-group-addon">
               <i class="fa fa-building-o"></i>
@@ -209,9 +240,7 @@
               <option value="out">Out</option>
             </select>
           </div>
-          <div></div>
-          <div></div>
-          <div></div>
+
           <div></div>
           <div></div>
         </div>
@@ -237,7 +266,8 @@
               <thead>
                 <tr role="row0">
                   <th style="width: 213px;">Nome</th>
-                  <th style="width: 180px;">Rgm Aluno</th>
+                  <th style="width: 180px;">Banco</th>
+                  <th style="width: 180px;">Protocolo</th>
                   <th style="width: 180px;">Cpf</th>
                   <th style="width: 180px;">Celular</th>
                   <th style="width: 213px;">Nome Do Atendente</th>

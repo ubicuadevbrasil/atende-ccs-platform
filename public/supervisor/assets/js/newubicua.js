@@ -138,7 +138,7 @@ async function insertCSV(data) {
     var arrPayload = [];
     limitemail = 0;
     console.log(headers);
-    if (headers.length != 4 || headers[0].toLowerCase() != "nome" || headers[1].toLowerCase() != "rgm_aluno" || headers[2].toLowerCase() != "cpf" || headers[3].toLowerCase() != "celular") {
+    if (headers.length != 4 || headers[0].toLowerCase() != "telefone" || headers[1].toLowerCase() != "nome " || headers[2].toLowerCase() != "cpf" || headers[3].toLowerCase() != "banco") {
         $("#modal-aviso-texto").text("Mailing invalido!");
         $('#modal-aviso').modal();
         document.getElementById("csvFile").value = "";
@@ -147,16 +147,16 @@ async function insertCSV(data) {
         $("#modal-aviso-texto").text("Carregando Mailing");
         $('#modal-aviso').modal();
         for (i = 1; i < data.length; i++) {
-            var _nome = data[i][0];
-            var _rgm_aluno = data[i][1];
+            var _telefone = data[i][0];
+            var _nome = data[i][1];
             var _cpf = data[i][2];
-            var _celular = data[i][3];
+            var _banco = data[i][3];
             var _quantidade = data.length - 1;
             var payload = {
+                'telefone': _telefone,
                 'nome': _nome,
-                'rgm_aluno': _rgm_aluno,
                 'cpf': _cpf,
-                'celular': _celular,
+                'banco': _banco,
                 'filename': fileName,
                 'quantidade': _quantidade
             };
@@ -193,7 +193,7 @@ function createTable(payload) {
                 data[i].mobile,
                 data[i].nome,
                 data[i].cpf,
-                data[i].rgm_aluno,
+                data[i].banco,
                 data[i].quantidade,
                 _dtcadastro
             ]

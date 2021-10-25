@@ -11,6 +11,7 @@ const bodyparser = require('body-parser');
 const cors = require('cors');
 const excel = require('exceljs');
 const schedule = require('node-schedule');
+const CronJob = require('cron').CronJob;
 const foreachasync = require('foreachasync').forEachAsync;
 const helmet = require('helmet');
 const port = process.env.PORT || 443;
@@ -48,10 +49,20 @@ app.get('/', function (req, res) {
 	res.redirect('/atendente')
 })
 
+// Schedules
+let socketParam;
+const job_message = new CronJob('*/5 * * * * *', function () {
+	sentinelNewmessages(socketParam)
+	setTimeout(5000);
+}, null, true, 'America/Los_Angeles');
+job_message.start();
+
+// Socket Events
 io.on('connection', function (socket) {
 
 	let numUsers = 0;
 	let addedUser = false;
+	socketParam = socket;
 
 	//	SEND INFO FUNCTIONS
 
@@ -287,8 +298,8 @@ io.on('connection', function (socket) {
 	socket.on('upd_sta', async function (payload) {
 		log("> Atualiza Status Encerramentos");
 		// Update Status Encerramento
-		let updateStatusEncQuery = "UPDATE tab_statusen SET descricao=? WHERE id=?";
-		let updateStatusEncParams = [payload.descricao, payload.id];
+		let updateStatusEncQuery = "UPDATE tab_statusen SET descricao=?, pedido=? WHERE id=?";
+		let updateStatusEncParams = [payload.descricao, payload.pedido, payload.id];
 		let updateStatusEncUpdate = await runDynamicQuery(updateStatusEncQuery, updateStatusEncParams);
 		// Refresh Status Encerramentos
 		let statusList = await getStausEnc();
@@ -314,6 +325,8 @@ io.on('connection', function (socket) {
 		let status = payload.status;
 		let cnpj = payload.cnpj;
 		let atendir = payload.atendir;
+		let protocolo = payload.protocolo;
+		let banco = payload.banco;
 		// Get from tab_atendein
 		// Insert or Update
 		let atendeinSelQuery = "SELECT * FROM tab_atendein WHERE mobile=? LIMIT 1";
@@ -337,8 +350,8 @@ io.on('connection', function (socket) {
 			let optAtendimento = atendeinSelList[0].optAtendimento
 			let optValue = atendeinSelList[0].optValue
 			// Insert into tab_encerrain
-			let atendeinInsQuery = "INSERT INTO tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer, sessionBot, origem, sessionBotCcs, optAtendimento, optValue) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			let atendeinInsParams = [sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer, sessionBot, origem, sessionBotCcs, optAtendimento, optValue];
+			let atendeinInsQuery = "INSERT INTO tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, protocolo, banco) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			let atendeinInsParams = [sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, protocolo, banco];
 			let atendeinInsert = await runDynamicQuery(atendeinInsQuery, atendeinInsParams);
 			// Delete into tab_encerrain
 			let atendeinDelQuery = "DELETE FROM tab_atendein WHERE sessionid=?";
@@ -362,6 +375,7 @@ io.on('connection', function (socket) {
 		if (getFromAtendimentoList.length > 0) {
 			let contacts = JSON.stringify(getFromAtendimentoList);
 			let sessionlist = await generateSessionArr(getFromAtendimentoList);
+			console.log(sessionlist);
 			// Get History
 			let getFromHistoryQuery = "SELECT sessionid, dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + sessionlist + ") ORDER BY dt;";
 			let getFromHistoryParams = [];
@@ -383,22 +397,12 @@ io.on('connection', function (socket) {
 		let normalQueueParams = [];
 		let normalQueueList = await runDynamicQuery(normalQueueQuery, normalQueueParams);
 		if (normalQueueList.length > 0) {
-			let mailInfoQuery = "SELECT nome,cpf,rgm_aluno FROM tab_mailing WHERE CONCAT('55',celular) = ? ORDER BY dtcadastro LIMIT 1;"
-			let mailInfoParams = [normalQueueList[0].mobile]
-			let mailInfoList = await runDynamicQuery(mailInfoQuery, mailInfoParams);
 			// Get Mail Info
 			let mailName, mailCpf, mailRgm, mailInfoCad;
-			if (mailName != "" && mailName != null) {
-				mailName = mailInfoList[0].nome;
-				mailCpf = mailInfoList[0].cpf;
-				mailRgm = mailInfoList[0].rgm_aluno;
-				mailInfoCad = "" + mailCpf + "/" + mailRgm + "";
-			} else {
-				mailName = "";
-				mailCpf = "";
-				mailRgm = "";
-				mailInfoCad = "";
-			}
+			mailName = "";
+			mailCpf = "";
+			mailRgm = "";
+			mailInfoCad = "";
 			// Database information
 			let mobile = normalQueueList[0].mobile;
 			let dtin = normalQueueList[0].dtin;
@@ -427,22 +431,12 @@ io.on('connection', function (socket) {
 		let priorQueueParams = [];
 		let priorQueueList = await runDynamicQuery(priorQueueQuery, priorQueueParams);
 		if (priorQueueList.length > 0) {
-			let mailInfoQuery = "SELECT nome,cpf,rgm_aluno FROM tab_mailing WHERE CONCAT('55',celular) = ? ORDER BY dtcadastro LIMIT 1;"
-			let mailInfoParams = [normalQueueList[0].mobile]
-			let mailInfoList = await runDynamicQuery(mailInfoQuery, mailInfoParams);
 			// Get Mail information
 			let mailName, mailCpf, mailRgm, mailInfoCad;
-			if (mailName != "" && mailName != null) {
-				mailName = mailInfoList[0].nome;
-				mailCpf = mailInfoList[0].cpf;
-				mailRgm = mailInfoList[0].rgm_aluno;
-				mailInfoCad = "" + mailCpf + "/" + mailRgm + "";
-			} else {
-				mailName = "";
-				mailCpf = "";
-				mailRgm = "";
-				mailInfoCad = "";
-			}
+			mailName = "";
+			mailCpf = "";
+			mailRgm = "";
+			mailInfoCad = "";
 			// Database information
 			let mobile = priorQueueList[0].mobile;
 			let dtin = priorQueueList[0].dtin;
@@ -569,8 +563,9 @@ io.on('connection', function (socket) {
 							hora: element.hora,
 							data: element.data,
 							status: element.status,
-							rgm_aluno: element.rgm_aluno,
-							nome: element.nome
+							banco: element.banco,
+							nome: element.nome,
+							protocolo: element.protocolo
 						};
 						reportdata.push(serialized);
 						if (lenchat == index) {
@@ -609,7 +604,7 @@ io.on('connection', function (socket) {
 							hora: element.hora,
 							data: element.data,
 							status: element.status,
-							rgm_aluno: element.rgm_aluno,
+							banco: element.banco,
 							nome: element.nome
 						};
 						reportdata.push(serialized);
@@ -639,28 +634,34 @@ io.on('connection', function (socket) {
 			let path = process.env.CCS_PATH;
 			let namexlsx = "report" + Date.now() + ".xlsx";
 			// Create excel header
-			ws.getCell('A1').value = "Mailing";
-			ws.getCell('B1').value = "Cpf";
-			ws.getCell('C1').value = "Interação";
-			ws.getCell('D1').value = "Nome do Antendente";
-			ws.getCell('E1').value = "Telefone";
-			ws.getCell('F1').value = "Hora";
-			ws.getCell('G1').value = "Data";
-			ws.getCell('H1').value = "Status";
-			ws.getCell('I1').value = "Rgm Aluno";
-			ws.getCell('J1').value = "Nome";
+			ws.getCell('A1').value = "Protocolo";
+			ws.getCell('B1').value = "Telefone";
+			ws.getCell('C1').value = "Nome do Cliente";
+			ws.getCell('D1').value = "Nome do Atendente";
+			ws.getCell('E1').value = "CPF";
+			ws.getCell('F1').value = "Banco";
+			ws.getCell('G1').value = "Canal";
+			ws.getCell('H1').value = "In/Out";
+			ws.getCell('I1').value = "Status";
+			ws.getCell('J1').value = "Dt Atendimento";
+			ws.getCell('K1').value = "Hr Atendimento";
+			ws.getCell('L1').value = "Dt Ecerramento";
+			ws.getCell('M1').value = "Hr Ecerramento";
 			// Create excel rows
 			foreachasync(procedureList[1], function (element, index) {
-				ws.getCell('A' + line).value = element.filename;
-				ws.getCell('B' + line).value = element.cpf;
-				ws.getCell('C' + line).value = element.atendir;
+				ws.getCell('A' + line).value = element.protocolo;
+				ws.getCell('B' + line).value = element.mobile;
+				ws.getCell('C' + line).value = element.name;
 				ws.getCell('D' + line).value = element.atendente;
-				ws.getCell('E' + line).value = element.mobile;
-				ws.getCell('F' + line).value = element.hora;
-				ws.getCell('G' + line).value = element.data;
-				ws.getCell('H' + line).value = element.status;
-				ws.getCell('I' + line).value = element.rgm_aluno;
-				ws.getCell('J' + line).value = element.nome;
+				ws.getCell('E' + line).value = element.cpf;
+				ws.getCell('F' + line).value = element.banco;
+				ws.getCell('G' + line).value = element.origem;
+				ws.getCell('H' + line).value = element.atendir;
+				ws.getCell('I' + line).value = element.status;
+				ws.getCell('J' + line).value = element.dtatende;
+				ws.getCell('K' + line).value = element.hratende;
+				ws.getCell('L' + line).value = element.dtencerra;
+				ws.getCell('M' + line).value = element.hrencerra;
 				line = line + 1;
 			}).then(function () {
 				try {
@@ -774,6 +775,7 @@ io.on('connection', function (socket) {
 		log('> Sentinel message');
 		// Fix Payload
 		payload = payload[0]
+		console.log(payload);
 		// Boolean for On/Off
 		let fkonline = false;
 		// Check for agents
@@ -943,12 +945,9 @@ io.on('connection', function (socket) {
 		let atendeinList = await runDynamicQuery(atendeinQuery, atendeinParams);
 		if (atendeinList.length == 0) {
 			let sessionid = await getCustomUuid();
-			let sessionBotCcs = atendeinList[0].session_sessionBotCcs;
-			let optAtendimento = atendeinList[0].session_optAtendimento;
-			let optValue = atendeinList[0].session_optValue;
 			// Insert atendein
-			let insertAtdQuery = "INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, atendir, sessionBotCcs, optAtendimento, optValue) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)";
-			let insertAtdParams = [sessionid, mobile, dtin, account, photo, fkto, fkname, atendir, sessionBotCcs, optAtendimento, optValue];
+			let insertAtdQuery = "INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, atendir) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+			let insertAtdParams = [sessionid, mobile, dtin, account, photo, fkto, fkname, atendir];
 			let insertAtdList = await runDynamicQuery(insertAtdQuery, insertAtdParams);
 			// Update Mailing
 			let updateAtdQuery = "UPDATE tab_ativo SET status=1 WHERE mobile = ?";
@@ -963,11 +962,12 @@ io.on('connection', function (socket) {
 
 	socket.on('bi-addativo', async function (payload) {
 		log("> Get Add Active Mailing");
+		console.log(payload);
 		for (i = 0; i < payload.length; i++) {
 			let nome = payload[i].nome;
-			let rgm_aluno = payload[i].rgm_aluno;
+			let banco = payload[i].banco;
 			let cpf = payload[i].cpf;
-			let celular = payload[i].celular;
+			let celular = payload[i].telefone;
 			let filename = payload[i].filename;
 			let quantidade = payload[i].quantidade;
 			// Fix Cellphone number
@@ -976,7 +976,7 @@ io.on('connection', function (socket) {
 				celular = celular.replace(/\D/g, '');
 				if (celular.length < 13) { celular = "55" + celular }
 				if (celular != "" && celular != null && celular.length >= 9) {
-					let ativoMailRes = await addAtivoMail(nome, rgm_aluno, cpf, celular, filename, quantidade)
+					let ativoMailRes = await addAtivoMail(nome, banco, cpf, celular, filename, quantidade)
 					if (ativoMailRes.statusCode == '200') {
 						socket.emit('bi-addativo', ativoMailRes.response)
 					} else {
@@ -1003,12 +1003,9 @@ io.on('connection', function (socket) {
 			let atendeParams = [mobile];
 			let atendeList = await runDynamicQuery(atendeQuery, atendeParams);
 			if (atendeList.length == 0) {
-				let sessionBotCcs = atendeList[0].session_sessionBotCcs
-				let optAtendimento = atendeList[0].session_optAtendimento
-				let optValue = atendeList[0].session_optValue
 				// Insert into atendein
-				let atendeQuery = "INSERT INTO tab_atendein (sessionid, mobile, dtin, fkto, fkname, atendir, sessionBotCcs, optAtendimento, optValue) VALUES(UUID(), ?, ?, ?, ?, ?, ?, ?, ?)";
-				let atendeParams = [mobile, dtin, fkto, fkname, atendir, sessionBotCcs, optAtendimento, optValue];
+				let atendeQuery = "INSERT INTO tab_atendein (sessionid, mobile, dtin, fkto, fkname, atendir) VALUES(UUID(), ?, ?, ?, ?, ?)";
+				let atendeParams = [mobile, dtin, fkto, fkname, atendir];
 				let atendeList = await runDynamicQuery(atendeQuery, atendeParams);
 				socket.emit('bi-callinput', { status: '200' });
 			} else {
@@ -1173,9 +1170,9 @@ io.on('connection', function (socket) {
 		let getStatusenList = await runDynamicQuery(getStatusenQuery, getStatusenParams);
 		socket.emit('bi-statusen', JSON.stringify(getStatusenList));
 	});
-
+	
 	// SCHEDULE CCS FILA
-
+	
 	const job = schedule.scheduleJob('*/5 * * * * *', async function () {
 		// Get fila info
 		let vwFilaQuery = "SELECT * FROM vw_fila;";
@@ -1207,6 +1204,145 @@ io.on('connection', function (socket) {
 
 });
 
+// Sentinel Sub's
+function sentinelNewmessages(socket) {
+	return new Promise(async function (resolve, reject) {
+		log('sentinelNewmessages');
+		let queryA = "SELECT id, uid, contact_uid, contact_name, message_uid, message_type, body_text, body_caption, body_url FROM tab_waboxappin WHERE message_dir='i' AND status=0 AND contact_type = 'User' ORDER by dtin;";
+		let paramsA = [];
+		let messagesList = await runDynamicQuery(queryA, paramsA);
+		if (messagesList.length > 0) {
+			foreachasync(messagesList, async function (element, index) {
+				message_id = element.id;
+				message_uid = element.uid;
+				message_mobile = element.contact_uid;
+				message_name_before = element.contact_name;
+				message_name = element.contact_name.replace("'", "");
+				message_message_uid = element.message_uid;
+				message_message_type = element.message_type;
+				message_body_text = element.body_text;
+				message_body_caption = element.body_caption;
+				message_body_url = element.body_url;
+				// Select from atendimento
+				let queryB = "SELECT sessionid, fkto, fkname, name FROM tab_atendein WHERE mobile=? LIMIT 1;"
+				let paramsB = [message_mobile]
+				let atendeList = await runDynamicQuery(queryB, paramsB);
+				if (atendeList.length > 0) {
+					let message_sessionid, message_fkto, message_fkname, message_namea;
+					for (b = 0; b < atendeList.length; b++) {
+						message_sessionid = atendeList[b].sessionid;
+						message_fkto = atendeList[b].fkto;
+						message_fkname = atendeList[b].fkname;
+						message_namea = atendeList[b].name;
+					}
+					let payload = [{
+						"id": message_id,
+						"uid": message_uid,
+						"contact_uid": message_mobile,
+						"message_uid": message_message_uid,
+						"message_type": message_message_type,
+						"body_text": message_body_text,
+						"body_caption": message_body_caption,
+						"body_url": message_body_url,
+						"sessionid": message_sessionid,
+						"fkto": message_fkto,
+						"fkname": message_fkname,
+						"name": message_namea
+					}]
+					// Fix Payload
+					payload = payload[0]
+					// Boolean for On/Off
+					let fkonline = false;
+					// Check for agents
+					for (var i in io.sockets.connected) {
+						let fkid = io.sockets.connected[i].fkid;
+						// Send message to Agent
+						if (fkid === payload.fkto || payload.fkto == "491b9564-2d79-11ea-978f-2e728ce88125") {
+							// Agent param
+							let id = payload.id;
+							let sessionid = payload.sessionid;
+							let fromid = payload.contact_uid;
+							let fromname = payload.name;
+							let toid = payload.fkto;
+							let toname = payload.fkname;
+							let msgdir = "i";
+							let msgtype = payload.message_type;
+							let msgtext = payload.body_text;
+							let msgurl = payload.body_url;
+							let msgcaption = payload.body_caption;
+							let findMessageQuery = "SELECT * FROM tab_logs WHERE id = ?";
+							let findMessageParams = [id];
+							let findMessageList = await runDynamicQuery(findMessageQuery, findMessageParams);
+							if (findMessageList.length < 1) {
+								// Insert message log
+								if (payload.message_type == "chat") {
+									let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+									let insertLogParams = [id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext];
+									let insertLogList = await runDynamicQuery(insertLogQuery, insertLogParams);
+								} else {
+									let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+									let insertLogParams = [id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption];
+									let insertLogList = await runDynamicQuery(insertLogQuery, insertLogParams);
+								}
+								// Emmit socket event
+								socket.to(i).emit('receive_chat', payload);
+								fkonline = true;
+								// Update message
+								if (fkonline != false) {
+									let updateMsgQuery = "UPDATE tab_waboxappin SET status=1 WHERE id=?";
+									let updateMsgParams = [payload.id];
+									let updateMsgList = await runDynamicQuery(updateMsgQuery, updateMsgParams);
+								}
+							} else {
+								log("> Mensagem já cadastrada")
+							}
+						}
+					}
+				} else {
+					let queryC = "SELECT * FROM tab_filain WHERE mobile=?  LIMIT 1;"
+					let paramsC = [message_mobile]
+					let filaList = await runDynamicQuery(queryC, paramsC);
+					if (filaList.length == 0) {
+						let queryD = "SELECT mobile FROM tab_prior WHERE mobile=? LIMIT 1;"
+						let paramsD = [message_mobile]
+						let priorList = await runDynamicQuery(queryD, paramsD);
+						if (priorList.length == 1) {
+							let queryInsert = "INSERT INTO tab_filain (mobile, account, status, sessionBotCcs) VALUES(?, 'prior', '1', UUID());"
+							let paramsInsert = [message_mobile]
+							let insert = await runDynamicQuery(queryInsert, paramsInsert);
+							// Log send welcome message
+							let msgtext = "Olá, tudo bem? Bem-vindo a Central de Vendas do Agibank! Temos a melhor solução de crédito para o seu momento.\n\nPara agilizar o seu atendimento responda com o nº da opção desejada. \n\n1 - 💳 Cartão de Crédito \n\n2 - 💵 Portabilidade\n\n3 - 💰 Crédito Consignado\n\n4- 📋 Consultar Contratos ";
+							// Extension Message Json
+							let messageJson = {
+								infra: "5511910893842@c.us",
+								id: message_mobile + '@c.us',
+								msg: msgtext,
+								media: 'chat'
+							}
+							let extResponse = await sendExtensionMessage(messageJson);
+						} else {
+							let queryInsert = "INSERT INTO tab_filain (mobile, status, sessionBotCcs) VALUES(?, '1', UUID());"
+							let paramsInsert = [message_mobile]
+							let insert = await runDynamicQuery(queryInsert, paramsInsert);
+							// Log send welcome message
+							let msgtext = "Olá, tudo bem? Bem-vindo a Central de Vendas do Agibank! Temos a melhor solução de crédito para o seu momento.\n\nPara agilizar o seu atendimento responda com o nº da opção desejada. \n\n1 - 💳 Cartão de Crédito \n\n2 - 💵 Portabilidade\n\n3 - 💰 Crédito Consignado\n\n4- 📋 Consultar Contratos ";
+							// Extension Message Json
+							let messageJson = {
+								infra: "5511910893842@c.us",
+								id: message_mobile + '@c.us',
+								msg: msgtext,
+								media: 'chat'
+							}
+							let extResponse = await sendExtensionMessage(messageJson);
+						}
+					}
+				}
+			})
+		}
+		resolve('finished')
+	})
+}
+
 server.listen(port, function () {
 	log('Chat Core - Ubicua Cloud Platform - Listening at Port ' + port);
 });
@@ -1214,4 +1350,3 @@ server.listen(port, function () {
 process.on('uncaughtException', function (err) {
 	return
 });
-

@@ -73,7 +73,7 @@ socket.on('bi-report1', function (payload) {
 
         for (i = 0; i < qnt; i++) {
             var table = '';
-            table += tabsup(tbres[i].sessionid, tbres[i].mobile, tbres[i].cpf, tbres[i].atendente, tbres[i].hora, tbres[i].data, tbres[i].status, tbres[i].atendir, tbres[i].filename, tbres[i].rgm_aluno, tbres[i].nome);
+            table += tabsup(tbres[i].sessionid, tbres[i].mobile, tbres[i].cpf, tbres[i].atendente, tbres[i].hora, tbres[i].data, tbres[i].status, tbres[i].atendir, tbres[i].filename, tbres[i].banco, tbres[i].nome, tbres[i].protocolo);
             $('#tableresult').append(table);
         }
 
@@ -234,8 +234,11 @@ function testsock2() {
 
     var v_number = $('#iCEL').val();
     var v_CPF = $('#iCPF').val();
-    var v_rgm = $('#iRGM').val();
+    var v_banco = $('#iBANCO').val();
     var v_direction = $('#iDirection').val();
+    var v_protocolo = $('#iPROTOCOLO').val();
+    var v_canal = $('#iCANAL').val();
+    var v_nomecliente = $('#iNomeCliente').val();
 
     globalqry2 = "";
 
@@ -251,11 +254,11 @@ function testsock2() {
         }
     }
 
-    if (v_rgm != "") {
+    if (v_banco != "") {
         if (globalqry2 != "") {
-            globalqry2 += " and rgm_aluno= '" + v_rgm + "'";
+            globalqry2 += " and banco= '" + v_banco + "'";
         } else {
-            globalqry2 += "rgm_aluno= '" + v_rgm + "'";
+            globalqry2 += "banco= '" + v_banco + "'";
         }
     }
 
@@ -266,6 +269,31 @@ function testsock2() {
             globalqry2 += "atendir= '" + v_direction + "'";
         }
     }
+
+    if (v_protocolo != "") {
+        if (globalqry2 != "") {
+            globalqry2 += " and protocolo= '" + v_protocolo + "'";
+        } else {
+            globalqry2 += "protocolo= '" + v_protocolo + "'";
+        }
+    }
+
+    if (v_canal != "") {
+        if (globalqry2 != "") {
+            globalqry2 += " and origem= '" + v_canal + "'";
+        } else {
+            globalqry2 += "origem= '" + v_canal + "'";
+        }
+    }
+
+    if (v_nomecliente != "") {
+        if (globalqry2 != "") {
+            globalqry2 += " and name= '" + v_nomecliente + "'";
+        } else {
+            globalqry2 += "name= '" + v_nomecliente + "'";
+        }
+    }
+
     testsock();
 }
 

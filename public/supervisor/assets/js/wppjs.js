@@ -44,6 +44,26 @@ function divblock(id, fkid, nome, data, a){
     return (msg);
 }
 
+// function divstatus(descricao, id, a, pedido) {
+//     var msg = "<tr id='" + id + "'>";
+//     msg += "<td><span>" + a + "</span><span id='id" + a + "' style='display:none'>" + id + "</span></td>";
+//     msg += "<td><span id='de" + a + "'>" + descricao + "</span></td>";
+//     if (pedido == 0) {
+//         msg += "<td><span id='ped" + a + "' style='margin-left:10px'>NÃO</span></td>";
+//     } else if (pedido == 1) {
+//         msg += "<td><span id='ped" + a + "' style='margin-left:10px'>SIM</span></td>";
+//     }
+//     msg += "<td style='padding-left: 1vw;'>";
+//     msg += "<button class='buttonatend' onclick='openbox1(" + a + ")'><i class='fa fa-edit'></i></button>";
+//     msg += "</td>";
+//     msg += "<td style='padding-left: 1.5vw'> ";
+//     msg += "<button class='buttonatend' onclick='openbox2(" + a + ")'><i class='fa fa-trash-o'></i></button>";
+//     msg += "</td>";
+//     msg += "</tr>";
+
+//     return (msg);
+// }
+
 function divstatus(descricao, id, a, pedido) {
     var msg = "<tr id='" + id + "'>";
     msg += "<td><span>" + a + "</span><span id='id" + a + "' style='display:none'>" + id + "</span></td>";
@@ -89,7 +109,7 @@ function getperfil(id) {
     return perfil;
 }
 
-function tabsup(id, numb, cpf, name, hour, date, state, atendir, filename, rgm, nome) {
+function tabsup(id, numb, cpf, name, hour, date, state, atendir, filename, rgm, nome, protocolo) {
 
     if (numb == null || numb == "" || numb == "null") {
         numb = '-';
@@ -121,10 +141,14 @@ function tabsup(id, numb, cpf, name, hour, date, state, atendir, filename, rgm, 
     if (rgm == null || rgm == "" || nome == "null") {
         rgm = '-';
     }
+    if (protocolo == null || protocolo == "" || protocolo == "null") {
+        protocolo = '-';
+    }
 
     var tab = "<tr id='count" + id + "' class='gradeA odd' role='row'>";
     tab += "<td class='sorting_1'>" + nome + "</td>";
     tab += "<td>" + rgm + "</td>";
+    tab += "<td>" + protocolo + "</td>";
     tab += "<td>" + cpf + "</td>";
     tab += "<td>" + numb + "</td>";
     tab += "<td>" + name + "</td>";

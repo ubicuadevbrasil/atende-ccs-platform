@@ -2,6 +2,7 @@ var ida = 0;
 var idcontato = 0;
 var json;
 var newSwitch = 1;
+var editSwitch = 1;
 var operador = sessionStorage.getItem('fkname');
 var socket = io.connect();
 
@@ -30,7 +31,7 @@ socket.on('connect', function () {
             for (a = 0; a < cx; a++) {
                 var teste = a;
                 var menu = '';
-                menu += divstatus(json[a].descricao, json[a].id, teste);
+                menu += divstatus(json[a].descricao, json[a].id, teste, json[a].pedido);
                 $('#tbodyz').append(menu);
             }
         } else {
@@ -38,7 +39,7 @@ socket.on('connect', function () {
                 var descricao = json[a].descricao;
                 var id = json[a].id;
                 var jsonteste = a;
-                searchtip(descricao, id, jsonteste);
+                searchtip(descricao, id, jsonteste, json[a].pedido);
             }
         }
 
@@ -67,11 +68,19 @@ $('#switchNew').on('click', function () {
     }
 });
 
+$('#switchEdit').on('click', function () {
+    if (editSwitch == 0) {
+      editSwitch = 1;
+    } else if (editSwitch == 1) {
+      editSwitch = 0;
+    }
+  });
+
 $('#btnsavenew').on('click', function () {
 
     var descricao = $('#idescnew').val();
     if (descricao != '') {
-        socket.emit('add_sta', { descricao: descricao.toUpperCase() });
+        socket.emit('add_sta', { descricao: descricao.toUpperCase(), pedido: newSwitch });
         $('#modal-default').modal('toggle');
     } else {
         alert('Preencha Todos os Campos');
@@ -83,7 +92,7 @@ $('#btnsaveedt').on('click', function () {
     if ($('#idescedt').val() != "") {
 
         var descricao = $('#idescedt').val();
-        socket.emit('upd_sta', { id: ida, descricao: descricao.toUpperCase() });
+        socket.emit('upd_sta', { id: ida, descricao: descricao.toUpperCase(), pedido: editSwitch });
         ida = 0;
 
         $('#modal-default2').modal('toggle');
@@ -99,13 +108,13 @@ $('#buscarlista').keyup(function () {
     socket.emit('bi-liststa', { fkid: 'a05c3708-32b3-11e8-9d7a-000c29369337' });
 });
 
-function searchtip(descricao, id, jsonteste) {
+function searchtip(descricao, id, jsonteste, pedido) {
     var input, filter;
     input = document.getElementById("buscarlista");
     filter = input.value.toUpperCase();
     if (descricao.toUpperCase().indexOf(filter) > -1) {
         var menu = '';
-        menu += divstatus(descricao, id, jsonteste);
+        menu += divstatus(descricao, id, jsonteste, pedido);
         $('#tbodyz').append(menu);
     } else {
     }
@@ -115,6 +124,17 @@ function openbox1(box) {
 
     var descricao = $('#de' + box).text();
     ida = $('#id' + box).text();
+    var pedido = $('#ped' + box).text();
+
+    if (pedido == "SIM") {
+        if (editSwitch == 0) {
+          $('#switchEdit').trigger("click")
+        }
+      } else if (pedido == "NÃO") {
+        if (editSwitch == 1) {
+          $('#switchEdit').trigger("click")
+        }
+      }
 
     $('#idescedt').val(descricao);
     $('#modal-default2').modal();

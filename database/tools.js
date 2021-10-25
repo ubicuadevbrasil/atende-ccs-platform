@@ -2,6 +2,7 @@ module.exports = function () {
 
       const dbcc = require('./dbcc');
       const request = require('request');
+      const foreachasync = require('foreachasync').forEachAsync;
 
       this.getTimestamp = function () {
             var date = new Date();
@@ -16,7 +17,7 @@ module.exports = function () {
 
       this.log = function (desc, message) {
             console.log(getTimestamp() + ' >> ' + desc);
-            console.log(message);
+            // console.log(message);
       };
 
       this.getCustomUuid = function () {
@@ -78,13 +79,18 @@ module.exports = function () {
 
       this.runDynamicQuery = function (query, params) {
             return new Promise(function (resolve, reject) {
-                  dbcc.query(query, params, function (err, result) {
-                        if (err) {
-                              console.log(err)
-                              reject(err)
-                        }
-                        resolve(result)
-                  });
+                  try {
+                        dbcc.query(query, params, function (err, result) {
+                              if (err) {
+                                    console.log(err)
+                                    reject(err)
+                              }
+                              resolve(result)
+                        });
+                  } catch (err) {
+                        console.log(err)
+                        reject(err)
+                  }
             })
       }
 
@@ -162,20 +168,25 @@ module.exports = function () {
             })
       }
 
-      this.addAtivoMail = function (nome, rgm_aluno, cpf, celular, filename, quantidade) {
+      this.addAtivoMail = function (nome, banco, cpf, celular, filename, quantidade) {
             return new Promise(function (resolve, reject) {
                   dbcc.query("SELECT COUNT(*) as resultCount FROM tab_ativo WHERE DATE(dtcadastro) = DATE(NOW());", [], function (err, result) {
+                        console.log('Select Count');
                         if (err) { console.log(err) }
                         if (result[0].resultCount <= 500) {
                               dbcc.query("SELECT UUID() AS UUID;", [], function (err, result) {
+                                    console.log('Select UUID');
                                     if (err) { console.log(err) }
                                     var id = result[0].UUID;
                                     dbcc.query("SELECT * FROM tab_ativo WHERE mobile='" + celular + "' and status = 0;", function (err, result) {
+                                          console.log('Select Ativo');
                                           if (err) { console.log(err) }
                                           if (result.length < 1) {
-                                                dbcc.query("INSERT INTO tab_ativo (id, nome, rgm_aluno, cpf, mobile, filename, quantidade) VALUES (?,?,?,?,?,?,?);", [id, nome, rgm_aluno, cpf, celular, filename, quantidade], function (err, result) {
+                                                console.log('Insert');
+                                                dbcc.query("INSERT INTO tab_ativo (id, nome, mobile, cpf, banco, filename, quantidade) VALUES (?,?,?,?,?,?,?);", [id, nome, celular, cpf, banco, filename, quantidade], function (err, result) {
                                                       if (err) { console.log(err) }
                                                       dbcc.query("SELECT * FROM tab_ativo WHERE status=0", [], function (err, result) {
+                                                            console.log('Select one ativo');
                                                             if (err) { console.log(err) }
                                                             if (result.length > 0) {
                                                                   var ativo = JSON.stringify(result);
