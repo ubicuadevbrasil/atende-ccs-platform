@@ -109,7 +109,7 @@ function getperfil(id) {
     return perfil;
 }
 
-function tabsup(id, numb, cpf, name, hour, date, state, atendir, filename, rgm, nome, protocolo) {
+function tabsup(id, numb, cpf, name, hour, date, state, atendir, filename, banco, nome, protocolo) {
 
     if (numb == null || numb == "" || numb == "null") {
         numb = '-';
@@ -138,8 +138,8 @@ function tabsup(id, numb, cpf, name, hour, date, state, atendir, filename, rgm, 
     if (nome == null || nome == "" || nome == "null") {
         nome = '-';
     }
-    if (rgm == null || rgm == "" || nome == "null") {
-        rgm = '-';
+    if (banco == null || banco == "" || banco == "null") {
+        banco = '-';
     }
     if (protocolo == null || protocolo == "" || protocolo == "null") {
         protocolo = '-';
@@ -147,7 +147,7 @@ function tabsup(id, numb, cpf, name, hour, date, state, atendir, filename, rgm, 
 
     var tab = "<tr id='count" + id + "' class='gradeA odd' role='row'>";
     tab += "<td class='sorting_1'>" + nome + "</td>";
-    tab += "<td>" + rgm + "</td>";
+    tab += "<td>" + banco + "</td>";
     tab += "<td>" + protocolo + "</td>";
     tab += "<td>" + cpf + "</td>";
     tab += "<td>" + numb + "</td>";

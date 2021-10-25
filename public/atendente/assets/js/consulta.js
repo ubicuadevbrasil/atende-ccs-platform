@@ -92,7 +92,7 @@ socket.on('bi-report2', function (payload) {
 
         for (i = 0; i < qnt; i++) {
             var table = '';
-            table += tabsup(tbres[i].sessionid, tbres[i].mobile, tbres[i].cpf, tbres[i].atendente, tbres[i].hora, tbres[i].data, tbres[i].status, tbres[i].atendir, tbres[i].filename, tbres[i].rgm_aluno, tbres[i].nome);
+            table += tabsup(tbres[i].sessionid, tbres[i].mobile, tbres[i].cpf, tbres[i].atendente, tbres[i].hora, tbres[i].data, tbres[i].status, tbres[i].atendir, tbres[i].filename, tbres[i].banco, tbres[i].nome, tbres[i].protocolo);
             $('#tableresult').append(table);
         }
 
@@ -126,9 +126,9 @@ socket.on('bi-report2', function (payload) {
             marcabtnpag = '';
         }
         marcabtnpag = '';
-        document.getElementById("btnexcel").style.display = "block";
+        // document.getElementById("btnexcel").style.display = "block";
     } else {
-        document.getElementById("btnexcel").style.display = "none";
+        // document.getElementById("btnexcel").style.display = "none";
         document.getElementById("datatables_info2").style.display = "none";
         $('#modaltitle1').text('Sem Resultados!');
         $('#modaltitle2').text('Nenhum Registro Encontrado !');
@@ -166,8 +166,8 @@ $('#btnsaveedt').on('click', function () {
 });
 
 $('#btnbusca').on('click', function () {
-    console.log($('#iCEL').val(), $('iCPF').val(), $('#iRGM').val());
-    if ($('#iCEL').val() != "" || $('iCPF').val() != "" || $('#iRGM').val() != "") {
+    console.log($('#iCEL').val(), $('iCPF').val(), $('#iBANCO').val());
+    if ($('#iCEL').val() != "" || $('iCPF').val() != "" || $('#iBANCO').val() != "") {
         testsock2();
         //$('#pagtab').empty();
         $('#pagtab2').empty();
@@ -241,7 +241,7 @@ function testsock2() {
 
     var v_number = $('#iCEL').val();
     var v_CPF = $('#iCPF').val();
-    var v_rgm = $('#iRGM').val();
+    var v_banco = $('#iBANCO').val();
 
     globalqry2 = "";
 
@@ -257,11 +257,11 @@ function testsock2() {
         }
     }
 
-    if (v_rgm != "") {
+    if (v_banco != "") {
         if (globalqry2 != "") {
-            globalqry2 += " and rgm_aluno= '" + v_rgm + "'";
+            globalqry2 += " and banco= '" + v_banco + "'";
         } else {
-            globalqry2 += "WHERE rgm_aluno= '" + v_rgm + "'";
+            globalqry2 += "WHERE banco= '" + v_banco + "'";
         }
     }
 

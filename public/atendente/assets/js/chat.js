@@ -467,7 +467,7 @@ socket.on('bi-mailativo', function (payload) {
             "ordering": false,
             columns: [
                 { title: "Nome" },
-                { title: "Rgm Aluno" },
+                { title: "Banco" },
                 { title: "Cpf" },
                 { title: "Numero" },
                 { title: "Chamar" }
@@ -1372,5 +1372,5 @@ $(document).on('mousemove', function () {
             fkname: sessionStorage.getItem('fkname'),
         };
         socket.emit('bi-usertimeout', payload);
-    }, 7200000);
+    }, 4200000);
 });

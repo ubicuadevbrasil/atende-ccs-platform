@@ -398,10 +398,9 @@ io.on('connection', function (socket) {
 		let normalQueueList = await runDynamicQuery(normalQueueQuery, normalQueueParams);
 		if (normalQueueList.length > 0) {
 			// Get Mail Info
-			let mailName, mailCpf, mailRgm, mailInfoCad;
+			let mailName, mailCpf, mailInfoCad;
 			mailName = "";
 			mailCpf = "";
-			mailRgm = "";
 			mailInfoCad = "";
 			// Database information
 			let mobile = normalQueueList[0].mobile;
@@ -432,10 +431,9 @@ io.on('connection', function (socket) {
 		let priorQueueList = await runDynamicQuery(priorQueueQuery, priorQueueParams);
 		if (priorQueueList.length > 0) {
 			// Get Mail information
-			let mailName, mailCpf, mailRgm, mailInfoCad;
+			let mailName, mailCpf, mailInfoCad;
 			mailName = "";
 			mailCpf = "";
-			mailRgm = "";
 			mailInfoCad = "";
 			// Database information
 			let mobile = priorQueueList[0].mobile;
@@ -605,7 +603,8 @@ io.on('connection', function (socket) {
 							data: element.data,
 							status: element.status,
 							banco: element.banco,
-							nome: element.nome
+							nome: element.nome,
+							protocolo: element.protocolo
 						};
 						reportdata.push(serialized);
 						if (lenchat == index) {
