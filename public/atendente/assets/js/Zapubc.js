@@ -378,7 +378,9 @@
 
           }else{
 
-            $('#myModal7').modal();
+            let modalTitle = "Aviso";
+        let modalDesc = "Nenhum Contato Selecionado!";
+        callWarningModal(modalTitle,modalDesc)
 
           }
           

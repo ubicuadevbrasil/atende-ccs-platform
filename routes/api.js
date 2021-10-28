@@ -153,7 +153,6 @@ router.post('/v1/message', function (req, res, next) {
             console.log('Recebimento de Stories')
         }
 
-		db.query("UPDATE tab_config SET waendpoint=? WHERE id=1", [_hostin]);
 		res.sendStatus(200);
 
 	} else if (_event == "ack") {

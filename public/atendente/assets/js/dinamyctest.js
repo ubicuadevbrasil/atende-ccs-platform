@@ -12,7 +12,7 @@ function modalpis(info, mobile, account, imageuser, atendir, atendircolor, direc
     }
 
     var texto = "<li id='id" + mobile + "' class='onhoverli'>";
-    texto += "<div id='sid" + mobile + "' class='widget-followers-item onhoverli' onclick='openbox1(" + mobile + ")'>";
+    texto += "<div id='sid" + mobile + "' class='widget-followers-item onhoverli' onclick='openUserChat(" + mobile + ")'>";
     if (direction == "foward") {
         texto += "<img id='i" + mobile + "'' src='https://cdn.ubicuacloud.com/file/" + imageuser + "' alt='' class='widget-followers-avatar border-round' style='margin-top: 10px'>";
     } else {
@@ -337,9 +337,7 @@ function previewdoctxr(pvdoc, caption, lname, ltime, ldate) {
 
 
 function conversor_remessa(data) {
-    console.log(data);
     var dateTime = new Date(data);
-    console.log(dateTime);
     var minutos = dateTime.getMinutes();
     var horas = dateTime.getHours();
     var segundos = dateTime.getSeconds();

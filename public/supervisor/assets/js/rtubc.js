@@ -407,7 +407,9 @@ $("#nvatend").on("click", function () {
 
     } else {
 
-        $('#myModal').modal();
+        let modalTitle = "Aviso";
+	let modalDesc = "Não Há Contatos na Fila!";
+	callWarningModal(modalTitle,modalDesc)
 
     }
 
@@ -448,10 +450,14 @@ $("#sendmsgtxt").on("click", function () {
             $('#inputmsgtxt').val(null);
 
         } else {
-            $('#myModal5').modal();
+            let modalTitle = "Aviso";
+	let modalDesc = "Campo de Texto Vazio!";
+	callWarningModal(modalTitle,modalDesc)
         }
     } else {
-        $('#myModal6').modal();
+        let modalTitle = "Aviso";
+let modalDesc = "Nenhum Atendimento Iniciado!";
+callWarningModal(modalTitle,modalDesc)
     }
 
 

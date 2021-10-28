@@ -407,7 +407,9 @@ $("#nvatend").on("click", function () {
 
     } else {
 
-        $('#myModal').modal();
+        let modalTitle = "Aviso";
+	let modalDesc = "Não Há Contatos na Fila!";
+	callWarningModal(modalTitle,modalDesc)
 
     }
 
@@ -448,10 +450,14 @@ $("#sendmsgtxt").on("click", function () {
             $('#inputmsgtxt').val(null);
 
         } else {
-            $('#myModal5').modal();
+            let modalTitle = "Aviso";
+	let modalDesc = "Campo de Texto Vazio!";
+	callWarningModal(modalTitle,modalDesc)
         }
     } else {
-        $('#myModal6').modal();
+        let modalTitle = "Aviso";
+let modalDesc = "Nenhum Atendimento Iniciado!";
+callWarningModal(modalTitle,modalDesc)
     }
 
 
@@ -495,7 +501,9 @@ $('#bootbox-prompt').on('click', function () {
         });
 
     } else {
-        $('#myModal7').modal();
+        let modalTitle = "Aviso";
+        let modalDesc = "Nenhum Contato Selecionado!";
+        callWarningModal(modalTitle,modalDesc)
     }
 
 });
@@ -521,7 +529,9 @@ $('#confirmaenc').on('click', function () {
 
     } else {
 
-        $('#myModal7').modal();
+        let modalTitle = "Aviso";
+        let modalDesc = "Nenhum Contato Selecionado!";
+        callWarningModal(modalTitle,modalDesc)
 
     }
 
@@ -535,7 +545,9 @@ $('#encerrafila').on('click', function () {
 
     } else {
 
-        $('#myModal7').modal();
+        let modalTitle = "Aviso";
+        let modalDesc = "Nenhum Contato Selecionado!";
+        callWarningModal(modalTitle,modalDesc)
 
     }
 

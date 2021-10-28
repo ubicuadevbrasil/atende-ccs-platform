@@ -150,7 +150,9 @@ socket.on('bi-historyone', function (payload) {
         onchatmsg(contacts, logs, 'chathistory');
         $('#modalHistorico').modal();
     } else {
-        $('#myModal9').modal();
+        let modalTitle = "Aviso";
+	let modalDesc = "Não Há Nenhum Histórico Desse Contato!";
+	callWarningModal(modalTitle,modalDesc)
     }
 });
 
