@@ -324,7 +324,6 @@ io.on('connection', function (socket) {
 		let mobile = payload.mobile;
 		let status = payload.status;
 		let cnpj = payload.cnpj;
-		let atendir = payload.atendir;
 		let protocolo = payload.protocolo;
 		let banco = payload.banco;
 		// Get from tab_atendein
@@ -349,6 +348,7 @@ io.on('connection', function (socket) {
 			let sessionBotCcs = atendeinSelList[0].sessionBotCcs
 			let optAtendimento = atendeinSelList[0].optAtendimento
 			let optValue = atendeinSelList[0].optValue
+			let atendir = atendeinSelList[0].atendir
 			// Insert into tab_encerrain
 			let atendeinInsQuery = "INSERT INTO tab_encerrain (sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, protocolo, banco) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			let atendeinInsParams = [sessionid, mobile, dtin, dtat, name, account, photo, fkto, fkname, status, cnpj, atendir, transfer, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, protocolo, banco];
@@ -460,6 +460,11 @@ io.on('connection', function (socket) {
 		let transferId = payload.fkid;
 		let transferName = payload.fkname;
 		let message = payload.message;
+		// Get Atendir from Mobile
+		let atendirSelQuery = "SELECT * FROM tab_atendein WHERE mobile=? LIMIT 1";
+		let atendirSelParams = [mobile];
+		let atendirSelList = await runDynamicQuery(atendirSelQuery, atendirSelParams);
+		payload.atendir = atendirSelList[0].atendir
 		// Verificar se  atendente está online e enviar a transferência de atendimento
 		let fkOnline = false;
 		for (var i in io.sockets.connected) {

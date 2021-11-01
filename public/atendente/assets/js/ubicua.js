@@ -394,7 +394,7 @@ function convertDate(inputFormat) {
 
 function attachcp() {
 
-  if (contactuid != "") {
+  if (currentUserMobile != "") {
 
     $('#myModal3').modal();
   } else {

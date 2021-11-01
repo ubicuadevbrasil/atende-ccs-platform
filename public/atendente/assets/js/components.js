@@ -1,4 +1,4 @@
-// Open chat
+// ? Open chat
 function openUserChat(mobile) {
     // Set current user mobile
     currentUserMobile = mobile;
@@ -19,14 +19,14 @@ function openUserChat(mobile) {
     $('#s' + currentUserMobile).fadeOut(1);
 }
 
-// Scroll Chat
+// ! Scroll Chat
 function pageScroll() {
     let altChat = document.getElementById('chat11');
     let altScroll = document.getElementById('chat11').offsetHeight;
     altChat.scrollBy(0, altScroll);
 }
 
-// Hide Chats
+// ! Hide Chats
 function hideChats() {
     let chats = document.getElementById("chat11").children;
     for (i = 0; i < chats.length; i++) {
@@ -34,7 +34,7 @@ function hideChats() {
     }
 }
 
-// Deselect other users
+// ! Deselect other users
 function notActive() {
     var chats = document.getElementById("ulConversation").children;
     for (i = 0; i < chats.length; i++) {
@@ -42,7 +42,7 @@ function notActive() {
     }
 }
 
-// Change Hash to Base64
+// ? Change Hash to Base64
 function loadBase64(hashFile) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
@@ -54,7 +54,7 @@ function loadBase64(hashFile) {
     xhttp.send();
 }
 
-// Close chat with user
+// ! Close chat with user
 async function closeChat(mobile) {
     // Clear current chat panel
     $('#contatos').removeClass('form-loading');

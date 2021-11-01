@@ -1,4 +1,4 @@
-// Upload Media
+// ? Upload Media
 function uploadFile(file, uploadType) {
     return new Promise(function (resolve, reject) {
         $('#modalloading').addClass('form-loading');
@@ -28,12 +28,8 @@ function uploadFile(file, uploadType) {
                 let uploadTime = await getTime();
                 if (uploadType == 'document') {
                     let menu = previewdoctxr('https://cdn.ubicuacloud.com/file/' + fileHash, file.name, agentFkname, uploadTime);
-                } else if (uploadType == 'audio') {
+                } else if (uploadType == 'audio' || uploadType == 'video' || uploadType == 'image') {
                     let menu = previewaudr('https://cdn.ubicuacloud.com/file/' + fileHash, agentFkname, uploadTime);
-                } else if (uploadType == 'video') {
-                    let menu = previewvidr('https://cdn.ubicuacloud.com/file/' + fileHash, agentFkname, uploadTime);
-                } else if (uploadType == 'image') {
-                    let menu = previewimgr('https://cdn.ubicuacloud.com/file/' + fileHash, agentFkname, uploadTime);
                 }
                 // Append message and Scroll
                 $('#chat' + currentUserMobile).append(menu);
@@ -54,7 +50,7 @@ function uploadFile(file, uploadType) {
     })
 }
 
-// Prepare chat for history
+// ? Prepare chat for history
 function arrangeUserChat(contacts) {
     return new Promise(function (resolve, reject) {
         let contactsLength = contacts.length;
@@ -106,7 +102,7 @@ function arrangeUserChat(contacts) {
     })
 }
 
-// Answer New Queue
+// ? Answer New Queue
 function answerNewQueue(payload) {
     return new Promise(function (resolve, reject) {
         // User Info
@@ -131,7 +127,7 @@ function answerNewQueue(payload) {
     })
 }
 
-// Arrange Agent Chat History
+// ? Arrange Agent Chat History
 function histmsg(contacts, logs) {
     let contactsLength = contacts.length;
     let logsLength = logs.length;
@@ -213,12 +209,12 @@ function histmsg(contacts, logs) {
     }
 }
 
-// Timer
+// ? Timer
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Get message style time
+// ? Get message style time
 function getTime() {
     return new Promise(function (resolve, reject) {
         let date = new Date();
@@ -230,14 +226,14 @@ function getTime() {
     })
 }
 
-// Agent Logout
+// ? Agent Logout
 function logoutAgent() {
     sessionStorage.clear();
     socket.disconnect();
     window.location = "index.html";
 }
 
-// Call mobile from Mailing
+// ? Call mobile from Mailing
 function callMobile(mobile) {
     $("#mailModal").modal('hide');
     socket.emit('bi-atendemail', {
@@ -247,7 +243,7 @@ function callMobile(mobile) {
     });
 }
 
-// Call Warning Modal
+// ? Call Warning Modal
 function callWarningModal(title, desc) {
     $("#warningModalTitle").text(title);
     $("#warningModalDesc").text(desc);

@@ -1,4 +1,4 @@
-// >>> Constants
+// ? Constants
 const socket = io.connect();
 const agentFkid = sessionStorage.getItem('fkid');
 const agentFkname = sessionStorage.getItem('fkname');
@@ -9,7 +9,7 @@ const inUsersDisplay = $('#ulConversation');
 const outUsersDisplay = $('#ulConversation2');
 const chatScreen = $('#chat11');
 
-// >>> Global Var's
+// ? Global Var's
 let currentUserMobile;
 let timeout = setTimeout(function () {
     socket.emit('bi-usertimeout', {
@@ -18,7 +18,7 @@ let timeout = setTimeout(function () {
     })
 }, 4200000);
 
-// >>> Document
+// ? Document
 $(document).on('ready', function () {
     // Set Operator name and CPF Mask
     $('#lboperador').text(agentFkname);
@@ -29,6 +29,7 @@ $(document).on('ready', function () {
     }
 });
 
+// ?
 $(document).on('mousemove', function () {
     // Check for timeout
     if (timeout !== null) {
@@ -42,29 +43,27 @@ $(document).on('mousemove', function () {
     }, 4200000);
 });
 
-// >>> Connection Events
-
+// ?
 socket.on('connect', function () {
     console.log('> Conectado')
     socket.emit('bi-atendein', { fkid: agentFkid });
 });
-
+// ?
 socket.on('disconnect', function () {
     console.log('> Desconectado');
 });
-
+// ?
 socket.on("force_disconnect", function () {
     console.log('> Logout forçado');
     logoutAgent();
 });
-
+// ?
 socket.on('bi-usertimeout', function (payload) {
     console.log('> Logout por timeout');
     logoutAgent();
 });
 
-// >>> Call's, Queues, Mobile's
-
+// ?
 socket.on('bi-answer_new_queue', async function (payload) {
     console.log('> Atendendo Fila');
     // Answer New Queue
@@ -73,7 +72,7 @@ socket.on('bi-answer_new_queue', async function (payload) {
     await sleep(4000)
     socket.emit('bi-atendein', { fkid: agentFkid });
 });
-
+// !
 socket.on('bi-answer_new_prior', async function (payload) {
     console.log('> Atendendo Fila Prioritaria');
     // Answer New Queue
@@ -82,7 +81,7 @@ socket.on('bi-answer_new_prior', async function (payload) {
     await sleep(4000)
     socket.emit('bi-atendein', { fkid: agentFkid });
 });
-
+// ?
 socket.on('bi-atendein', async function (payload) {
     console.log('> Buscando atendimentos e historicos');
     if (payload.logs.length > 0 && payload.contacts.length > 0) {
@@ -93,32 +92,13 @@ socket.on('bi-atendein', async function (payload) {
     }
     socket.emit('add user', { fkid: agentFkid, fkname: agentFkname });
 });
-
+// ?
 socket.on('bi-close_chat', async function (payload) {
     console.log('> Encerra chat');
     await closeChat(payload.mobile)
 });
 
-// >>> Tranfer
-
-socket.on('bi-transferagent', async function (payload) {
-    console.log('> Status from Transfer Agent');
-    if (payload.status == 0) {
-        $.growl.error({
-            title: "Atenção",
-            message: "Transferência do Contato <strong>" + payload.mobile + "</strong> Não Realizada, Atendente <strong>" + payload.fkname + "</strong> Não se Encontra mais Online !"
-        });
-    } else {
-        $.growl.success({
-            title: "Aviso",
-            message: "Transferência do Contato <strong>" + payload.mobile + "</strong> Realizada com Sucesso !"
-        });
-        await closeChat(payload.mobile)
-    }
-});
-
-// >>> Sentinel Events
-
+// ?
 socket.on('sentinel_clients_queue', function (payload) {
     // Atualização das Filas
     let filaPrior = filaNorm = 0;
@@ -139,13 +119,28 @@ socket.on('sentinel_clients_queue', function (payload) {
     $('#nvatendPrior').removeClass('form-loading');
 });
 
+// !
+// !
+// !
 
-//
-//
-// FIX DOWN BELLOW
-//
-//
+// ?
+socket.on('bi-transferagent', async function (payload) {
+    console.log('> Status from Transfer Agent');
+    if (payload.status == 0) {
+        $.growl.error({
+            title: "Atenção",
+            message: "Transferência do Contato <strong>" + payload.mobile + "</strong> Não Realizada, Atendente <strong>" + payload.fkname + "</strong> Não se Encontra mais Online !"
+        });
+    } else {
+        $.growl.success({
+            title: "Aviso",
+            message: "Transferência do Contato <strong>" + payload.mobile + "</strong> Realizada com Sucesso !"
+        });
+        await closeChat(payload.mobile)
+    }
+});
 
+// TODO:
 socket.on("get_cliInfo", function (payload) {
     $("#iNomeTx").val(payload.nome)
     $("#iCpfTx").val(payload.cpf)
@@ -155,6 +150,7 @@ socket.on("get_cliInfo", function (payload) {
     //console.log(payload)
 });
 
+// ?
 socket.on('bi-transferok', function (payload) {
     let numac = payload.mobile;
     let atendir = payload.atendir;
@@ -182,6 +178,7 @@ socket.on('bi-transferok', function (payload) {
     socket.emit('bi-transferok', { mobile: payload.mobile });
 });
 
+// TODO:
 socket.on('receive_register', function (payload) {
 
     let json = payload;
@@ -195,6 +192,7 @@ socket.on('receive_register', function (payload) {
     }
 });
 
+// ?
 socket.on('bi-statusen', function (payload) {
     let _statusen = JSON.parse(payload);
     $("#icbStatus").empty().append("<option value='0'>Selecione</option>");
@@ -208,6 +206,7 @@ socket.on('bi-statusen', function (payload) {
     $('#modalEncerrar').modal();
 });
 
+// TODO:
 socket.on('bi-lasthistory', function (payload) {
     //console.log(payload)
     if (payload.contacts.length != 0) {
@@ -222,6 +221,7 @@ socket.on('bi-lasthistory', function (payload) {
     }
 });
 
+// ?
 socket.on('sentinel_clients_alive', function (payload) {
     let _atendentesonline = JSON.parse(payload);
     $("#cbatendentesonline").empty().append("<option value='0'>Selecione</option>");
@@ -237,6 +237,7 @@ socket.on('sentinel_clients_alive', function (payload) {
     }
 });
 
+// TODO:
 socket.on('receive_chat', function (payload) {
 
     let msg = payload;
@@ -385,6 +386,7 @@ socket.on('receive_chat', function (payload) {
     }
 });
 
+// TODO:
 socket.on('bi-mailativo', function (payload) {
     if (payload != "" && payload != null) {
         let data = JSON.parse(payload);
@@ -439,6 +441,7 @@ socket.on('bi-mailativo', function (payload) {
     }
 });
 
+// TODO:
 socket.on("bi-atendemail", function (payload) {
     //console.log(payload);
     if (payload.status == '200') {
@@ -448,6 +451,7 @@ socket.on("bi-atendemail", function (payload) {
     }
 });
 
+// TODO:
 socket.on("bi-callinput", function (payload) {
     //console.log(payload);
     if (payload.status == '200') {
@@ -457,6 +461,7 @@ socket.on("bi-callinput", function (payload) {
     }
 });
 
+// !
 socket.on('bi-find_register', function (payload) {
     //console.log(payload);
     if (payload.name == null) {

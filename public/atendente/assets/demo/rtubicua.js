@@ -49,7 +49,7 @@
         if (payload.response == 1) {
           sessionStorage.setItem('fkid', payload.id);
           sessionStorage.setItem('fkname', payload.nome);
-          window.location.href = "chat.html";
+          window.location.href = "whats.html";
         } else if (payload.response == 2) {
           alert('Usuário Bloqueado !');
         } else if (payload.response == 3) {

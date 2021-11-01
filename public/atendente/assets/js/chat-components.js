@@ -4,14 +4,14 @@ $('#vidins').click(function () { $('#inserirvid').trigger('click'); });
 $('#audins').click(function () { $('#inseriraudio').trigger('click'); });
 $('#docins').click(function () { $('#inserirdoc').trigger('click'); });
 
-// Botão de Logout
+// ? Botão de Logout
 $("#btnlogout").on("click", function () {
     console.log('> Agent logout');
     // Desloga usuario
     logoutAgent();
 });
 
-// Botão de Atender Fila
+// ? Botão de Atender Fila
 $("#nvatend").on("click", function () {
     console.log('> Atende usuario da fila');
     let filaIn = $('#filain').text();
@@ -31,7 +31,7 @@ $("#nvatend").on("click", function () {
     }
 });
 
-// Botao de Atender Fila Prioritaria
+// ! Botao de Atender Fila Prioritaria
 $("#nvatendPrior").on("click", function () {
     console.log('> Atende usuario da fila prioritaria');
     let filaIn = $('#filaPrior').text();
@@ -51,7 +51,7 @@ $("#nvatendPrior").on("click", function () {
     }
 });
 
-// Envia menssagem de texto
+// ? Envia menssagem de texto
 $("#sendmsgtxt").on("click", async function () {
     console.log('> Send text message');
     let msgtext = $('#inputmsgtxt').val();
@@ -83,13 +83,13 @@ $("#sendmsgtxt").on("click", async function () {
     }
 });
 
-// Botão para consultar atendimentos posteriores
+// TODO: Botão para consultar atendimentos posteriores
 $('#btnconsulta').on('click', function () {
     console.log('> Consulta Atendimentos');
     window.open('consulta.html');
 });
 
-// Botão para cadastrar informações sobre o Cliente
+// TODO: Botão para cadastrar informações sobre o Cliente
 $('#btncadastro').on('click', function () {
     console.log('> Cadastra Cliente');
     if (currentUserMobile) {
@@ -116,7 +116,7 @@ $('#btncadastro').on('click', function () {
 
 });
 
-// Inicia Transferencia
+// ? Inicia Transferencia
 $('#btntransferir').on('click', function () {
     console.log('> Inicia Transferencia');
     if (currentUserMobile) {
@@ -137,7 +137,7 @@ $('#btntransferir').on('click', function () {
     }
 });
 
-// Confirma Transferencia
+// ? Confirma Transferencia
 $('#confirmatra').on('click', function () {
     console.log('> Confirma transferencia');
     let optionSelected = $('#cbatendentesonline option:selected').val();
@@ -162,7 +162,7 @@ $('#confirmatra').on('click', function () {
     }
 });
 
-// Busca Historico do Cliente
+// TODO: Busca Historico do Cliente
 $('#btnhistorico').on('click', function () {
     console.log('> Consulta historico do atendente');
     if (currentUserMobile) {
@@ -179,7 +179,7 @@ $('#btnhistorico').on('click', function () {
     }
 });
 
-// Botão para encerrar atendimentos
+// ? Botão para encerrar atendimentos
 $('#btnencerrar').on('click', function () {
     if (currentUserMobile) {
         // Clear CPF
@@ -194,7 +194,7 @@ $('#btnencerrar').on('click', function () {
 
 });
 
-// Botão para confirmar encerramento
+// ? Botão para confirmar encerramento
 $('#confirmaenc').on('click', function () {
     // Verifica se existe um contato selecionado
     if (currentUserMobile) {
@@ -213,13 +213,13 @@ $('#confirmaenc').on('click', function () {
     }
 });
 
-// Botão para um Input de um Mobile especifico
+// TODO: Botão para um Input de um Mobile especifico
 $('#callOther').on('click', function () {
     // Display Input Modal
     $('#modalInput').modal()
 });
 
-// Botão para efetuar o input de um Mobile
+// TODO: Botão para efetuar o input de um Mobile
 $('#insertInput').on('click', function () {
     // Realiza Captura do Mobile digitado pelo agente
     let mobile = $('#mobileInput').val();
@@ -239,31 +239,31 @@ $('#insertInput').on('click', function () {
     }
 });
 
-// Botão para realizar disparo Ativo
+// TODO: Botão para realizar disparo Ativo
 $('#btnchamar').on('click', function () {
     // Emite evento socket
     socket.emit('bi-mailativo', { tipo: '1' });
 });
 
-// Media Upload (Image)
+// ? Media Upload (Image)
 $('#inseririmg').change(function () {
     console.log('> Upload de Imagem');
     uploadFile(inserirdoc.files[0], 'image');
 });
 
-// Media Upload (Video)
+// ? Media Upload (Video)
 $('#inserirvid').change(function () {
     console.log('> Upload de Video');
     uploadFile(inserirdoc.files[0], 'video');
 });
 
-// Media Upload (Audio)
+// ? Media Upload (Audio)
 $('#inseriraudio').change(function () {
     console.log('> Upload de Audio');
     uploadFile(inserirdoc.files[0], 'audio');
 });
 
-// Media Upload (Document)
+// ? Media Upload (Document)
 $('#inserirdoc').change(function () {
     console.log('> Upload de Documento');
     uploadFile(inserirdoc.files[0], 'document');

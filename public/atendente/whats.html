@@ -10,24 +10,52 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../atendente/assets/css/whats.css">
+    <link rel="stylesheet" href="../atendente/assets/css/whats-modal.css">
     <script src="https://kit.fontawesome.com/5ae1266f50.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
     <div class="panel-body">
         <div id="sidebar" class="sidebar">
-            <!-- Sidebar itens in here -->
+            <span class="expand-sidebar-icon" id="hamburgerIcon">
+                <i class="fas fa-bars"></i>
+            </span>
+            <div class="hide-container" style="display: none;">
+                <div class="user-icon-container">
+                    <span class="user-icon">
+                        <img src="../atendente/assets/images/avatar 01.png" alt="user-icon">
+                    </span>
+                    <span class="engrenagem-icon">
+                        <img src="../atendente/assets/images/engrenagem.png" alt="engrenagem">
+                    </span>
+                </div>
+                <div class="user-name-container">
+                    <span style="font-size: 13px;">Atendente:</span>
+                    <span id="user-name" style="font-size: 22px;">Usuário XI</span>
+                </div>
+                <p id="operacao" class="operacao" style="font-size: 18px;">Operação Ativa</p>
+            </div>
+            <div class="side-bar-buttons">
+                <button id="editor-button" class="side-bar-button">
+                    <i class="fas fa-pencil-alt"></i>
+                    <span class="d-none editor-label" name="editor-label">Editor de respostas</span>
+                </button>
+                <button id="logout-button" class="side-bar-button">
+                    <i class="fas fa-power-off"></i>
+                    <span class="d-none editor-label" name="editor-label">Log out</span>
+                </button>
+            </div>
         </div>
         <!-- Contacts Lists -->
         <div id="" class="contacts-lists">
             <!-- Fila Button -->
-            <div class="fila-button">
+            <div id="filaButton" class="fila-button">
                 <div>
                     <span>Atender</span>
                 </div>
                 <div>
                     <div class="fila-white-box">
-                        <span>361</span>
+                        <span id="fila">0</span>
                     </div>
                 </div>
             </div>
@@ -36,112 +64,7 @@
                 <div class="calls-list-title">
                     Receptivo
                 </div>
-                <div class="calls-list-group">
-                    <div class="user-list-item">
-                        <div>
-                            <img src="https://cdn.ubicuacloud.com/file/null" alt="" class="user-list-item-avatar">
-                        </div>
-                        <div class="user-list-item-text-group">
-                            <div>
-                                +5511963684235
-                            </div>
-                            <div class="user-list-item-message-group">
-                                <span class="user-list-item-message-content">
-                                    Olá Bruno Patrick, Como está sua tarde hoje?
-                                </span>
-                            </div>
-                            <div>
-                                331190232
-                            </div>
-                        </div>
-                        <div class="user-list-item-time-group">
-                            <div>
-                                <span>12:34</span>
-                            </div>
-                            <div>
-                                <img src="../atendente/assets/images/whatsIcon.png" alt="">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="user-list-item">
-                        <div>
-                            <img src="https://cdn.ubicuacloud.com/file/null" alt="" class="user-list-item-avatar">
-                        </div>
-                        <div class="user-list-item-text-group">
-                            <div>
-                                +5511963684235
-                            </div>
-                            <div class="user-list-item-message-group">
-                                <span class="user-list-item-message-content">
-                                    Olá Bruno Patrick, Como está sua tarde hoje?
-                                </span>
-                            </div>
-                            <div>
-                                331190232
-                            </div>
-                        </div>
-                        <div class="user-list-item-time-group">
-                            <div>
-                                <span>12:34</span>
-                            </div>
-                            <div>
-                                <img src="../atendente/assets/images/whatsIcon.png" alt="">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="user-list-item">
-                        <div>
-                            <img src="https://cdn.ubicuacloud.com/file/null" alt="" class="user-list-item-avatar">
-                        </div>
-                        <div class="user-list-item-text-group">
-                            <div>
-                                +5511963684235
-                            </div>
-                            <div class="user-list-item-message-group">
-                                <span class="user-list-item-message-content">
-                                    Olá Bruno Patrick, Como está sua tarde hoje?
-                                </span>
-                            </div>
-                            <div>
-                                331190232
-                            </div>
-                        </div>
-                        <div class="user-list-item-time-group">
-                            <div>
-                                <span>12:34</span>
-                            </div>
-                            <div>
-                                <img src="../atendente/assets/images/chatwebIcon.png" alt="">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="user-list-item">
-                        <div>
-                            <img src="https://cdn.ubicuacloud.com/file/null" alt="" class="user-list-item-avatar">
-                        </div>
-                        <div class="user-list-item-text-group">
-                            <div>
-                                +5511963684235
-                            </div>
-                            <div class="user-list-item-message-group">
-                                <span class="user-list-item-message-content">
-                                    Olá Bruno Patrick, Como está sua tarde hoje?
-                                </span>
-                            </div>
-                            <div>
-                                331190232
-                            </div>
-                        </div>
-                        <div class="user-list-item-time-group">
-                            <div>
-                                <span>12:34</span>
-                            </div>
-                            <div>
-                                <img src="../atendente/assets/images/chatwebIcon.png" alt="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div id="userRecList" class="calls-list-group"></div>
             </div>
             <!-- Ativo List -->
             <div class="calls-list">
@@ -154,112 +77,7 @@
                         </div>
                     </button>
                 </div>
-                <div class="calls-list-group">
-                    <div class="user-list-item">
-                        <div>
-                            <img src="https://cdn.ubicuacloud.com/file/null" alt="" class="user-list-item-avatar">
-                        </div>
-                        <div class="user-list-item-text-group">
-                            <div>
-                                +5511963684235
-                            </div>
-                            <div class="user-list-item-message-group">
-                                <span class="user-list-item-message-content">
-                                    Olá Bruno Patrick, Como está sua tarde hoje?
-                                </span>
-                            </div>
-                            <div>
-                                331190232
-                            </div>
-                        </div>
-                        <div class="user-list-item-time-group">
-                            <div>
-                                <span>12:34</span>
-                            </div>
-                            <div>
-                                <img src="../atendente/assets/images/whatsIcon.png" alt="">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="user-list-item">
-                        <div>
-                            <img src="https://cdn.ubicuacloud.com/file/null" alt="" class="user-list-item-avatar">
-                        </div>
-                        <div class="user-list-item-text-group">
-                            <div>
-                                +5511963684235
-                            </div>
-                            <div class="user-list-item-message-group">
-                                <span class="user-list-item-message-content">
-                                    Olá Bruno Patrick, Como está sua tarde hoje?
-                                </span>
-                            </div>
-                            <div>
-                                331190232
-                            </div>
-                        </div>
-                        <div class="user-list-item-time-group">
-                            <div>
-                                <span>12:34</span>
-                            </div>
-                            <div>
-                                <img src="../atendente/assets/images/whatsIcon.png" alt="">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="user-list-item">
-                        <div>
-                            <img src="https://cdn.ubicuacloud.com/file/null" alt="" class="user-list-item-avatar">
-                        </div>
-                        <div class="user-list-item-text-group">
-                            <div>
-                                +5511963684235
-                            </div>
-                            <div class="user-list-item-message-group">
-                                <span class="user-list-item-message-content">
-                                    Olá Bruno Patrick, Como está sua tarde hoje?
-                                </span>
-                            </div>
-                            <div>
-                                331190232
-                            </div>
-                        </div>
-                        <div class="user-list-item-time-group">
-                            <div>
-                                <span>12:34</span>
-                            </div>
-                            <div>
-                                <img src="../atendente/assets/images/chatwebIcon.png" alt="">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="user-list-item">
-                        <div>
-                            <img src="https://cdn.ubicuacloud.com/file/null" alt="" class="user-list-item-avatar">
-                        </div>
-                        <div class="user-list-item-text-group">
-                            <div>
-                                +5511963684235
-                            </div>
-                            <div class="user-list-item-message-group">
-                                <span class="user-list-item-message-content">
-                                    Olá Bruno Patrick, Como está sua tarde hoje?
-                                </span>
-                            </div>
-                            <div>
-                                331190232
-                            </div>
-                        </div>
-                        <div class="user-list-item-time-group">
-                            <div>
-                                <span>12:34</span>
-                            </div>
-                            <div>
-                                <img src="../atendente/assets/images/chatwebIcon.png" alt="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div id="userAtvList" class="calls-list-group"></div>
             </div>
         </div>
         <!-- Chat Section -->
@@ -267,104 +85,31 @@
             <div class="chat-group">
                 <div class="chat-header">
                     <div class="chat-header-icon">
-                        <img src="https://cdn.ubicuacloud.com/file/null" alt="" class="chat-avatar-icon">
+                        <img id="userChatAvatar" src="https://cdn.ubicuacloud.com/file/null" alt=""
+                            class="chat-avatar-icon closedChat">
                     </div>
                     <div>
-                        <span>+55 11 96368-4235</span>
+                        <span id="userMobileSpan"></span>
                     </div>
                     <div class="chat-header-button">
-                        <button class="chat-header-close-button"> <i class="fas fa-sign-out-alt"></i> Encerrar</button>
+                        <button id="closeChatButton" class="chat-header-close-button closedChat"> <i
+                                class="fas fa-sign-out-alt"></i> Encerrar</button>
                     </div>
                 </div>
-                <div class="chat-body">
-                    <div class="chat-body-messages">
-                        <div class="chat-body-messages-block-right">
-                            Teste
-                            <div class="chat-body-messages-block-right-time">
-                                12:24
-                            </div>
-                        </div>
-                        <div class="chat-body-messages-block-left">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean dapibus quam elit, non euismod nulla eleifend ut. Praesent tempor nisi sed condimentum euismod. Praesent cursus hendrerit bibendum. Mauris condimentum, magna quis auctor gravida, ex risus ullamcorper erat, nec blandit nisl ipsum at eros. Sed eu eros nec nunc eleifend cursus. Nulla suscipit faucibus tincidunt. Donec vehicula ex ipsum, sit amet cursus purus interdum et. Integer at sollicitudin eros.
-                            <div class="chat-body-messages-block-left-time">
-                                12:24
-                            </div>
-                        </div>
-                        <div class="chat-body-messages-block-left">
-                            Teste
-                            <div class="chat-body-messages-block-left-time">
-                                12:24
-                            </div>
-                        </div>
-                        <div class="chat-body-messages-block-right">
-                            Isto é um Teste
-                            <div class="chat-body-messages-block-right-time">
-                                12:24
-                            </div>
-                        </div>
-                        <div class="chat-body-messages-block-right">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean dapibus quam elit, non euismod nulla eleifend ut. Praesent tempor nisi sed condimentum euismod. Praesent cursus hendrerit bibendum. Mauris condimentum, magna quis auctor gravida, ex risus ullamcorper erat, nec blandit nisl ipsum at eros. Sed eu eros nec nunc eleifend cursus. Nulla suscipit faucibus tincidunt. Donec vehicula ex ipsum, sit amet cursus purus interdum et. Integer at sollicitudin eros.
-                            <div class="chat-body-messages-block-right-time">
-                                12:24
-                            </div>
-                        </div>
-                        <!-- -->
-                        <div class="chat-body-messages-block-right">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean dapibus quam elit, non euismod nulla eleifend ut. Praesent tempor nisi sed condimentum euismod. Praesent cursus hendrerit bibendum. Mauris condimentum, magna quis auctor gravida, ex risus ullamcorper erat, nec blandit nisl ipsum at eros. Sed eu eros nec nunc eleifend cursus. Nulla suscipit faucibus tincidunt. Donec vehicula ex ipsum, sit amet cursus purus interdum et. Integer at sollicitudin eros.
-                            <div class="chat-body-messages-block-right-time">
-                                12:24
-                            </div>
-                        </div>
-                        <div class="chat-body-messages-block-right">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean dapibus quam elit, non euismod nulla eleifend ut. Praesent tempor nisi sed condimentum euismod. Praesent cursus hendrerit bibendum. Mauris condimentum, magna quis auctor gravida, ex risus ullamcorper erat, nec blandit nisl ipsum at eros. Sed eu eros nec nunc eleifend cursus. Nulla suscipit faucibus tincidunt. Donec vehicula ex ipsum, sit amet cursus purus interdum et. Integer at sollicitudin eros.
-                            <div class="chat-body-messages-block-right-time">
-                                12:24
-                            </div>
-                        </div>
-                        <div class="chat-body-messages-block-right">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean dapibus quam elit, non euismod nulla eleifend ut. Praesent tempor nisi sed condimentum euismod. Praesent cursus hendrerit bibendum. Mauris condimentum, magna quis auctor gravida, ex risus ullamcorper erat, nec blandit nisl ipsum at eros. Sed eu eros nec nunc eleifend cursus. Nulla suscipit faucibus tincidunt. Donec vehicula ex ipsum, sit amet cursus purus interdum et. Integer at sollicitudin eros.
-                            <div class="chat-body-messages-block-right-time">
-                                12:24
-                            </div>
-                        </div>
-                        <div class="chat-body-messages-block-right">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean dapibus quam elit, non euismod nulla eleifend ut. Praesent tempor nisi sed condimentum euismod. Praesent cursus hendrerit bibendum. Mauris condimentum, magna quis auctor gravida, ex risus ullamcorper erat, nec blandit nisl ipsum at eros. Sed eu eros nec nunc eleifend cursus. Nulla suscipit faucibus tincidunt. Donec vehicula ex ipsum, sit amet cursus purus interdum et. Integer at sollicitudin eros.
-                            <div class="chat-body-messages-block-right-time">
-                                12:24
-                            </div>
-                        </div>
-                        <div class="chat-body-messages-block-right">
-                            <img src="../atendente/assets/images/bigImageTeste.jpg" class="chat-body-messages-image" alt="">
-                            <div class="chat-body-messages-block-right-time">
-                                12:24
-                            </div>
-                        </div>
-                        <div class="chat-body-messages-block-left">
-                            <img src="../atendente/assets/images/wallpaperTeste.jpg" class="chat-body-messages-image" alt="">
-                            <div class="chat-body-messages-block-left-time">
-                                12:24
-                            </div>
-                        </div>
-                        <div class="chat-body-messages-block-right">
-                            <img src="../atendente/assets/images/testePhone.jpg" class="chat-body-messages-image" alt="">
-                            <div class="chat-body-messages-block-right-time">
-                                12:24
-                            </div>
-                        </div>
-                        <!-- -->
-                    </div>
+                <div id="chatPanel" class="chat-body">
+                    <div id="chatDefault" class="chat-body-messages"></div>
                     <div class="chat-body-input">
                         <div class="chat-body-input-box">
-                            <div class="chat-body-input-box-icon-div">
-                                <img src="../atendente/assets/images/clipIcon.png"  class="chat-body-input-icons" alt="">
+                            <div id="attachMediaButton" class="chat-body-input-box-icon-div">
+                                <img src="../atendente/assets/images/clipIcon.png" class="chat-body-input-icons" alt="">
                             </div>
                             <div>
-                                <input type="text" name="" id="" placeholder="Digite uma Mensagem">
+                                <input type="text" name="" id="messageInputBox" placeholder="Digite uma Mensagem">
                             </div>
                             <div class="chat-body-input-box-icon-div">
                                 <img src="../atendente/assets/images/micIcon.png" class="chat-body-input-icons" alt="">
                             </div>
-                            <div class="chat-body-input-box-icon-div">
+                            <div id="sendMessageButton" class="chat-body-input-box-icon-div">
                                 <img src="../atendente/assets/images/sendIcon.png" class="chat-body-input-icons" alt="">
                             </div>
                         </div>
@@ -375,39 +120,226 @@
         <div class="chat-options-lists">
             <div class="chat-options">
                 <div class="chat-options-title">
-                    <span><i class="fas fa-info-circle"></i> Menu</span>
+                    <span><i class="fas fa-info-circle"></i><span class="right-side-label"
+                            style="margin-left: 5px;">Menu</span></span>
                 </div>
                 <div class="chat-options-group">
-                    <button class="chat-options-group-buttons"> <i class="fas fa-comments"></i> Historico </button>
-                    <button class="chat-options-group-buttons"> <i class="fas fa-people-arrows"></i> Transferir </button>
-                    <button class="chat-options-group-buttons"> <i class="fas fa-edit"></i> Cadastrar Cliente </button>
-                    <button class="chat-options-group-buttons"> <i class="fas fa-search"></i> Consulta </button>
+                    <button class="chat-options-group-buttons">
+                        <i class="fas fa-comments"></i>
+                        <span class="right-side-label">Historico</span>
+                    </button>
+                    <button id="buttonTransfer" class="chat-options-group-buttons">
+                        <i class="fas fa-people-arrows"></i>
+                        <span class="right-side-label">Transferir</span>
+                    </button>
+                    <button class="chat-options-group-buttons">
+                        <i class="fas fa-edit"></i>
+                        <span class="right-side-label">Cadastrar Cliente</span>
+                    </button>
+                    <button class="chat-options-group-buttons">
+                        <i class="fas fa-search"></i>
+                        <span class="right-side-label">Consulta</span>
+                    </button>
                 </div>
             </div>
             <div class="chat-info">
                 <div class="chat-info-title">
-                    <span><i class="far fa-clock"></i> Respostas Programadas</span>
+                    <span><i class="far fa-clock"></i><span class="right-side-label" style="margin-left: 5px;">Respostas
+                            Programadas</span></span>
                 </div>
                 <div class="chat-info-group">
                     <button class="chat-info-group-buttons">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        <span class="chat-info-text">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        </span>
+                        <span class="elipisis">...</span>
                     </button>
                     <button class="chat-info-group-buttons">
-                        Maecenas suscipit erat ut lacus consectetur sagittis. Praesent non dui sollicitudin, vehicula felis ac, gravida tortor.
+                        <span class="chat-info-text">
+                            Maecenas suscipit erat ut lacus consectetur sagittis. Praesent non dui sollicitudin,
+                            vehicula felis ac, gravida tortor.
+                        </span>
+                        <span class="elipisis">...</span>
                     </button>
                     <button class="chat-info-group-buttons">
-                        Praesent non dui sollicitudin, vehicula felis ac, gravida tortor.
+                        <span class="chat-info-text">
+                            Praesent non dui sollicitudin, vehicula felis ac, gravida tortor.
+                        </span>
+                        <span class="elipisis">...</span>
                     </button>
                     <button class="chat-info-group-buttons">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        <span class="chat-info-text">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        </span>
+                        <span class="elipisis">...</span>
                     </button>
                     <button class="chat-info-group-buttons">
-                        Praesent non dui sollicitudin, vehicula felis ac, gravida tortor.
+                        <span class="chat-info-text">
+                            Praesent non dui sollicitudin, vehicula felis ac, gravida tortor.
+                        </span>
+                        <span class="elipisis">...</span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <div id="campo-salvo-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #25D366;">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="modal-body">
+                <span id="modal-title">Campo de resposta salvo!</span>
+                <span id="modal-text">Iniciando uma conversa, sua resposta salva irá aparecer no seu campo de
+                    seleção</span>
+                <button class="modal-button close" style="background-color: #25D366;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="campo-deletado-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #EA2A2A;">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+            <div class="modal-body">
+                <span id="modal-title">Campo removido!</span>
+                <span id="modal-text">Você removeu esta resposta. Para adicionar outra, entre no editor. Em sua próxima
+                    conversa, não estará presente o conteúdo dessa resposta.</span>
+                <button class="modal-button close" style="background-color: #D10505;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="conversa-finalizada-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #BC4444;">
+                <i class="fas fa-exclamation"></i>
+            </div>
+            <div class="modal-body">
+                <span id="modal-title">Finalizamos a sua conversa</span>
+                <span id="modal-text">Para fazer uma nova interação, veja sua fila de atendimentos.</span>
+                <button class="modal-button close" style="background-color: #BC4444;">OK</button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Media Modal -->
+    <div id="mediaModal" class="modal">
+        <div class="modal-content anexo-content">
+            <div class="modal-header" style="background-color: #0E5672">
+                <i class="fas fa-paperclip" style="margin-left: auto;"></i>
+                <span class="close-icon">&times;</span>
+            </div>
+            <div class="modal-body">
+                <span id="modal-title">Anexo</span>
+                <span id="modal-text">Que tipo de arquivo deseja enviar?</span>
+                <div class="buttons">
+                    <button id="insertDoc" class="modal-button anexo-button"><i class="fas fa-file"></i>
+                        Documento</button>
+                    <button id="insertAudio" class="modal-button anexo-button"><i class="fas fa-headphones"></i>
+                        Áudio</button>
+                    <button id="insertVideo" class="modal-button anexo-button"><i class="fas fa-video"></i>
+                        Video</button>
+                    <button id="insertImage" class="modal-button anexo-button"><i class="far fa-image"></i>
+                        Imagem</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Media Modal End -->
+
+    <!-- Modal Sucesso -->
+    <div id="succesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #61dd56;">
+                <i class="fas fa-exclamation"></i>
+            </div>
+            <div class="modal-body">
+                <span id="succesModalTitle"></span>
+                <span id="succesModalDesc"></span>
+                <button class="modal-button close" style="background-color: #a8d18c;">OK</button>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Sucesso End -->
+
+    <!-- Modal Aviso Generico -->
+    <div id="warningModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #E2BD23;">
+                <i class="fas fa-exclamation"></i>
+            </div>
+            <div class="modal-body">
+                <span id="warningModalTitle"></span>
+                <span id="warningModalDesc"></span>
+                <button class="modal-button close" style="background-color: #E2BD23;">OK</button>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Aviso Generico End -->
+
+    <!-- Modal Encerramento -->
+    <div id="formModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #0E5672;">
+                <i class="fas fa-user-edit"></i>
+            </div>
+            <div class="modal-body">
+                <select id="endOptions" class="formEncInput" name="">
+                    <option>Selecione</option>
+                </select>
+                <input id="endFormCpf" class="formEncInput" type="text" placeholder="CPF">
+                <input id="endFormBanco" class="formEncInput" type="text" placeholder="Banco">
+                <input id="endFormProtocolo" class="formEncInput" type="text" placeholder="Protocolo">
+                <div style="display: grid; grid-template-columns: 1fr 1fr;">
+                    <button id="confirmEnd" class="modal-button close"
+                        style="background-color: #0E5672;">Encerrar</button>
+                    <button class="modal-button close">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Encerramento End -->
+
+    <!-- Modal Transfer -->
+    <div id="transferModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #0E5672;">
+                <i class="fas fa-people-arrows"></i>
+            </div>
+            <div class="modal-body">
+                <select id="atendentesOnline" class="formEncInput" name="">
+                    <option value='0'>Selecione</option>
+                </select>
+                <div style="display: grid; grid-template-columns: 1fr 1fr;">
+                    <button id="confirmTransferAgents" class="modal-button close"
+                        style="background-color: #0E5672;">Transferir</button>
+                    <button class="modal-button close">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Transfer End -->
+
+    <!-- Media Inputs -->
+    <input id="imageInput" type="file" name="" accept="image/*" style="display: none;" />
+    <input id="videoInput" type="file" name="" accept="video/mp4" style="display: none;" />
+    <input id="audioInput" type="file" name="" accept="audio/*" style="display: none;" />
+    <input id="docInput" type="file" name="" style="display: none;" />
+    <!-- Media Inputs Ends -->
+
 </body>
+<script src="../atendente/assets/js/socket.io.js"></script>
+<script src="../atendente/assets/js/jquery.min.js"></script>
+<script src="../atendente/assets/js/jquery.mask.min.js"></script>
+<script src="../atendente/assets/js/whats-modal.js"></script>
+<script src="../atendente/assets/js/whats-elements.js"></script>
+<script src="../atendente/assets/js/whats-tools.js"></script>
+<script src="../atendente/assets/js/whats-components.js"></script>
+<script src="../atendente/assets/js/whats-socket.js"></script>
+<script src="../atendente/assets/js/whats.js"></script>
 
 </html>
