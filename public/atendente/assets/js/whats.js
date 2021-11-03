@@ -1,5 +1,6 @@
 $(document).ready(function(){
     handleSidebarHover()
+    handleHamburguerIconClick()
     
 })
 
@@ -21,7 +22,6 @@ function handleSidebarHover(){
             //right sidebar
             $(".right-side-label").toggleClass("d-none")
             $(".panel-body").css("grid-template-columns", "1fr 5fr 15fr 1fr")
-
             $(".chat-info-text").css("display", "none")
             $(".elipisis").css("display", "block")
 
@@ -42,4 +42,10 @@ function handleSidebarHover(){
         }
     })
 
+}
+
+function handleHamburguerIconClick(){
+    $('#nav-icon4').click(function(){
+            $(this).toggleClass('open');
+        });
 }

@@ -203,5 +203,23 @@ module.exports = function () {
                   });
             })
       }
+
+      this.insertQuestions = function (payload) {
+            return new Promise(function (resolve, reject) {
+                  let fkid = payload.fkid;
+                  let questions = payload.questions;
+                  // Check Messages
+                  for (i = 0; i < questions.length; i++) {
+                        dbcc.query("INSERT INTO tab_questions (id, message) VALUES (?,?) ON DUPLICATE KEY UPDATE message=?", [questions[i].id, questions[i].message, questions[i].message], function (err, result) {
+                              if (err) { console.log(err) }
+                        })
+                  }
+                  // Select from questions
+                  let getFromQuestionsQuery = `SELECT * FROM tab_questions WHERE id LIKE "%${fkid}%" ORDER BY dataCadastro ASC`;
+                  let getFromQuestionsParams = [fkid];
+                  let getFromQuestionsList = runDynamicQuery(getFromQuestionsQuery, getFromQuestionsParams);
+                  resolve(getFromQuestionsList)
+            })
+      }
 }
 

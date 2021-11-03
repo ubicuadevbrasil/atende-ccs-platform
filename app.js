@@ -369,7 +369,7 @@ io.on('connection', function (socket) {
 	socket.on('bi-atendein', async function (payload) {
 		log("> Buscando Atendimentos");
 		// Select from atendimento
-		let getFromAtendimentoQuery = "SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome, A.origem, A.sessionBot, A.sessionBotCcs FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin";
+		let getFromAtendimentoQuery = "SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, A.origem, A.sessionBot, A.sessionBotCcs FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin";
 		let getFromAtendimentoParams = [payload.fkid];
 		let getFromAtendimentoList = await runDynamicQuery(getFromAtendimentoQuery, getFromAtendimentoParams);
 		if (getFromAtendimentoList.length > 0) {
@@ -388,12 +388,21 @@ io.on('connection', function (socket) {
 		}
 	});
 
+	socket.on('bi-questions', async function (payload) {
+		log("> Buscando Respostas");
+		// Select from atendimento
+		let getFromQuestionsQuery = `SELECT * FROM tab_questions WHERE id LIKE "%${payload.fkid}%" ORDER BY dataCadastro ASC`;
+		let getFromQuestionsParams = [payload.fkid];
+		let getFromQuestionsList = await runDynamicQuery(getFromQuestionsQuery, getFromQuestionsParams);
+		socket.emit('bi-questions', { questions: getFromQuestionsList });
+	});
+
 	socket.on('bi-answer_new_queue', async function (payload) {
 		log('> Iniciando novo atendimento')
 		let fkto = payload.fkid;
 		let fkname = payload.fkname;
 		// Select from fila
-		let normalQueueQuery = "SELECT mobile, dtin, account, photo, sessionBot, origem, sessionBotCcs, optAtendimento, optValue FROM tab_filain WHERE status=1 ORDER BY dtin LIMIT 1";
+		let normalQueueQuery = "SELECT mobile, dtin, account, photo, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name FROM tab_filain WHERE status=1 ORDER BY dtin LIMIT 1";
 		let normalQueueParams = [];
 		let normalQueueList = await runDynamicQuery(normalQueueQuery, normalQueueParams);
 		if (normalQueueList.length > 0) {
@@ -413,7 +422,7 @@ io.on('connection', function (socket) {
 			let sessionBotCcs = normalQueueList[0].sessionBotCcs;
 			let optAtendimento = normalQueueList[0].optAtendimento;
 			let optValue = normalQueueList[0].optValue;
-			let name = mailName;
+			let name = normalQueueList[0].name;
 			let mailInfo = mailInfoCad;
 			// Inserto into Databse
 			let atendimentoRes = await insertAtendein(mobile, dtin, account, photo, fkto, fkname, atendir, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name, mailInfo);
@@ -1125,7 +1134,7 @@ io.on('connection', function (socket) {
 
 	socket.on('get_cliInfo', async function (payload) {
 		log("> Get cliente info")
-		let getClientQuery = "SELECT NAME,cnpj FROM tab_encerrain WHERE mobile = ? ORDER BY dten DESC LIMIT 1";
+		let getClientQuery = "SELECT NAME,cnpj FROM tab_atendein WHERE mobile = ?";
 		let getClientParams = [payload.mobile];
 		let getClient = await runDynamicQuery(getClientQuery, getClientParams);
 		if (getClient.length > 0) {
@@ -1146,6 +1155,13 @@ io.on('connection', function (socket) {
 			let photo = getClientList[0].photo;
 			socket.emit('bi-find_register', { sessionid: sessionid, mobile: mobile, name: name, account: account, photo: photo });
 		}
+	});
+
+	socket.on('upd_cliInfo', async function (payload) {
+		log("> Get cliente info")
+		let updClientQuery = "UPDATE tab_atendein SET name = ?, cnpj = ? WHERE mobile = ?;";
+		let updClientParams = [payload.name, payload.cpf, payload.mobile];
+		let updClient = await runDynamicQuery(updClientQuery, updClientParams);
 	});
 
 	// TRAINING FUNCTIONS
@@ -1173,6 +1189,15 @@ io.on('connection', function (socket) {
 		let getStatusenParams = [];
 		let getStatusenList = await runDynamicQuery(getStatusenQuery, getStatusenParams);
 		socket.emit('bi-statusen', JSON.stringify(getStatusenList));
+	});
+
+	// QUESTION EVENTS
+
+	socket.on('ins-questions', async function (payload) {
+		log("> Inserindo Respostas");
+		// Insert Questions
+		let newQuestions = await insertQuestions(payload);
+		socket.emit('bi-questions', { questions: newQuestions });
 	});
 	
 	// SCHEDULE CCS FILA
@@ -1288,8 +1313,9 @@ function sentinelNewmessages(socket) {
 									let insertLogParams = [id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption];
 									let insertLogList = await runDynamicQuery(insertLogQuery, insertLogParams);
 								}
+								console.log('Emit Messages');
 								// Emmit socket event
-								socket.to(i).emit('receive_chat', payload);
+								io.emit('receive_chat', payload);
 								fkonline = true;
 								// Update message
 								if (fkonline != false) {

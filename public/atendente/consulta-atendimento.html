@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="./assets/css/consulta-datatable.css">
+    <link rel="stylesheet" href="./assets/css/consulta-atendimento.css">
+    <link rel="stylesheet" href="./assets/css/whats-consulta-atendimento.css">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="panel-body">
+        <div id="sidebar" class="sidebar">
+            <span class="expand-sidebar-icon" id="hamburgerIcon">
+                <i class="fas fa-bars"></i>
+            </span>
+            <div class="hide-container" style="display: none;">
+                <div class="user-icon-container">
+                    <span class="user-icon">
+                        <img src="../atendente/assets/images/avatar 01.png" alt="user-icon">
+                    </span>
+                    <button id="engrenagemIcon" class="engrenagem-icon">
+                        <img src="../atendente/assets/images/engrenagem.png" alt="engrenagem">
+                    </button>
+                </div>
+                <div id="alterProfileImg" class="d-none">
+                </div>
+                <div class="user-name-container">
+                    <span style="font-size: 13px;">Atendente:</span>
+                    <span id="user-name" style="font-size: 22px;">Usuário XI</span>
+                </div>
+                <p id="operacao" class="operacao" style="font-size: 18px;">Operação Ativa</p>
+            </div>
+            <div class="side-bar-buttons">
+                <button id="editor-button" class="side-bar-button">
+                    <i class="fas fa-pencil-alt"></i>
+                    <span class="d-none editor-label" name="editor-label">Editor de respostas</span>
+                </button>
+                <button id="logout-button" class="side-bar-button">
+                    <i class="fas fa-power-off"></i>
+                    <span class="d-none editor-label" name="editor-label">Log out</span>
+                </button>
+            </div>
+        </div>
+        <main class="mainContent">
+            <div class="returnTab">
+                <div class="tabIcons">
+                    <i id="buttonReturn" class="fas fa-arrow-circle-left"></i>
+                    <p>Consulta Atendimento</p>
+                </div>
+            </div>
+
+            <div class="tableContainer">
+                <div class="filterBar">
+                    <div class="filterTitle">
+                        <img src="./assets/images/filtro.png">
+                        <p>Filtros</p>
+                    </div>
+                    <div class="filters">
+                    </div>
+                </div>
+                <div class="tableTitle">
+                    <i class="fas fa-list"></i>
+                    <p>Resultados</p>
+                </div>
+                <div class="dataTable"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="./assets/js/jquery-3.6.0.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="https://kit.fontawesome.com/5127f4cea9.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+
+    <script src="./assets/js/consulta-atendimento.js"></script>
+    <script src="./assets/js/datatable.js"></script>
+    <script src="./assets/js/datatables-main.js"></script>
+    <script src="./assets/js/whats-consulta-atendimentos.js"></script>
+</body>
+
+</html>

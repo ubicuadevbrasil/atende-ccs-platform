@@ -9,6 +9,7 @@ const inUsersDisplay = $('#userRecList');
 const outUsersDisplay = $('#userAtvList');
 const chatScreen = $('#chatPanel');
 const chatDefault = $('#chatDefault');
+const questionsDefault = $('#questionsGroup');
 
 // >>> Global Var's
 let currentUserMobile;
@@ -28,8 +29,9 @@ textInputDetect.addEventListener("keydown", function (e) {
 
 // Check for Login Info
 if (!agentFkname || !agentFkid) { window.location = "index.html" }
+$("#user-name").text(agentFkname);
 $('#endFormCpf').mask('999.999.999-99');
-
+$('#userCPF').mask('999.999.999-99');
 
 // Update to block timeout
 $(document).on('mousemove', function () {
@@ -45,10 +47,16 @@ $(document).on('mousemove', function () {
     }, 4200000);
 });
 
+// Check for new Questions
+setInterval(() => {
+    socket.emit('bi-questions', { fkid: agentFkid });
+}, 1000);
+
 // Detect Connection
 socket.on('connect', function () {
     console.log('> Conectado')
     socket.emit('bi-atendein', { fkid: agentFkid });
+    socket.emit('bi-questions', { fkid: agentFkid });
 });
 
 // Detect Disconnect
@@ -84,9 +92,26 @@ socket.on('bi-atendein', async function (payload) {
         let logs = JSON.parse(payload.logs);
         let contacts = JSON.parse(payload.contacts);
         await arrangeUserChat(contacts, logs)
-        await histmsg(contacts, logs);
+        await historyMessage(contacts, logs, 'chatPannel');
     }
     socket.emit('add user', { fkid: agentFkid, fkname: agentFkname });
+});
+
+// Busca Questions
+socket.on('bi-questions', async function (payload) {
+    console.log('> Buscando Respostas Automaticas');
+    questionsDefault.empty()
+    for(i=0; i < payload.questions.length; i++){
+        let questions = payload.questions[i];
+        let questionId = payload.questions[i].id.replace('_' + agentFkid,'');
+        let questionMessage = payload.questions[i].message;
+        let questionsComponent = questionsDiv(i, questionMessage);
+        questionsDefault.append(questionsComponent);
+        // Append question on Edit question Modal
+        if($('#editAnswerModal:visible').length == 0){
+            $('#' + questionId).val(questionMessage);
+        }
+    }
 });
 
 // Encerra um atendimento especifico
@@ -127,7 +152,7 @@ socket.on('bi-statusen', function (payload) {
         option.id = statusEnc[i].pedido;
         $("#endOptions").append(option);
     }
-    $('#formModal').css('display', 'block');
+    $('#formModal').fadeIn("fast");
 });
 
 // Verifica outros atendentes online para transferencia
@@ -187,4 +212,137 @@ socket.on('bi-transferok', async function (payload) {
     }
     // Confirmar ecebimento da Transferencia
     socket.emit('bi-transferok', { mobile: payload.mobile });
+});
+
+// Evento de Recebimento de Mensagens
+socket.on('receive_chat', async function (payload) {
+    console.log('> Mensagem recebida');
+    if (agentFkid == payload.fkto) {
+        let audio = new Audio('assets/aud/tethys.mp3');
+        let userMobile = payload.contact_uid;
+        let messageType = payload.message_type;
+        let messageText = payload.body_text;
+        let messageCaption = payload.body_caption;
+        let messageUrl = payload.body_url;
+        let messageTime = await getTime();
+        let messageComponent;
+
+        if (messageType === 'chat') {
+            messageComponent = messageLeft(messageText, messageTime);
+        } else if (messageType === 'image') {
+            messageComponent = messageImageLeft(messageUrl, messageCaption, messageTime);
+        } else {
+            messageComponent = messageAttachLeft(messageUrl, messageCaption, messageTime);
+        }
+
+        // Append message component
+        $('#chat' + userMobile).append(messageComponent);
+        // Aumenta numero de notificações de cada conversa
+        let notifica = $('#notifyUser' + userMobile).text();
+        notifica = Number(notifica) + 1;
+        $('#notifyUser' + userMobile).text(notifica);
+        $('#notifyUser' + userMobile).fadeIn(1);
+        // Atualiza ultima mensagem
+        $('#lastMessage' + userMobile).text(messageText);
+        $('#lastMessageTime' + userMobile).text(messageTime);
+        // Aviso sonoro de novas mensagens
+        audio.play();
+        // Scroll to last message
+        document.getElementById(`chat${currentUserMobile}`).scrollBy(0, 9999999999999999);
+    }
+
+});
+
+// Historico de conversa do Cliente
+socket.on('bi-lasthistory', async function (payload) {
+    console.log('> Busca historico do Cliente')
+    if (payload.contacts.length != 0) {
+        let logs = JSON.parse(payload.logs);
+        let contacts = JSON.parse(payload.contacts);
+        await historyMessage(contacts, logs, 'chatHistory');
+        $("#historicoModal").fadeIn("fast");
+    } else {
+        let modalTitle = "Aviso";
+        let modalDesc = "Não Há Nenhum Histórico Desse Contato!";
+        callWarningModal(modalTitle, modalDesc)
+    }
+});
+
+// Recebe informaçoes do Cliente
+socket.on('get_cliInfo', async function (payload) {
+    console.log('> Recebe informaçoes do Cliente');
+    // Recebe Info
+    let userName = payload.nome;
+    let userCPF = payload.cpf;
+    $("#userNome").val(userName);
+    $("#userCPF").val(userCPF);
+    $('#signupModal').fadeIn("fast");
+})
+
+// Recebe Mailing Ativo
+socket.on('bi-mailativo', function (payload) {
+    if (payload != "" && payload != null) {
+        let data = JSON.parse(payload);
+        let dataSet = [];
+        for (i = 0; data.length > i; i++) {
+            let callBtn = '<button type="button" class="call-mailing-button" onclick="callMobile(' + data[i].mobile + ')">Chamar</button>';
+            let row = [data[i].nome, data[i].banco, data[i].cpf, data[i].mobile, callBtn]
+            dataSet.push(row);
+        }
+        //console.log(dataSet);
+        $('#table_id').dataTable({
+            "destroy": true,
+            "autoWidth": true,
+            "pageLength": 10,
+            "lengthChange": false,
+            "data": dataSet,
+            "ordering": false,
+            columns: [
+                { title: "Nome" },
+                { title: "Banco" },
+                { title: "Cpf" },
+                { title: "Numero" },
+                { title: "Chamar" }
+            ],
+            "language": {
+                "sEmptyTable": "Nenhum registro encontrado",
+                "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                "sInfoFiltered": "(Filtrados de MAX registros)",
+                "sInfoPostFix": "",
+                "sInfoThousands": ".",
+                "sLengthMenu": "",
+                "sLoadingRecords": "Carregando...",
+                "sProcessing": "Processando...",
+                "sZeroRecords": "Nenhum registro encontrado",
+                "sSearch": "Pesquisar",
+                "oPaginate": {
+                    "sNext": "Próximo",
+                    "sPrevious": "Anterior",
+                    "sFirst": "Primeiro",
+                    "sLast": "Último"
+                },
+                "oAria": {
+                    "sSortAscending": ": Ordenar colunas de forma ascendente",
+                    "sSortDescending": ": Ordenar colunas de forma descendente"
+                }
+            }
+        });
+        $('#mailingModal').fadeIn("fast");
+    } else {
+        let modalTitle = "Aviso";
+        let modalDesc = "Nenhum contato encontrado para efetuar Chamada!";
+        callSuccessModal(modalTitle, modalDesc)
+    }
+});
+
+// Recebe atualização de Ativo
+socket.on("bi-atendemail", function (payload) {
+    if (payload.status == '200') {
+        socket.emit('bi-atendein', { fkid: agentFkid });
+    } else {
+        let modalTitle = "Aviso";
+        let modalDesc = "Este numero já se encontra em atendimento!";
+        callWarningModal(modalTitle, modalDesc)
+    }
 });

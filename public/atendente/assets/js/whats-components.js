@@ -5,7 +5,7 @@ $('#insertAudio').click(function () { $('#audioInput').trigger('click'); });
 $('#insertDoc').click(function () { $('#docInput').trigger('click'); });
 
 // Desloga Usuario
-$("#logout-button").on("click", function () {
+$("#buttonLogout").on("click", function () {
     console.log('> Agent logout');
     // Desloga usuario
     logoutAgent();
@@ -46,6 +46,9 @@ $("#sendMessageButton").on("click", async function () {
             let messageTime = await getTime();
             let messageComponent = messageRight(msgtext, messageTime);
             $('#chat' + currentUserMobile).append(messageComponent);
+            // Atualiza ultima mensagem
+            $('#lastMessage' + currentUserMobile).text(msgtext);
+            $('#lastMessageTime' + currentUserMobile).text(messageTime);
             // Scroll to last message
             document.getElementById(`chat${currentUserMobile}`).scrollBy(0, 9999999999999999);
             $('#messageInputBox').val(null);
@@ -65,7 +68,7 @@ $("#sendMessageButton").on("click", async function () {
 $("#attachMediaButton").on("click", function () {
     // Verifica se existe um usuario selecionar
     if (currentUserMobile) {
-        $("#mediaModal").css("display", "block");
+        $("#mediaModal").fadeIn("fast");
     } else {
         let modalTitle = "Aviso";
         let modalDesc = "Nenhum Atendimento Selecionado!";
@@ -75,10 +78,13 @@ $("#attachMediaButton").on("click", function () {
 
 // Botão para encerrar atendimentos
 $('#closeChatButton').on('click', function () {
+    console.log('> Botão de encerrar');
     if (currentUserMobile) {
         // Evento Status Encerramento
         socket.emit('bi-statusen');
         $('#endFormCpf').val('')
+        $('#endFormBanco').val('')
+        $('#endFormProtocolo').val('')
     } else {
         let modalTitle = "Aviso";
         let modalDesc = "Nenhum Contato Selecionado!";
@@ -126,7 +132,7 @@ $('#buttonTransfer').on('click', function () {
             callWarningModal(modalTitle, modalDesc)
             // Se SIM, abre modal para realizar transferencia
         } else {
-            $('#transferModal').css('display', 'block');
+            $('#transferModal').fadeIn("fast");
         }
     } else {
         let modalTitle = "Aviso";
@@ -154,6 +160,91 @@ $('#confirmTransferAgents').on('click', function () {
             message: "<strong>Atendimento Transferido para: " + optionSelectedText + "</strong>"
         });
     }
+});
+
+// Cadastra Cliente
+$("#buttonSignUp").on('click', function () {
+    console.log('> Cadastrar Cliente');
+    // Exibe Modal
+    if (currentUserMobile) {
+        socket.emit('get_cliInfo', {
+            mobile: currentUserMobile
+        })
+    } else {
+        let modalTitle = "Aviso";
+        let modalDesc = "Nenhum Contato Selecionado!";
+        callWarningModal(modalTitle, modalDesc)
+    }
+});
+
+// Editor de respostas
+$("#buttonResponseEdit").on('click', function () {
+    console.log('> Edição de Respostas Rapidas');
+    $('#editAnswerModal').fadeIn("fast");
+});
+
+// Acessar página de consulta
+$("#buttonConsult").on('click', function () {
+    console.log('> Consulta Atendimentos');
+    window.open("https://ccs.atendimento-kainos.com.br/atendente/consulta.html");
+});
+
+// Historico de Conversa com o Usuario
+$('#historyButton').on('click', function () {
+    console.log('> Consulta historico do atendente');
+    if (currentUserMobile) {
+        // Limpa janela de Chat atual
+        $("#chatHistory").empty();
+        // Evento para buscar historico do Cliente
+        socket.emit('bi-lasthistory', {
+            mobile: currentUserMobile
+        });
+    } else {
+        let modalTitle = "Aviso";
+        let modalDesc = "Nenhum Contato Selecionado!";
+        callWarningModal(modalTitle, modalDesc)
+    }
+});
+
+// Cadastra Informações do Cliente
+$("#singupButton").on('click', function () {
+    console.log('> Cadastra informações do usuario');
+    let userName = $("#userNome").val();
+    let userCPF = $("#userCPF").val();
+    if (userName != '' && userCPF != '') {
+        socket.emit('upd_cliInfo', {
+            name: userName,
+            cpf: userCPF,
+            mobile: currentUserMobile
+        })
+        $("#userInfoName" + currentUserMobile).text(userName);
+        $("#userNome").val('');
+        $("#userCPF").val('');
+    }
+});
+
+// Edita respostas programadas
+$("#editQuestionsButton").on('click', function () {
+    let payload = {
+        fkid : agentFkid,
+        questions : []
+    }
+    for(i=1; i < 6; i++){
+        let question = $("#questioInput" + i).val();
+        if(question != ''){
+            payload.questions.push({
+                'id': 'questioInput' + i + '_' + agentFkid,
+                'message' : question
+            })
+        }
+    }
+    console.log(payload);
+    socket.emit('ins-questions',payload)
+})
+
+// Busca Mailing Ativo
+$("#callMailingButton").on('click', function (){
+    socket.emit('bi-mailativo');
 });
 
 // Media Upload (Image)

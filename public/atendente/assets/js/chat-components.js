@@ -83,13 +83,13 @@ $("#sendmsgtxt").on("click", async function () {
     }
 });
 
-// TODO: Botão para consultar atendimentos posteriores
+// ? Botão para consultar atendimentos posteriores
 $('#btnconsulta').on('click', function () {
     console.log('> Consulta Atendimentos');
     window.open('consulta.html');
 });
 
-// TODO: Botão para cadastrar informações sobre o Cliente
+// ? Botão para cadastrar informações sobre o Cliente
 $('#btncadastro').on('click', function () {
     console.log('> Cadastra Cliente');
     if (currentUserMobile) {
@@ -162,7 +162,7 @@ $('#confirmatra').on('click', function () {
     }
 });
 
-// TODO: Busca Historico do Cliente
+// ? Busca Historico do Cliente
 $('#btnhistorico').on('click', function () {
     console.log('> Consulta historico do atendente');
     if (currentUserMobile) {
@@ -239,7 +239,7 @@ $('#insertInput').on('click', function () {
     }
 });
 
-// TODO: Botão para realizar disparo Ativo
+// ? Botão para realizar disparo Ativo
 $('#btnchamar').on('click', function () {
     // Emite evento socket
     socket.emit('bi-mailativo', { tipo: '1' });

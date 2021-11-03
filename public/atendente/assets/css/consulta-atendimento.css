@@ -1,0 +1,222 @@
+body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    font-family: 'Roboto', sans-serif;
+    background-color: #C4C5C6;
+}
+
+.mainContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.returnTab {
+    background-color: #FFFFFF;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 10px;
+    width: 80vw;
+    margin: 20px 0px 40px 0px;
+    border: #808080 solid 2px;
+}
+
+.tabIcons {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 30%;
+}
+
+.tabIcons i {
+    color: #08364D;
+    font-size: 30px;
+    margin: 0px 20px 0px 20px;
+    cursor: pointer;
+}
+
+.tabIcons p {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.tableContainer {
+    display: flex;
+    flex-direction: column;
+    width: 80vw;
+    border: #808080 solid 2px;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+}
+
+.filterBar {
+    display: flex;
+    justify-content: space-between;
+    background-color: #E6E6E6;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom: #808080 solid 2px;
+    padding: 7px;
+}
+
+.filterTitle {
+    width: 10%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.filterTitle img {
+    width: 27px;
+    height: 27px;
+    margin: 0px 10px 0px 10px;
+}
+
+.filterTitle p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.filters {
+    width: 90%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-right: 9px;
+}
+
+.cardFilter {
+    display: flex;
+    border-radius: 5px;
+    margin: 5px;
+}
+
+.cardFilterImg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 25px;
+    width: 25px;
+    background-color: #1BC1A5;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.cpfIcon {
+    margin-right: 5px;
+}
+
+.phoneIcon {
+    margin-right: 1px;
+}
+
+.dateIcon {
+    margin-bottom: 4px;
+    margin-right: 1px;
+}
+
+.searchIcon {
+    margin-bottom: 4px;
+}
+
+.cardFilter input {
+    width: 110px;
+    border: none;
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
+    outline: none;
+    box-shadow: none;
+    border: #808080 solid 1px;
+    border-left: none;
+    font-size: 10px;
+}
+
+.cardFilter input::placeholder {
+    font-size: 10px;
+    font-weight: bold;
+    color: black;
+    padding-left: 5px;
+}
+
+.searchInput {
+    background-color: #128C7E;
+    cursor: pointer;
+}
+
+.searchInput::placeholder {
+    font-size: 13px !important;
+    text-align: center;
+    color: white !important;
+}
+
+.historyImg {
+    height: 19px;
+    width: 28px;
+}
+
+.tableTitle {
+    width: 8%;
+    margin-left: 22px;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    /* background-color: #128C7E; */
+}
+
+.tableTitle p {
+    font-size: 12px;
+    margin-left: 15px;
+}
+
+.dataTable {
+    /* padding: 0px 20px 20px 20px; */
+
+}
+.tableStyle thead th {
+    font-size: 15px !important;
+    text-align: left !important;
+    border-right: #808080 solid 2px;
+    background-color: #E6E6E6;
+}
+
+.tableStyle thead th:last-child {
+    font-size: 15px !important;
+    text-align: center !important;
+    border-right: #808080 solid 2px;
+    background-color: #E6E6E6;
+}
+
+.tableStyle tr:nth-child(even) {
+    background-color: #F2F2F2;
+}
+
+.tableStyle tbody td {
+    text-align: left;
+    padding: 10px 10px 10px 18px !important;
+    font-size: 12px;
+    border-right: #808080 solid 2px;
+    border-bottom: #808080 solid 1px;
+}
+
+.tableStyle tbody td:last-child {
+    text-align: center;
+    padding: 10px 10px 10px 18px !important;
+    font-size: 12px;
+    border-right: #808080 solid 2px;
+    border-bottom: #808080 solid 1px;
+    cursor: pointer;
+}
+

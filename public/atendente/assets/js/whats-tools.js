@@ -91,6 +91,7 @@ function arrangeUserChat(contacts, logs) {
             let userMobile = contacts[i].mobile;
             let account = contacts[i].account;
             let userAtendir = contacts[i].atendir;
+            let userName = contacts[i].name;
             // User components
             let userChat = $("#list" + userMobile);
             let userChatDisplay = $("#chat" + userMobile);
@@ -98,8 +99,7 @@ function arrangeUserChat(contacts, logs) {
             if (userChatDisplay.length == 0) { userChatDisplay.empty() }
             // Arrange user Chats
             if (userChat.length == 0) {
-                // mobile, message, messageTime, protocolo
-                let userChatComponent = userListDiv(userMobile, userLastMsg, userLastMsgTime, '123456');
+                let userChatComponent = userListDiv(userMobile, userLastMsg, userLastMsgTime, '123456', userName);
                 if (userAtendir == 'in') {
                     inUsersDisplay.append(userChatComponent);
                 } else if (userAtendir == 'out') {
@@ -121,10 +121,11 @@ function answerNewQueue(payload) {
     return new Promise(function (resolve, reject) {
         // User Info
         let userMobile = payload.mobile;
+        let userName = payload.name;
         // Prep user components
         if (userMobile != null) {
             // Create user components
-            let userChatComponent = userListDiv(userMobile, '', '', '123456');
+            let userChatComponent = userListDiv(userMobile, '', '', '123456', userName);
             inUsersDisplay.append(userChatComponent);
             let userChatDisplayComponent = userChatDiv(userMobile);
             // Arrange user Chat component
@@ -136,11 +137,15 @@ function answerNewQueue(payload) {
 }
 
 // Arrange Agent Chat History
-function histmsg(contacts, logs) {
+function historyMessage(contacts, logs, area) {
     let contactsLength = contacts.length;
     let logsLength = logs.length;
     for (i = 0; i < contactsLength; i++) {
-        $('#chat' + contacts[i].mobile).empty();
+        if(area == 'chatPannel'){
+            $('#chat' + contacts[i].mobile).empty();
+        } else if (area == 'chatHistory'){
+            $('#chatHistory').empty();
+        }
     }
     for (a = 0; a < logsLength; a++) {
         let messageTime = dateConvert(logs[a].dt);
@@ -164,7 +169,11 @@ function histmsg(contacts, logs) {
                         messageComponent = messageAttachRight(logs[a].msgurl, logs[a].msgcaption, messageTime);
                     }
                 }
-                $('#chat' + contacts[i].mobile).append(messageComponent);
+                if(area == 'chatPannel'){
+                    $('#chat' + contacts[i].mobile).append(messageComponent);
+                } else if (area == 'chatHistory'){
+                    $('#chatHistory').append(messageComponent);
+                }
             }
         }
     }
@@ -182,9 +191,9 @@ function logoutAgent() {
     window.location = "index.html";
 }
 
-// ! Call mobile from Mailing
+// Call mobile from Mailing
 function callMobile(mobile) {
-    $("#mailModal").modal('hide');
+    $('#mailingModal').fadeOut("fast");
     socket.emit('bi-atendemail', {
         fkid: agentFkid,
         fkname: agentFkname,
@@ -208,6 +217,10 @@ function openChat(mobile) {
             document.getElementById(`chat${mobile}`).scrollBy(0, 9999999999999999);
             document.getElementById('userMobileSpan').innerText = `+${mobile}`
         }
+        if (chatComponents[i].id == `chat${mobile}`) {
+            // Set current user mobile
+            document.getElementById(`notifyUser${currentUserMobile}`).innerText = ''
+        }
     }
 }
 
@@ -229,7 +242,6 @@ function dateConvert(data) {
     let minutos = dateTime.getMinutes();
     let horas = dateTime.getHours();
     let segundos = dateTime.getSeconds();
-    horas = horas + 3
     if (horas < 10) { horas = "0" + horas }
     if (minutos < 10) { minutos = "0" + minutos }
     if (segundos < 10) { segundos = "0" + segundos }
@@ -254,12 +266,21 @@ function getTime() {
 function callWarningModal(title, desc) {
     $("#warningModalTitle").text(title);
     $("#warningModalDesc").text(desc);
-    $("#warningModal").css("display", "block");
+    $("#warningModal").fadeIn("fast");
 }
 
 // Call Success Modal
 function callSuccessModal(title, desc) {
     $("#succesModalTitle").text(title);
     $("#succesModalDesc").text(desc);
-    $("#succesModal").css("display", "block");
+    $("#succesModal").fadeIn("fast");
+}
+
+// Send Quick Question
+function quickQuestion(id) {
+    return new Promise(function (resolve, reject) {
+        let question = $('#question-' + id)[0].innerText;
+        $('#messageInputBox').val(question);
+        resolve('ok')
+    })
 }

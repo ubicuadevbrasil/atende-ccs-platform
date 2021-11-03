@@ -48,15 +48,18 @@ socket.on('connect', function () {
     console.log('> Conectado')
     socket.emit('bi-atendein', { fkid: agentFkid });
 });
+
 // ?
 socket.on('disconnect', function () {
     console.log('> Desconectado');
 });
+
 // ?
 socket.on("force_disconnect", function () {
     console.log('> Logout forçado');
     logoutAgent();
 });
+
 // ?
 socket.on('bi-usertimeout', function (payload) {
     console.log('> Logout por timeout');
@@ -72,6 +75,7 @@ socket.on('bi-answer_new_queue', async function (payload) {
     await sleep(4000)
     socket.emit('bi-atendein', { fkid: agentFkid });
 });
+
 // !
 socket.on('bi-answer_new_prior', async function (payload) {
     console.log('> Atendendo Fila Prioritaria');
@@ -81,6 +85,7 @@ socket.on('bi-answer_new_prior', async function (payload) {
     await sleep(4000)
     socket.emit('bi-atendein', { fkid: agentFkid });
 });
+
 // ?
 socket.on('bi-atendein', async function (payload) {
     console.log('> Buscando atendimentos e historicos');
@@ -92,6 +97,7 @@ socket.on('bi-atendein', async function (payload) {
     }
     socket.emit('add user', { fkid: agentFkid, fkname: agentFkname });
 });
+
 // ?
 socket.on('bi-close_chat', async function (payload) {
     console.log('> Encerra chat');
@@ -119,10 +125,6 @@ socket.on('sentinel_clients_queue', function (payload) {
     $('#nvatendPrior').removeClass('form-loading');
 });
 
-// !
-// !
-// !
-
 // ?
 socket.on('bi-transferagent', async function (payload) {
     console.log('> Status from Transfer Agent');
@@ -140,7 +142,7 @@ socket.on('bi-transferagent', async function (payload) {
     }
 });
 
-// TODO:
+// ? Cliente INFO
 socket.on("get_cliInfo", function (payload) {
     $("#iNomeTx").val(payload.nome)
     $("#iCpfTx").val(payload.cpf)
@@ -178,7 +180,7 @@ socket.on('bi-transferok', function (payload) {
     socket.emit('bi-transferok', { mobile: payload.mobile });
 });
 
-// TODO:
+// ? Cliente INFO
 socket.on('receive_register', function (payload) {
 
     let json = payload;
@@ -206,7 +208,7 @@ socket.on('bi-statusen', function (payload) {
     $('#modalEncerrar').modal();
 });
 
-// TODO:
+// ? Recebe Historico
 socket.on('bi-lasthistory', function (payload) {
     //console.log(payload)
     if (payload.contacts.length != 0) {
@@ -237,7 +239,7 @@ socket.on('sentinel_clients_alive', function (payload) {
     }
 });
 
-// TODO:
+// ? Recebe Mensagem
 socket.on('receive_chat', function (payload) {
 
     let msg = payload;
@@ -386,7 +388,7 @@ socket.on('receive_chat', function (payload) {
     }
 });
 
-// TODO:
+// ? ATIVO
 socket.on('bi-mailativo', function (payload) {
     if (payload != "" && payload != null) {
         let data = JSON.parse(payload);
@@ -441,7 +443,7 @@ socket.on('bi-mailativo', function (payload) {
     }
 });
 
-// TODO:
+// ? ATIVO
 socket.on("bi-atendemail", function (payload) {
     //console.log(payload);
     if (payload.status == '200') {
@@ -451,7 +453,7 @@ socket.on("bi-atendemail", function (payload) {
     }
 });
 
-// TODO:
+// TODO: ATIVO
 socket.on("bi-callinput", function (payload) {
     //console.log(payload);
     if (payload.status == '200') {

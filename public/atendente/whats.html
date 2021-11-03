@@ -5,47 +5,58 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat</title>
+    <title>Ubicua Cloud</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
     <link rel="stylesheet" href="../atendente/assets/css/whats.css">
     <link rel="stylesheet" href="../atendente/assets/css/whats-modal.css">
+    <link rel="shortcut icon" href="assets/images/5797ico3.png" />
+    <link rel="stylesheet" href="//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
     <script src="https://kit.fontawesome.com/5ae1266f50.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
     <div class="panel-body">
+
+        <!-- Sidebar -->
         <div id="sidebar" class="sidebar">
             <span class="expand-sidebar-icon" id="hamburgerIcon">
-                <i class="fas fa-bars"></i>
+                <div id="nav-icon4">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </span>
+
             <div class="hide-container" style="display: none;">
                 <div class="user-icon-container">
                     <span class="user-icon">
                         <img src="../atendente/assets/images/avatar 01.png" alt="user-icon">
                     </span>
-                    <span class="engrenagem-icon">
+                    <span class="engrenagem-icon" style="display: none;">
                         <img src="../atendente/assets/images/engrenagem.png" alt="engrenagem">
                     </span>
                 </div>
                 <div class="user-name-container">
                     <span style="font-size: 13px;">Atendente:</span>
-                    <span id="user-name" style="font-size: 22px;">Usuário XI</span>
+                    <span id="user-name" style="font-size: 22px;"></span>
                 </div>
                 <p id="operacao" class="operacao" style="font-size: 18px;">Operação Ativa</p>
             </div>
             <div class="side-bar-buttons">
-                <button id="editor-button" class="side-bar-button">
+                <button id="buttonResponseEdit" class="side-bar-button">
                     <i class="fas fa-pencil-alt"></i>
                     <span class="d-none editor-label" name="editor-label">Editor de respostas</span>
                 </button>
-                <button id="logout-button" class="side-bar-button">
+                <button id="buttonLogout" class="side-bar-button">
                     <i class="fas fa-power-off"></i>
                     <span class="d-none editor-label" name="editor-label">Log out</span>
                 </button>
             </div>
         </div>
+        <!-- Sidebar End -->
+
         <!-- Contacts Lists -->
         <div id="" class="contacts-lists">
             <!-- Fila Button -->
@@ -70,7 +81,7 @@
             <div class="calls-list">
                 <div class="calls-list-title ativo-header">
                     <span>Ativo</span>
-                    <button class="ativo-search">
+                    <button id="callMailingButton" class="ativo-search">
                         <span class="ativo-search-span">Pesquisar</span>
                         <div class="ativo-search-icons">
                             <i class="fas fa-search"></i>
@@ -80,6 +91,8 @@
                 <div id="userAtvList" class="calls-list-group"></div>
             </div>
         </div>
+        <!-- Contacts Lists End -->
+
         <!-- Chat Section -->
         <div class="chat-section">
             <div class="chat-group">
@@ -117,6 +130,9 @@
                 </div>
             </div>
         </div>
+        <!-- Chat Section End -->
+
+        <!-- Chat Options -->
         <div class="chat-options-lists">
             <div class="chat-options">
                 <div class="chat-options-title">
@@ -124,7 +140,7 @@
                             style="margin-left: 5px;">Menu</span></span>
                 </div>
                 <div class="chat-options-group">
-                    <button class="chat-options-group-buttons">
+                    <button id="historyButton" class="chat-options-group-buttons">
                         <i class="fas fa-comments"></i>
                         <span class="right-side-label">Historico</span>
                     </button>
@@ -132,11 +148,11 @@
                         <i class="fas fa-people-arrows"></i>
                         <span class="right-side-label">Transferir</span>
                     </button>
-                    <button class="chat-options-group-buttons">
+                    <button id="buttonSignUp" class="chat-options-group-buttons">
                         <i class="fas fa-edit"></i>
                         <span class="right-side-label">Cadastrar Cliente</span>
                     </button>
-                    <button class="chat-options-group-buttons">
+                    <button id="buttonConsult" class="chat-options-group-buttons">
                         <i class="fas fa-search"></i>
                         <span class="right-side-label">Consulta</span>
                     </button>
@@ -147,94 +163,23 @@
                     <span><i class="far fa-clock"></i><span class="right-side-label" style="margin-left: 5px;">Respostas
                             Programadas</span></span>
                 </div>
-                <div class="chat-info-group">
-                    <button class="chat-info-group-buttons">
-                        <span class="chat-info-text">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </span>
-                        <span class="elipisis">...</span>
-                    </button>
-                    <button class="chat-info-group-buttons">
-                        <span class="chat-info-text">
-                            Maecenas suscipit erat ut lacus consectetur sagittis. Praesent non dui sollicitudin,
-                            vehicula felis ac, gravida tortor.
-                        </span>
-                        <span class="elipisis">...</span>
-                    </button>
-                    <button class="chat-info-group-buttons">
-                        <span class="chat-info-text">
-                            Praesent non dui sollicitudin, vehicula felis ac, gravida tortor.
-                        </span>
-                        <span class="elipisis">...</span>
-                    </button>
-                    <button class="chat-info-group-buttons">
-                        <span class="chat-info-text">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </span>
-                        <span class="elipisis">...</span>
-                    </button>
-                    <button class="chat-info-group-buttons">
-                        <span class="chat-info-text">
-                            Praesent non dui sollicitudin, vehicula felis ac, gravida tortor.
-                        </span>
-                        <span class="elipisis">...</span>
-                    </button>
+                <div id="questionsGroup" class="chat-info-group">
                 </div>
             </div>
         </div>
-    </div>
+        <!-- Chat Options End -->
 
-    <div id="campo-salvo-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #25D366;">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="modal-body">
-                <span id="modal-title">Campo de resposta salvo!</span>
-                <span id="modal-text">Iniciando uma conversa, sua resposta salva irá aparecer no seu campo de
-                    seleção</span>
-                <button class="modal-button close" style="background-color: #25D366;">OK</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="campo-deletado-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #EA2A2A;">
-                <i class="fas fa-trash-alt"></i>
-            </div>
-            <div class="modal-body">
-                <span id="modal-title">Campo removido!</span>
-                <span id="modal-text">Você removeu esta resposta. Para adicionar outra, entre no editor. Em sua próxima
-                    conversa, não estará presente o conteúdo dessa resposta.</span>
-                <button class="modal-button close" style="background-color: #D10505;">OK</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="conversa-finalizada-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #BC4444;">
-                <i class="fas fa-exclamation"></i>
-            </div>
-            <div class="modal-body">
-                <span id="modal-title">Finalizamos a sua conversa</span>
-                <span id="modal-text">Para fazer uma nova interação, veja sua fila de atendimentos.</span>
-                <button class="modal-button close" style="background-color: #BC4444;">OK</button>
-            </div>
-        </div>
-    </div>
     </div>
 
     <!-- Media Modal -->
     <div id="mediaModal" class="modal">
         <div class="modal-content anexo-content">
-            <div class="modal-header" style="background-color: #0E5672">
-                <i class="fas fa-paperclip" style="margin-left: auto;"></i>
+            <div class="modal-header" style="background-color: #0E6058">
+                <i class="fas fa-paperclip"></i>
+                <span class="modal-header-label">Anexo</span>
                 <span class="close-icon">&times;</span>
             </div>
             <div class="modal-body">
-                <span id="modal-title">Anexo</span>
                 <span id="modal-text">Que tipo de arquivo deseja enviar?</span>
                 <div class="buttons">
                     <button id="insertDoc" class="modal-button anexo-button"><i class="fas fa-file"></i>
@@ -254,7 +199,7 @@
     <!-- Modal Sucesso -->
     <div id="succesModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: #61dd56;">
+            <div class="modal-header warning-header" style="background-color: #61dd56;">
                 <i class="fas fa-exclamation"></i>
             </div>
             <div class="modal-body">
@@ -269,7 +214,7 @@
     <!-- Modal Aviso Generico -->
     <div id="warningModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: #E2BD23;">
+            <div class="modal-header warning-header" style="background-color: #E2BD23;">
                 <i class="fas fa-exclamation"></i>
             </div>
             <div class="modal-body">
@@ -284,8 +229,9 @@
     <!-- Modal Encerramento -->
     <div id="formModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: #0E5672;">
+            <div class="modal-header padding-header" style="background-color: #0E6058;">
                 <i class="fas fa-user-edit"></i>
+                <span class="modal-header-label">Encerrar Atendimento</span>
             </div>
             <div class="modal-body">
                 <select id="endOptions" class="formEncInput" name="">
@@ -296,7 +242,7 @@
                 <input id="endFormProtocolo" class="formEncInput" type="text" placeholder="Protocolo">
                 <div style="display: grid; grid-template-columns: 1fr 1fr;">
                     <button id="confirmEnd" class="modal-button close"
-                        style="background-color: #0E5672;">Encerrar</button>
+                        style="background-color: #0E6058;">Encerrar</button>
                     <button class="modal-button close">Cancelar</button>
                 </div>
             </div>
@@ -307,8 +253,9 @@
     <!-- Modal Transfer -->
     <div id="transferModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: #0E5672;">
+            <div class="modal-header padding-header" style="background-color: #0E6058;">
                 <i class="fas fa-people-arrows"></i>
+                <span class="modal-header-label">Transferir Atendimento</span>
             </div>
             <div class="modal-body">
                 <select id="atendentesOnline" class="formEncInput" name="">
@@ -316,13 +263,129 @@
                 </select>
                 <div style="display: grid; grid-template-columns: 1fr 1fr;">
                     <button id="confirmTransferAgents" class="modal-button close"
-                        style="background-color: #0E5672;">Transferir</button>
+                        style="background-color: #0E6058;">Transferir</button>
                     <button class="modal-button close">Cancelar</button>
                 </div>
             </div>
         </div>
     </div>
     <!-- Modal Transfer End -->
+
+    <!-- Modal Cadastro -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header padding-header" style="background-color: #0E6058;">
+                <i class="fas fa-edit"></i>
+                <span class="modal-header-label">Cadastrar cliente</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-fields">
+                    <div class="field">
+                        <input id="userNome" type="text" placeholder="Nome" class="formEncInput">
+                    </div>
+                    <div class="field">
+                        <input id="userCPF" type="text" placeholder="CPF" class="formEncInput">
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-button close cancel-button">Cancelar</button>
+                    <button id="singupButton" class="modal-button close" style="background-color: #0E6058;">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Cadastro End-->
+
+    <!-- Modal editor de respostas -->
+    <div id="editAnswerModal" class="modal">
+        <div class="modal-content editor-answer">
+            <div class="modal-header modal-cadastro-header" style="background-color: #0E6058;">
+                <i class="fas fa-edit"></i>
+                <span class="modal-header-label" style="margin-left: 1rem;">Editor de respostas programadas</span>
+                <span class="close-icon">&times;</span>
+            </div>
+            <div class="modal-body">
+
+                <p>Escreve nos campos de 1 a 5 mensagens pré-programadas que irão aparecer em sua tela assim que iniciar
+                    uma conversa.</p>
+
+                <div class="modal-fields">
+                    <div class="field" style="align-items: flex-start;">
+                        <label for="field1">Resposta 1</label>
+                        <input type="text" id="questioInput1" placeholder="Digite aqui uma frase..."
+                            class="modal-input2">
+                    </div>
+                    <div class="field" style="align-items: flex-start;">
+                        <label for="field2">Resposta 2</label>
+                        <input type="text" id="questioInput2" placeholder="Digite aqui uma frase..."
+                            class="modal-input2">
+                    </div>
+                    <div class="field" style="align-items: flex-start;">
+                        <label for="field3">Resposta 3</label>
+                        <input type="text" id="questioInput3" placeholder="Digite aqui uma frase..."
+                            class="modal-input2">
+                    </div>
+                    <div class="field" style="align-items: flex-start;">
+                        <label for="field4">Resposta 4</label>
+                        <input type="text" id="questioInput4" placeholder="Digite aqui uma frase..."
+                            class="modal-input2">
+                    </div>
+                    <div class="field" style="align-items: flex-start;">
+                        <label for="field5">Resposta 5</label>
+                        <input type="text" id="questioInput5" placeholder="Digite aqui uma frase..."
+                            class="modal-input2">
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-button close cancel-button">Cancelar</button>
+                    <button id="editQuestionsButton" class="modal-button close"
+                        style="background-color: #25D366;">Gravar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal editor de respostas End -->
+
+    <!-- Modal Histórico -->
+    <div id="historicoModal" class="modal modal-history">
+        <div class="modal-content history-modal-content">
+            <div class="modal-header padding-header" style="background-color: #0E6058;">
+                <i class="fas fa-history"></i>
+                <span class="modal-header-label">Historico do Usuario</span>
+                <span class="close-icon">&times;</span>
+            </div>
+            <div id="chatHistory" class="modal-body modal-history-background">
+            </div>
+        </div>
+    </div>
+    <!-- Modal Histórico End-->
+
+    <!-- Modal Mailing -->
+    <div id="mailingModal" class="modal">
+        <div class="modal-content mailing-modal">
+            <div class="modal-header modal-cadastro-header" style="background-color: #0E6058;">
+                <i class="fas fa-edit"></i>
+                <span class="modal-header-label" style="margin-left: 1rem;">Chamar Mailing</span>
+                <span class="close-icon">&times;</span>
+            </div>
+            <div class="modal-body mailing-modal-body">
+                <table id="table_id" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Banco</th>
+                            <th>Cpf</th>
+                            <th>Celular</th>
+                            <th>Chamar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Mailing End-->
 
     <!-- Media Inputs -->
     <input id="imageInput" type="file" name="" accept="image/*" style="display: none;" />
@@ -332,9 +395,11 @@
     <!-- Media Inputs Ends -->
 
 </body>
+
 <script src="../atendente/assets/js/socket.io.js"></script>
 <script src="../atendente/assets/js/jquery.min.js"></script>
 <script src="../atendente/assets/js/jquery.mask.min.js"></script>
+<script src="//cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 <script src="../atendente/assets/js/whats-modal.js"></script>
 <script src="../atendente/assets/js/whats-elements.js"></script>
 <script src="../atendente/assets/js/whats-tools.js"></script>

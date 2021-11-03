@@ -23,8 +23,12 @@ body {
     /* Enable scroll if needed */
     background-color: rgb(0, 0, 0);
     /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.34);
     /* Black w/ opacity */
+}
+
+.modal-history{
+    background-color: rgba(0, 0, 0, 0.66) !important;
 }
 
 /* Modal Content */
@@ -55,10 +59,20 @@ body {
     border-top-right-radius: 8px;
     color: white;
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-size: 90px;
-    padding: 1.5rem;
+    font-size: 15px;
+    padding: 0rem 1.5rem;
+    justify-content: flex-start;
+}
+
+.warning-header {
+    padding: 1.5rem !important;
+    font-size: 90px !important;
+    justify-content: center !important;
+}
+
+.padding-header {
+    padding: 0.5rem 1.5rem !important;
 }
 
 .modal-body {
@@ -115,4 +129,15 @@ body {
 
 .anexo-content {
     width: 27%;
+}
+
+.modal-history-background {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background-image: url('../images/chatBackground.png');
+    height: 40vh;
+}
+
+.history-modal-content {
+    width: 40% !important;
 }

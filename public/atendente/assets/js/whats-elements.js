@@ -1,4 +1,10 @@
-function userListDiv(mobile, message, messageTime, protocolo) {
+function userListDiv(mobile, message, messageTime, protocolo, name) {
+    let nameInfo;
+    if(name != '' && name != null){
+        nameInfo = name
+    } else {
+        nameInfo = '+' + mobile
+    }
     let component = `
         <div id="list${mobile}" class="user-list-item" onclick="openChat(this.id)">
             <div>
@@ -6,10 +12,10 @@ function userListDiv(mobile, message, messageTime, protocolo) {
             </div>
             <div class="user-list-item-text-group">
                 <div>
-                    +${mobile}
+                    <span id="userInfoName${mobile}" > ${nameInfo} </span>
                 </div>
                 <div class="user-list-item-message-group">
-                    <span class="user-list-item-message-content">
+                    <span id="lastMessage${mobile}" class="user-list-item-message-content">
                         ${message}
                     </span>
                 </div>
@@ -19,10 +25,10 @@ function userListDiv(mobile, message, messageTime, protocolo) {
             </div>
             <div class="user-list-item-time-group">
                 <div>
-                    <span>${messageTime}</span>
+                    <span id="lastMessageTime${mobile}" >${messageTime}</span>
                 </div>
-                <div>
-                    <img src="../atendente/assets/images/whatsIcon.png" alt="">
+                <div style="color: green; font-size: 1.4em;" >
+                    <strong> <span id="notifyUser${mobile}" > </span> </stronng>
                 </div>
             </div>
         </div>
@@ -36,6 +42,18 @@ function userChatDiv(mobile) {
         </div>
     `
     return component;
+}
+
+function questionsDiv(id, message) {
+    let component = `
+        <button class="chat-info-group-buttons" onclick="quickQuestion(${id})">
+            <span id="question-${id}" class="chat-info-text">
+                ${message}
+            </span>
+            <span class="elipisis">...</span>
+        </button>
+    `
+    return component
 }
 
 function messageRight(message, messageTime) {
