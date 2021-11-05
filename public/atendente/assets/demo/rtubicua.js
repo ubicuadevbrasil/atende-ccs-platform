@@ -49,6 +49,8 @@
         if (payload.response == 1) {
           sessionStorage.setItem('fkid', payload.id);
           sessionStorage.setItem('fkname', payload.nome);
+          sessionStorage.setItem('tema', payload.tema);
+          sessionStorage.setItem('avatar', payload.avatar);
           window.location.href = "whats.html";
         } else if (payload.response == 2) {
           alert('Usuário Bloqueado !');

@@ -1,3 +1,17 @@
+// Global Var's
+let currentColorPrimary = getComputedStyle(document.querySelector(':root')).getPropertyValue('--color-primary');
+let currentColorSecondary = getComputedStyle(document.querySelector(':root')).getPropertyValue('--color-secondary');
+let currentColorTextPrimary = getComputedStyle(document.querySelector(':root')).getPropertyValue('--color-text-primary');
+let currentColorTextSecondary = getComputedStyle(document.querySelector(':root')).getPropertyValue('--color-text-secondary');
+let currentHoverSecondary = getComputedStyle(document.querySelector(':root')).getPropertyValue('--color-hover-secondary');
+let hourTimer = 0;
+let minuteTimer = 0;
+let secondTimer = 0;
+let millisecondTimer = 0;
+let cronTimer;
+let chunks = [];
+let mediaRecorder;
+
 // Upload File
 function uploadFile(file, uploadType) {
     return new Promise(function (resolve, reject) {
@@ -28,7 +42,9 @@ function uploadFile(file, uploadType) {
                 let messageComponent
                 if (uploadType == 'image') {
                     messageComponent = messageImageRight(imageUrl, '', uploadTime);
-                } else if (uploadType == 'audio' || uploadType == 'video' || uploadType == 'document') {
+                } else if (uploadType == 'audio') {
+                    messageComponent = messageAudioRight(imageUrl, '', uploadTime);
+                } else if (uploadType == 'video' || uploadType == 'document') {
                     messageComponent = messageAttachRight(imageUrl, '', uploadTime);
                 }
                 // Append message and Scroll
@@ -100,10 +116,14 @@ function arrangeUserChat(contacts, logs) {
             // Arrange user Chats
             if (userChat.length == 0) {
                 let userChatComponent = userListDiv(userMobile, userLastMsg, userLastMsgTime, '123456', userName);
-                if (userAtendir == 'in') {
-                    inUsersDisplay.append(userChatComponent);
-                } else if (userAtendir == 'out') {
-                    outUsersDisplay.append(userChatComponent);
+                if (logs.filter(element => (element.sessionid == contacts[i].sessionid) && (element.msgdir == 'o')).length > 0) {
+                    atendeUsersDisplay.append(userChatComponent);
+                } else {
+                    if (userAtendir == 'in') {
+                        inUsersDisplay.append(userChatComponent);
+                    } else if (userAtendir == 'out') {
+                        outUsersDisplay.append(userChatComponent);
+                    }
                 }
             }
             // Display user in Contacts List
@@ -141,9 +161,9 @@ function historyMessage(contacts, logs, area) {
     let contactsLength = contacts.length;
     let logsLength = logs.length;
     for (i = 0; i < contactsLength; i++) {
-        if(area == 'chatPannel'){
+        if (area == 'chatPannel') {
             $('#chat' + contacts[i].mobile).empty();
-        } else if (area == 'chatHistory'){
+        } else if (area == 'chatHistory') {
             $('#chatHistory').empty();
         }
     }
@@ -157,6 +177,8 @@ function historyMessage(contacts, logs, area) {
                         messageComponent = messageLeft(logs[a].msgtext, messageTime);
                     } else if (logs[a].msgtype === 'image') {
                         messageComponent = messageImageLeft(logs[a].msgurl, logs[a].msgcaption, messageTime);
+                    } else if (logs[a].msgtype == 'audio') {
+                        messageComponent = messageAudioLeft(logs[a].msgurl, '', messageTime);
                     } else {
                         messageComponent = messageAttachLeft(logs[a].msgurl, logs[a].msgcaption, messageTime);
                     }
@@ -165,13 +187,15 @@ function historyMessage(contacts, logs, area) {
                         messageComponent = messageRight(logs[a].msgtext, messageTime);
                     } else if (logs[a].msgtype === 'image') {
                         messageComponent = messageImageRight(logs[a].msgurl, logs[a].msgcaption, messageTime);
+                    } else if (logs[a].msgtype == 'audio') {
+                        messageComponent = messageAudioRight(logs[a].msgurl, '', messageTime);
                     } else {
                         messageComponent = messageAttachRight(logs[a].msgurl, logs[a].msgcaption, messageTime);
                     }
                 }
-                if(area == 'chatPannel'){
+                if (area == 'chatPannel') {
                     $('#chat' + contacts[i].mobile).append(messageComponent);
-                } else if (area == 'chatHistory'){
+                } else if (area == 'chatHistory') {
                     $('#chatHistory').append(messageComponent);
                 }
             }
@@ -212,14 +236,21 @@ function openChat(mobile) {
             // Set current user mobile
             currentUserMobile = mobile;
             document.getElementById(chatComponents[i].id).classList.remove('closedChat');
+            document.getElementById(`list${mobile}`).classList.add('activeChat');
             document.getElementById('userChatAvatar').classList.remove('closedChat');
             document.getElementById('closeChatButton').classList.remove('closedChat');
             document.getElementById(`chat${mobile}`).scrollBy(0, 9999999999999999);
-            document.getElementById('userMobileSpan').innerText = `+${mobile}`
+            document.getElementById('userMobileSpan').innerText = $(`#userInfoName${mobile}`).text();
         }
         if (chatComponents[i].id == `chat${mobile}`) {
             // Set current user mobile
             document.getElementById(`notifyUser${currentUserMobile}`).innerText = ''
+        }
+    }
+    let userList = document.getElementsByClassName('user-list-item');
+    for (i = 0; i < userList.length; i++) {
+        if (userList[i].id != `list${mobile}`) {
+            userList[i].classList.remove('activeChat');
         }
     }
 }
@@ -283,4 +314,203 @@ function quickQuestion(id) {
         $('#messageInputBox').val(question);
         resolve('ok')
     })
+}
+
+// Seleciona Tema
+function selectTheme(theme, cancel = false) {
+    let r = document.querySelector(':root');
+
+    switch (theme) {
+        case 'THM-1':
+            r.style.setProperty('--color-primary', '#4F345A');
+            r.style.setProperty('--color-secondary', '#5D4E6D');
+            r.style.setProperty('--color-text-primary', '#8FA998');
+            r.style.setProperty('--color-text-secondary', '#9CBFA7');
+            r.style.setProperty('--color-hover-secondary', '#C9F299');
+            break;
+
+        case 'THM-2':
+            r.style.setProperty('--color-primary', '#423E28');
+            r.style.setProperty('--color-secondary', '#50723C');
+            r.style.setProperty('--color-text-primary', '#63B995');
+            r.style.setProperty('--color-text-secondary', '#86DEB7');
+            r.style.setProperty('--color-hover-secondary', '#ADEEE3');
+            break;
+
+        case 'THM-3':
+            r.style.setProperty('--color-primary', '#432371');
+            r.style.setProperty('--color-secondary', '#714674');
+            r.style.setProperty('--color-text-primary', '#9F6976');
+            r.style.setProperty('--color-text-secondary', '#CC8B79');
+            r.style.setProperty('--color-hover-secondary', '#FAAE7B');
+            break;
+
+        case 'THM-4':
+            r.style.setProperty('--color-primary', '#0D41E1');
+            r.style.setProperty('--color-secondary', '#0C63E7');
+            r.style.setProperty('--color-text-primary', 'white');
+            r.style.setProperty('--color-text-secondary', 'wheat');
+            r.style.setProperty('--color-hover-secondary', '#07C8F9');
+            break;
+
+        case 'THM-5':
+            r.style.setProperty('--color-primary', '#E85C90');
+            r.style.setProperty('--color-secondary', '#C481A7');
+            r.style.setProperty('--color-text-primary', '#A0A6BE');
+            r.style.setProperty('--color-text-secondary', '#7CCAD5');
+            r.style.setProperty('--color-hover-secondary', '#58EFEC');
+            break;
+
+        case 'THM-6':
+            r.style.setProperty('--color-primary', '#0E6058');
+            r.style.setProperty('--color-secondary', '#1C9984');
+            r.style.setProperty('--color-text-primary', '#fff');
+            r.style.setProperty('--color-text-secondary', '#fff');
+            r.style.setProperty('--color-hover-secondary', '#036A56');
+            break;
+
+        default:
+            break;
+    }
+
+    if (cancel) {
+        r.style.setProperty('--color-primary', currentColorPrimary);
+        r.style.setProperty('--color-secondary', currentColorSecondary);
+        r.style.setProperty('--color-text-primary', currentColorTextPrimary);
+        r.style.setProperty('--color-text-secondary', currentColorTextSecondary);
+        r.style.setProperty('--color-hover-secondary', currentHoverSecondary);
+    } else {
+        sessionStorage.setItem('tema', theme)
+        socket.emit('upd_theme', { tema: theme, fkid: agentFkid })
+    }
+}
+
+// Gravador de Audio
+function audioRecorder() {
+    if (currentUserMobile) {
+        $(".chat-body-input-box").css("grid-template-columns", "8% 69% 18% 8%")
+        $(".audio-modal").css("display", "flex")
+        $("#buttonSendAudio").css("display", "none")
+        startTimer()
+
+        navigator
+            .mediaDevices
+            .getUserMedia({ audio: true })
+            .then(stream => {
+                mediaRecorder = new MediaRecorder(stream)
+                mediaRecorder.ondataavailable = data => {
+                    chunks.push(data.data)
+                    // createDownloadLink(data.data)
+                }
+                mediaRecorder.onstart = () => {
+                    chunks = []
+                }
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: 'audio/ogg; code=opus' })
+                    // const blob = new Blob(chunks, {type: 'audio/mpeg-3; code=opus'})
+                    const reader = new window.FileReader()
+                    let arquivo = new File([blob], "audio.mp3", { type: "audio/ogg" })
+                    reader.readAsDataURL(blob)
+                    reader.onloadend = async () => {
+                        const audio = document.createElement('audio')
+                        uploadAudioFile(arquivo, 'audio')
+                        audio.src = reader.result
+                        audio.controls = true
+                        audio.nodeType = 'audio/mpeg3'
+                        // await uploadFile(reader.result, '    audio')
+                    }
+                }
+                mediaRecorder.start()
+            }, err => {
+                console.log(err)
+            })
+    } else {
+        let modalTitle = "Aviso";
+        let modalDesc = "Nenhum Atendimento Iniciado!";
+        callWarningModal(modalTitle, modalDesc)
+    }
+}
+
+// Upload audio
+function uploadAudioFile(file) {
+    return new Promise(function (resolve, reject) {
+        let xhr = new XMLHttpRequest();
+        let fd = new FormData();
+        xhr.open("POST", appCdnUpload, true);
+        xhr.onreadystatechange = async function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                // Get File Hash
+                let cdnFileInfo = xhr.responseText;
+                let jsonHash = JSON.parse(cdnFileInfo);
+                let fileHash = jsonHash.hashfile;
+
+                // Arrange media preview in chat
+                let imageUrl = 'https://cdn.ubicuacloud.com/file/' + fileHash;
+                // Prep File Json
+                let fileJson = {
+                    mobile: currentUserMobile,
+                    type: 'audio',
+                    hashfile: fileHash,
+                    descfile: file.name,
+                    myMedia: loadBase64(fileHash)
+                }
+                // Emit socket event to send media message
+                socket.emit('send_media', fileJson);
+                // Set message component
+                let uploadTime = await getTime();
+                let messageComponent = messageAudioRight(imageUrl, '', uploadTime);
+                // Append message and Scroll
+                $('#chat' + currentUserMobile).append(messageComponent);
+                // Scroll to last message
+                document.getElementById(`chat${currentUserMobile}`).scrollBy(0, 9999999999999999);
+            }
+        };
+        // FormData and XML prep's
+        fd.append("inserirdoc", file);
+        xhr.send(fd);
+    })
+}
+
+// Start Timer
+function startTimer() {
+    pauseTimer();
+    cronTimer = setInterval(() => { timer(); }, 10);
+}
+
+// Pause Timer
+function pauseTimer() {
+    clearInterval(cronTimer);
+}
+
+// Reset Timer
+function resetTimer() {
+    hourTimer = 0;
+    minuteTimer = 0;
+    secondTimer = 0;
+    millisecondTimer = 0;
+    document.getElementById('minuteTimer').innerText = '00';
+    document.getElementById('secondTimer').innerText = '00';
+}
+
+// Timer
+function timer() {
+    if ((millisecondTimer += 10) == 1000) {
+        millisecondTimer = 0;
+        secondTimer++;
+    }
+    if (secondTimer == 60) {
+        secondTimer = 0;
+        minuteTimer++;
+    }
+    if (minuteTimer == 60) {
+        minuteTimer = 0;
+        hourTimer++;
+    }
+    document.getElementById('minuteTimer').innerText = returnDataTimer(minuteTimer);
+    document.getElementById('secondTimer').innerText = returnDataTimer(secondTimer);
+}
+
+// Return Timer Value
+function returnDataTimer(input) {
+    return input > 10 ? input : `0${input}`
 }

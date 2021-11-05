@@ -52,6 +52,11 @@ $("#sendMessageButton").on("click", async function () {
             // Scroll to last message
             document.getElementById(`chat${currentUserMobile}`).scrollBy(0, 9999999999999999);
             $('#messageInputBox').val(null);
+            //
+            let parentid = $(`#list${currentUserMobile}`).parent()[0].id;
+            if( (parentid == 'userRecList') || (parentid == 'userAtvList')){
+                $(`#list${currentUserMobile}`).appendTo("#userAtendeList");
+            }
         } else {
             let modalTitle = "Aviso";
             let modalDesc = "Campo de Texto Vazio!";
@@ -270,3 +275,72 @@ $('#docInput').change(function () {
     console.log('> Upload de Documento');
     uploadFile($("#docInput")[0].files[0], 'document');
 });
+
+// Sendo Audio
+$("#buttonSendAudio").click(()=>{
+    console.log('> Send audio Button');
+    audioRecorder();
+})
+
+// Confirma envio de audio
+$("#button-send-audio").on('click', () => {
+    $(".chat-body-input-box").css("grid-template-columns", "8% 76% 8% 8%")
+    $(".audio-modal").css("display", "none")
+    $("#buttonSendAudio").css("display", "flex")
+    resetTimer()
+    mediaRecorder.stop()
+})
+
+// Cancela envio de audio
+$("#button-cancel-audio").on('click', () => {
+    $(".chat-body-input-box").css("grid-template-columns", "8% 76% 8% 8%")
+    $(".audio-modal").css("display", "none")
+    $("#buttonSendAudio").css("display", "flex")
+    resetTimer()
+})
+
+// Seleciona edição de Tema
+$("#buttonThemeEdit").click(() => {
+    let r = document.querySelector(':root');
+    currentColorPrimary = getComputedStyle(r).getPropertyValue('--color-primary')
+    currentColorSecondary = getComputedStyle(r).getPropertyValue('--color-secondary')
+    currentColorTextPrimary = getComputedStyle(r).getPropertyValue('--color-text-primary')
+    currentColorTextSecondary = getComputedStyle(r).getPropertyValue('--color-text-secondary')
+    currentHoverSecondary = getComputedStyle(r).getPropertyValue('--color-hover-secondary')
+    $("#editThemeModal").fadeIn("fast")
+})
+
+// Cancela seleção de temas
+$("#buttonThemeCancel, #buttonThemeClose").click(() => {
+    selectTheme('', true)
+})
+
+// Emoji para Respostas Programadas
+$("#questioInput1,#questioInput2,#questioInput3,#questioInput4,#questioInput5").emoji({
+    place: 'after'
+})
+
+// Abre seleção de avatares
+$(".engrenagem-icon").click(() => {
+    $(".change-profile-modal").toggleClass("d-grid")
+})
+
+// Confirma seleção de avatar
+$(".user-pic-button, .avatar-pic").click((ev) => {
+    $(".user-pic-button").find(".check-pic").remove()
+
+    $(ev.target).closest(".user-pic-button").append(`
+        <span class="check-pic"><i class="fas fa-check"></i></span>
+    `)
+
+    let img = $(ev.target).closest(".user-pic-button").find(".avatar-pic").prop("src")
+    let imgId = $(ev.target).closest(".user-pic-button").find(".avatar-pic").prop("id")
+    sessionStorage.setItem('avatar',imgId)
+    socket.emit('upd_avatar', {avatar : imgId, fkid: agentFkid})
+    $("#user-profile-pic").prop("src", img)
+})
+
+// Modal de Confirmação de Encerramento
+$("#confirmEnd").click(() => {
+    $("#interactionEndedModal").fadeIn("fast")
+})

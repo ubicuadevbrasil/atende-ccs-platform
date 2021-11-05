@@ -7,7 +7,8 @@ function userListDiv(mobile, message, messageTime, protocolo, name) {
     }
     let component = `
         <div id="list${mobile}" class="user-list-item" onclick="openChat(this.id)">
-            <div>
+            <div class="user-photo">
+                <span id="notifyUser${mobile}" class="message-notify" ></span>
                 <img src="https://cdn.ubicuacloud.com/file/null" alt="" class="user-list-item-avatar">
             </div>
             <div class="user-list-item-text-group">
@@ -27,8 +28,8 @@ function userListDiv(mobile, message, messageTime, protocolo, name) {
                 <div>
                     <span id="lastMessageTime${mobile}" >${messageTime}</span>
                 </div>
-                <div style="color: green; font-size: 1.4em;" >
-                    <strong> <span id="notifyUser${mobile}" > </span> </stronng>
+                <div>
+                    <img src="../atendente/assets/images/whatsIcon.png">
                 </div>
             </div>
         </div>
@@ -97,6 +98,32 @@ function messageImageLeft(image, caption, messageTime) {
     let component = `
         <div class="chat-body-messages-block-left">
             <img src="${image}" class="chat-body-messages-image" alt="">
+            ${caption}
+            <div class="chat-body-messages-block-left-time">
+                ${messageTime}
+            </div>
+        </div>
+    `
+    return component
+}
+
+function messageAudioRight(url, caption, messageTime) {
+    let component = `
+        <div class="chat-body-messages-block-right">
+            <a href="${url}" target="_blank"><strong>Enviou um audio...</strong></a>
+            ${caption}
+            <div class="chat-body-messages-block-right-time">
+                ${messageTime}
+            </div>
+        </div>
+    `
+    return component
+}
+
+function messageAudioLeft(url, caption, messageTime) {
+    let component = `
+        <div class="chat-body-messages-block-left">
+            <a href="${url}" target="_blank"><strong>Enviou um audio...</strong></a>
             ${caption}
             <div class="chat-body-messages-block-left-time">
                 ${messageTime}

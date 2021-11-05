@@ -1051,7 +1051,7 @@ io.on('connection', function (socket) {
 							socket.emit('bi-auth', { response: 9 });
 							// If usuario ativo
 						} else if (usersList[0].status == 1) {
-							socket.emit('bi-auth', { response: 1, id: usersList[0].id, nome: usersList[0].nome })
+							socket.emit('bi-auth', { response: 1, id: usersList[0].id, nome: usersList[0].nome, tema: usersList[0].tema, avatar: usersList[0].avatar })
 						} else { socket.emit('bi-auth', { response: 2 }) }
 					} else { socket.emit('bi-auth', { response: 3 }) }
 					// If app version == 2
@@ -1061,7 +1061,7 @@ io.on('connection', function (socket) {
 						if (md5(fkpass) == usersList[0].senha) {
 							// If usuario ativo
 							if (usersList[0].status == 1) {
-								socket.emit('bi-auth', { response: 1, id: usersList[0].id, nome: usersList[0].nome });
+								socket.emit('bi-auth', { response: 1, id: usersList[0].id, nome: usersList[0].nome, tema: usersList[0].tema, avatar: usersList[0].avatar });
 							} else { socket.emit('bi-auth', { response: 2 }) }
 						} else { socket.emit('bi-auth', { response: 3 }) }
 					} else { socket.emit('bi-auth', { response: 5 }) }
@@ -1199,6 +1199,22 @@ io.on('connection', function (socket) {
 		let newQuestions = await insertQuestions(payload);
 		socket.emit('bi-questions', { questions: newQuestions });
 	});
+
+	// AVATAR EVENT
+	socket.on('upd_training', async function (payload) {
+		log("> Update training message");
+		let updAvatarQuery = 'UPDATE tab_usuarios SET avatar=? where id=?';
+		let updAvatarParams = [payload.avatar, payload.fkid];
+		let updAvatar = await runDynamicQuery(updAvatarQuery, updAvatarParams);
+	})
+
+	// AVATAR EVENT
+	socket.on('upd_theme', async function (payload) {
+		log("> Update training message");
+		let updTemaQuery = 'UPDATE tab_usuarios SET tema=? where id=?';
+		let updTemaParams = [payload.tema, payload.fkid];
+		let updTema = await runDynamicQuery(updTemaQuery, updTemaParams);
+	})
 	
 	// SCHEDULE CCS FILA
 	

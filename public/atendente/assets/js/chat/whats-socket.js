@@ -5,6 +5,7 @@ const agentFkname = sessionStorage.getItem('fkname');
 const appCdnUpload = 'https://cdn.ubicuacloud.com/upload';
 const appCdnFile = 'https://cdn.ubicuacloud.com/file/';
 const appCdnBase = 'https://cdn.ubicuacloud.com/base64/';
+const atendeUsersDisplay = $('#userAtendeList');
 const inUsersDisplay = $('#userRecList');
 const outUsersDisplay = $('#userAtvList');
 const chatScreen = $('#chatPanel');
@@ -50,13 +51,15 @@ $(document).on('mousemove', function () {
 // Check for new Questions
 setInterval(() => {
     socket.emit('bi-questions', { fkid: agentFkid });
-}, 1000);
+}, 2500);
 
 // Detect Connection
 socket.on('connect', function () {
     console.log('> Conectado')
     socket.emit('bi-atendein', { fkid: agentFkid });
     socket.emit('bi-questions', { fkid: agentFkid });
+    selectTheme(sessionStorage.getItem('tema'), false);
+    $("#user-profile-pic").prop("src", "../atendente/assets/images/" + (sessionStorage.getItem('avatar')) + ".png");
 });
 
 // Detect Disconnect

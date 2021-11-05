@@ -102,7 +102,7 @@
 
   <div class="page-signin-container" id="page-signin-form">
     <br/>
-    <h2 class="m-t-0 m-b-4 text-xs-center font-weight-semibold font-size-20">Acesso a Plataforma</h2>
+    <h2 class="m-t-0 m-b-4 text-xs-center font-weight-semibold font-size-20">Acesso a Plataforma (Atendente)</h2>
 
     <div class="panel p-a-4">
       <fieldset class=" form-group form-group-lg">
@@ -122,25 +122,9 @@
       </div>
 
       <button id="btnlogin" class="btn btn-block btn-lg btn-primary m-t-3">Login</button>
+      <button id="btnSupervisor" class="btn btn-block btn-lg btn-secondary">Supervisor</button>
     </div>
-
-    <h4 class="m-y-3 text-xs-center font-weight-semibold text-muted">Plataforma Multi Atendimentos</h4>
-
-    <div class="text-xs-center">
-      <a class="page-signin-social-btn btn btn-success btn-rounded" data-placement="top" data-toggle="tooltip" title="WhatsApp">
-        <i class="fab fa-whatsapp"></i>
-      </a>&nbsp;&nbsp;&nbsp;
-      <a href="index.html" class="page-signin-social-btn btn btn-primary btn-rounded" data-toggle="tooltip" title="Facebook Messenger">
-        <i class="fab fa-facebook-messenger"></i>
-      </a>&nbsp;&nbsp;&nbsp;
-      <a href="index.html" class="page-signin-social-btn btn btn-rounded" style="background-color: #33abde" data-toggle="tooltip"
-        title="Telegram">
-        <i class="fab fa-telegram"></i>
-      </a>&nbsp;&nbsp;&nbsp;
-      <a href="index.html" class="page-signin-social-btn btn btn-danger btn-rounded" data-toggle="tooltip" title="Chat">
-        <i class="fas fa-comments"></i>
-      </a>
-    </div>
+    
   </div>
 
   <!-- ==============================================================================
@@ -182,6 +166,10 @@
         $("#btnlogin").click();
       }
     });
+
+    $("#btnSupervisor").on('click', function (){
+      window.location = '/supervisor/'
+    })
 
     $("#cbLembrarUsuario").on('click', function (event) {
       if ($("#cbLembrarUsuario").prop('checked') == true) {

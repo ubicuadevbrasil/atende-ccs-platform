@@ -1,3 +1,13 @@
+:root{
+    --color-primary: #0E6058;
+    --color-secondary: #1C9984;
+    --color-text-primary: #fff;
+    --color-text-secondary: #fff;
+    --color-hover-secondary: #036A56;
+    --color-white: #fff;
+    --color-black: #000;
+}
+
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -40,7 +50,7 @@ textarea:focus, input:focus {
 .sidebar {
     position: relative;
     z-index: 4;
-    background-color: #0E6058;
+    background-color: var(--color-primary);
     box-sizing: content-box;
     width: 100%;
     height: 100%;
@@ -65,8 +75,8 @@ textarea:focus, input:focus {
 .fila-button {
     display: grid;
     grid-template-columns: 9fr 2fr;
-    background-color: #1C9984;
-    color: white;
+    background-color: var(--color-secondary);
+    color: var(--color-text-secondary);
     border-radius: 5px;
     padding: 5px;
     padding-left: 10px;
@@ -77,8 +87,8 @@ textarea:focus, input:focus {
 }
 
 .fila-white-box {
-    background-color: white;
-    color: black;
+    background-color: var(--color-white);
+    color: var(--color-black);
     border-radius: 5px;
     box-sizing: content-box;
     justify-content: center;
@@ -87,7 +97,7 @@ textarea:focus, input:focus {
 }
 
 .fila-button:hover {
-    background-color: #3F84AD;
+    background-color: var(--color-hover-secondary);
     cursor: pointer;
 }
 
@@ -97,8 +107,8 @@ textarea:focus, input:focus {
 }
 
 .calls-list-title {
-    background-color: #0E6058;
-    color: white;
+    background-color: var(--color-primary);
+    color: var(--color-text-primary);
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
     padding: 5px;
@@ -110,7 +120,7 @@ textarea:focus, input:focus {
 .calls-list-group {
     overflow-y: scroll;
     overflow-x: hidden;
-    background-color: white;
+    background-color: var(--color-white);
     border-bottom-right-radius: 5px;
     border-bottom-left-radius: 5px;
     min-height: 15vh;
@@ -133,7 +143,7 @@ textarea:focus, input:focus {
 }
 
 .ativo-search:hover span {
-    background-color: #336E8C;
+    background-color: var(--color-hover-secondary);
     cursor: pointer;
 }
 
@@ -142,13 +152,13 @@ textarea:focus, input:focus {
 }
 
 .ativo-search-span {
-    background-color: #1C9984;
+    background-color: var(--color-secondary);
     border-top-left-radius: 3px;
     border-bottom-left-radius: 3px;
     padding: 2px;
     padding-left: 10px;
     padding-right: 10px;
-    color: white;
+    color: var(--color-text-secondary);
     border: none;
     box-sizing: content-box;
 }
@@ -194,6 +204,7 @@ textarea:focus, input:focus {
     box-sizing: content-box;
     border-radius: 50%;
     max-height: 6vh;
+    position: relative;
 }
 
 .user-list-item-text-group {
@@ -242,8 +253,8 @@ textarea:focus, input:focus {
     align-items: center;
     width: 100%;
     height: 100%;
-    background-color: #0E6058;
-    color: white;
+    background-color: var(--color-primary);
+    color: var(--color-text-primary);
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
@@ -262,8 +273,9 @@ textarea:focus, input:focus {
 }
 
 .chat-header-close-button {
-    background-color: #1C9984;
-    color: white;
+    background-color: var(--color-secondary);
+    color: var(--color-text-secondary);
+    font-size: 0.8em;
     border: none;
     padding: 5px;
     padding-left: 10px;
@@ -282,17 +294,18 @@ textarea:focus, input:focus {
 }
 
 .chat-body {
-    display: grid;
-    grid-template-rows: 9fr 1fr;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     width: 100%;
     height: 100%;
-    background-color: #0E6058;
+    background-color: var(--color-primary);
     max-height: 89vh;
     background-image: url('../images/chatBackground.png');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    color: white;
+    color: var(--color-text-primary);
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 }
@@ -306,7 +319,7 @@ textarea:focus, input:focus {
 .chat-body-input-box {
     display: grid;
     grid-template-columns: 8% 76% 8% 8%;
-    background-color: white;
+    background-color: var(--color-white);
     border-radius: 15px;
     box-sizing: content-box;
     justify-content: center;
@@ -319,12 +332,12 @@ textarea:focus, input:focus {
     max-width: 100%;
     font-size: 1.6em;
     border: none;
-    color: black;
+    color: var(--color-black);
 }
 
 .chat-body-input-box>div>input {
     width: 100%;
-    font-size: 1.6em;
+    font-size: 1.2em;
     border: none;
 }
 
@@ -440,11 +453,13 @@ textarea:focus, input:focus {
 }
 
 .chat-options-lists {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     position: relative;
     z-index: 1;
     background-color: #CCCCCC;
     box-sizing: content-box;
-    justify-content: center;
     align-items: center;
     width: 100%;
     height: 100%;
@@ -452,13 +467,14 @@ textarea:focus, input:focus {
 }
 
 .chat-options {
+    width: 90%;
     margin: 15px;
     margin-top: 2vh;
 }
 
 .chat-options-title {
-    background-color: #0E6058;
-    color: white;
+    background-color: var(--color-primary);
+    color: var(--color-text-primary);
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
     padding: 5px;
@@ -473,7 +489,7 @@ textarea:focus, input:focus {
     flex-direction: column;
     overflow-y: hidden;
     overflow-x: hidden;
-    background-color: white;
+    background-color: var(--color-white);
     border-bottom-right-radius: 5px;
     border-bottom-left-radius: 5px;
     min-height: 10vh;
@@ -481,8 +497,8 @@ textarea:focus, input:focus {
 }
 
 .chat-options-group-buttons {
-    background-color: #1C9984;
-    color: white;
+    background-color: var(--color-secondary);
+    color: var(--color-text-secondary);
     border: none;
     padding: 5px;
     padding-left: 10px;
@@ -498,11 +514,12 @@ textarea:focus, input:focus {
 }
 
 .chat-options-group-buttons:hover {
-    background-color: #036A56;
+    background-color: var(--color-hover-secondary);
     cursor: pointer;
 }
 
 .chat-info {
+    width: 90%;
     margin: 15px;
     margin-top: 2vh;
     position: absolute;
@@ -510,8 +527,8 @@ textarea:focus, input:focus {
 }
 
 .chat-info-title {
-    background-color: #0E6058;
-    color: white;
+    background-color: var(--color-primary);
+    color: var(--color-text-primary);
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
     padding: 5px;
@@ -526,7 +543,7 @@ textarea:focus, input:focus {
     flex-direction: column;
     overflow-y: scroll;
     overflow-x: hidden;
-    background-color: white;
+    background-color: var(--color-white);
     border-bottom-right-radius: 5px;
     border-bottom-left-radius: 5px;
     min-height: 30vh;
@@ -559,9 +576,13 @@ textarea:focus, input:focus {
     display: none;
 }
 
+.activeChat{
+    background-color: lightgray;
+}
+
 .call-mailing-button{
-    background-color: #1C9984;
-    color: white;
+    background-color: var(--color-secondary);
+    color: var(--color-text-secondary);
     border: none;
     padding: 5px;
     border-radius: 5px;
@@ -576,10 +597,11 @@ textarea:focus, input:focus {
 /* \/ Sidebar \/ */
 
 .expand-sidebar-icon {
-    color: white;
+    color: var(--color-white);
     font-size: 35px;
     margin-top: 0.5rem;
     cursor: pointer;
+    height: 9%;
 }
 
 .side-bar-buttons {
@@ -597,15 +619,15 @@ textarea:focus, input:focus {
     border: 0;
     border-radius: 8px;
     padding: 0.6rem 0;
-    background-color: #1C9984;
-    color: white;
+    background-color: var(--color-secondary);
+    color: var(--color-text-secondary);
     font-size: 25px;
     width: 85%;
-    /* margin: 0 auto; */
+    margin-top: 1rem;
 }
 
 .engrenagem-icon {
-    background-color: white;
+    background-color: var(--color-white);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -613,7 +635,7 @@ textarea:focus, input:focus {
     align-self: flex-end;
     width: 20px;
     height: 20px;
-    margin-left: -10px;
+    margin-left: -30px;
     cursor: pointer;
 }
 
@@ -642,7 +664,7 @@ textarea:focus, input:focus {
 }
 
 .hide-container span, .hide-container p {
-    color: white;
+    color: var(--color-white);
 }
 
 .user-name-container {
@@ -830,4 +852,137 @@ textarea:focus, input:focus {
 
 .mailing-modal-body{
     padding: 1rem 1rem 1rem !important;
+}
+
+.theme-button{
+    width: 85%;
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    height: 4vh;
+    padding: 0 0;
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+    margin: 0.5rem;
+}
+
+.theme-button-color-array{
+    width: 100%;
+    height: 6vh;
+
+}
+
+.theme-cornor-left{
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.theme-cornor-right{
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.theme-buttons{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.top-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    width: 100%;
+}
+
+.audio-modal{
+    margin-left: auto;
+    display: none; 
+    justify-content: space-around;
+    align-items: center;
+    color: red;
+    width: 100%;
+}
+
+.audio-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: 20px;
+    color: black;
+}
+
+.check-button {
+    padding: 5px 5px;
+    border: 2px solid #00897C;
+}
+
+.cancel-button-audio {
+    padding: 5px 8px;
+    border: 2px solid #C1272D;
+}
+
+.input-row {
+    display: flex;
+    width: 100%;
+}
+
+.user-photo{
+    display: flex;
+    flex-direction: column;
+}
+
+.message-notify{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: red;
+    border-radius: 50%;
+    color: white;
+    margin-left: auto;
+    z-index: 2;
+    position: absolute;
+    left: 2.5vw;
+    padding: 0px 4px;
+}
+
+.change-profile-modal {
+    display: none;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 90%;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.d-grid {
+    display: grid !important;
+}
+
+.user-pic-button{
+    background-color: transparent;
+    border: 0;
+    width: 100%;
+    display: flex;
+}
+
+.avatar-pic {
+    width: 90%;
+    position: relative;
+}
+
+.check-pic {
+    background-color: green;
+    border-radius: 50%;
+    padding: 1px;
+
+    margin-top: 26px;
+    margin-left: -10px;
+    z-index: 2;
 }
