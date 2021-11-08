@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <title>Ubicua Cloud</title>
+
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin"
+        rel="stylesheet" type="text/css">
+    <link href="assets/css/ionicons.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Core stylesheets -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/pixeladmin.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/widgets.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/ubicua.css" rel="stylesheet" type="text/css">
+
+    <!-- Theme -->
+    <link href="assets/css/themes/adminflare.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Scripts -->
+    <script src="assets/js/socket.io.js"></script>
+    <script src="assets/pace/pace.min.js"></script>
+    <script src="assets/js/wppjs.js"></script>
+</head>
+
+<body>
+    <!-- Nav -->
+    <nav class="px-nav px-nav-left">
+        <button type="button" class="px-nav-toggle" data-toggle="px-nav">
+            <span class="px-nav-toggle-arrow"></span>
+            <span class="navbar-toggle-icon"></span>
+            <span class="px-nav-toggle-label font-size-11">HIDE MENU</span>
+        </button>
+
+        <ul class="px-nav-content">
+            <li class="px-nav-item">
+                <a href="dashboard.html">
+                    <i class="px-nav-icon ion-ios-pulse"></i>
+                    <span class="px-nav-label">Dashboard</span>
+                </a>
+            </li>
+            <li class="px-nav-item">
+                <a href="agentes.html">
+                    <i class="px-nav-icon ion-ios-people"></i>
+                    <span class="px-nav-label">Atendentes</span>
+                </a>
+            </li>
+            <li class="px-nav-item">
+                <a href="cadsta.html">
+                    <i class="px-nav-icon ion-android-checkbox-outline"></i>
+                    <span class="px-nav-label">Status de Atendimento</span>
+                </a>
+            </li>
+            <li class="px-nav-item active">
+                <a href="mailing.html">
+                    <i class="px-nav-icon ion-clipboard"></i>
+                    <span class="px-nav-label">Cadastro de Mailing</span>
+                </a>
+            </li>
+            <li class="px-nav-item px-nav-dropdown px-open active">
+                <a href="#">
+                    <i class="px-nav-icon ion-ios-paper"></i>
+                    <span class="px-nav-label">Relatórios</span>
+                </a>
+                <ul class="px-nav-dropdown-menu">
+                    <li class="px-nav-item">
+                        <a href="report1.html">
+                            <span class="px-nav-label">Analítico de Atendimentos</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Navbar -->
+    <nav class="navbar px-navbar">
+        <div class="navbar-header">
+            <a class="navbar-brand px-demo-brand">
+                <n class="page-header-icon" style="color: white">Atendimento WhatsApp</n>
+            </a>
+        </div>
+
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#px-navbar-collapse"
+            aria-expanded="false">
+            <i class="navbar-toggle-icon"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="px-navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#"></a>
+                    </a>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        aria-expanded="false">
+                        <img src="assets/images/avatar.png" alt="" class="px-navbar-image">
+                        <span id="lboperador" class="hidden-md" style="color:white"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="index.html">Log out</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="px-content">
+        <div class="page-header">
+            <h1 class="ion-android-checkbox-outline"> Cadastro Mailing</h1>
+            <!--<div id="expCSV" class="box-cell pull-right" style="width: 150px; border-style: none;">
+                <a class="btn btn-block btn-success">
+                    <span class="btn btn-success btn-label-icon left ion-archive"></span>Exportar CSV
+                </a>
+            </div>-->
+            <!--<div id="btnnovo" class="box-cell pull-right" style="width: 150px; border-style: none; margin-right: 15px">
+                <a id="btnNewReg" class="btn btn-block btn-primary">
+                    <span class="btn btn-primary btn-label-icon left fa fa-plus"></span>Novo Registro
+                </a>
+            </div>-->
+            <div id="regCSV" class="box-cell pull-right" style="width: 150px; border-style: none; margin-right: 15px">
+                <a class="btn btn-block btn-warning">
+                    <span class="btn btn-warning btn-label-icon left fa fa-plus"></span>Carregar CSV
+                </a>
+            </div>
+        </div>
+
+
+        <table id="mailtable" class="table table-striped table-bordered" style="width: 100%;display: none">
+            <thead>
+                <tr>
+                    <th>Nome do Mailing</th>
+                    <th>Numero</th>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>Banco</th>
+                    <th>Quantidade</th>
+                    <th>Data de Cadastro</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="px-footer px-footer-bottom">© 2018 Ubicua Cloud</footer>
+
+    <input type="file" name="" id="csvFile" style="display: none">
+
+    <div class="modal fade" id="modal-default" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h4 class="modal-title" id="myModalLabel">Cadastro</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="text-xs-center bigtext">
+                        <i class="ion-person-add"></i><span id="stitulo"> Cadastrar Novo Cliente</span>
+                    </div>
+                    <div class="gridradio text-xs-center">
+                        <div>CHC/ONE</div>
+                        <div>CEM</div>
+                        <div>
+                            <input type="radio" name="regTipo" id="regTipo" value="1" style="transform: scale(1.4);"
+                                checked />
+                        </div>
+                        <div>
+                            <input type="radio" name="regTipo" id="regTipo" value="2" style="transform: scale(1.4);" />
+                        </div>
+                    </div>
+                    <div class="gridmodal">
+                        <div>
+                            <i class="ion-information-circled"></i>
+                        </div>
+                        <div>
+                            <input id='regFant' type="text" class="page-signup-form-control form-control"
+                                placeholder="Nome Fantasia">
+                        </div>
+                        <div>
+                            <i class="ion-person"></i>
+                        </div>
+                        <div>
+                            <input id='regName' type="text" class="page-signup-form-control form-control"
+                                placeholder="Nome">
+                        </div>
+                        <div>
+                            <i class="ion-android-phone-portrait"></i>
+                        </div>
+                        <div>
+                            <input id='regMobile' type="text" class="page-signup-form-control form-control"
+                                placeholder="Numero" maxlength="13" onkeypress="return isNumber(event)">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 5vh;">
+                    <button id='cancelreg' type="button" class="btn" data-dismiss="modal"
+                        style="width: 90px;">Cancelar</button>
+                    <button id='regSalvar' type="button" class="btn btn-primary" style="width: 90px;"
+                        disabled>Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-aviso" class="modal fade modal-alert modal-warning">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><i class="fa ion-alert"></i></div>
+                <div class="modal-title">Aviso</div>
+                <div class="modal-body"><span id="modal-aviso-texto"></span></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-csv" class="modal fade modal-alert modal-warning">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><i class="fa ion-alert"></i></div>
+                <div class="modal-title">Aviso</div>
+                <div class="modal-body"><span id="modal-csv-texto"></span></div>
+                <div class="modal-footer">
+                    <button id="goCSV" type="button" class="btn btn-warning" data-dismiss="modal"
+                        onclick="selTipo()">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-mailing" class="modal fade modal-alert modal-info">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><i class="fa ion-alert"></i></div>
+                <div class="modal-title">Aviso</div>
+                <div class="modal-body"><span id="modal-mailing-texto"></span></div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load JS's -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/pixeladmin.min.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/dinamyctest.js"></script>
+    <script src="assets/js/ubicua.js"></script>
+    <script src="assets/js/papaparse.min.js"></script>
+    <script src="assets/js/newubicua.js"></script>
+
+</body>
+
+</html>

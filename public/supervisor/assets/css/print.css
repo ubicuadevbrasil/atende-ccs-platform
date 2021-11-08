@@ -1,0 +1,18 @@
+div.widget-chat-item.left > div.widget-chat-text{
+    background-color: #dcf8c6 !important; 
+    word-wrap: break-word !important
+}
+
+div.widget-chat-item.right > div.widget-chat-text{
+    background-color: #E2E2DE !important; 
+    word-wrap: break-word !important
+}
+
+div.widget-chat-item.right > div.widget-chat-text.far.fa-images{
+    background-color: #dcf8c6 !important; 
+    word-wrap: break-word !important
+}
+
+img{
+    max-width: 15vw !important;
+}
