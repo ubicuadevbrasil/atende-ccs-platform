@@ -192,7 +192,7 @@ $("#buttonResponseEdit").on('click', function () {
 // Acessar página de consulta
 $("#buttonConsult").on('click', function () {
     console.log('> Consulta Atendimentos');
-    window.open("https://ccs.atendimento-kainos.com.br/atendente/consulta-atendimento.html");
+    window.open("https://ccs.atendimento-kainos.com.br/atendente/consulta.html");
 });
 
 // Historico de Conversa com o Usuario

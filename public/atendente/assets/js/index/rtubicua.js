@@ -51,7 +51,7 @@
           sessionStorage.setItem('fkname', payload.nome);
           sessionStorage.setItem('tema', payload.tema);
           sessionStorage.setItem('avatar', payload.avatar);
-          window.location.href = "whats.html";
+          window.location.href = "chat.html";
         } else if (payload.response == 2) {
           alert('Usuário Bloqueado !');
         } else if (payload.response == 3) {

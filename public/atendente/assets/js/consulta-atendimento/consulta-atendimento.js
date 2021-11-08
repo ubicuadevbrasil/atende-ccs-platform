@@ -1,3 +1,8 @@
+// Detect Connection
+$("#user-name").text(sessionStorage.getItem('fkname'));
+selectTheme(sessionStorage.getItem('tema'), false);
+$("#user-profile-pic").prop("src", "../atendente/assets/images/" + (sessionStorage.getItem('avatar')) + ".png");
+
 //filtros
 $('.filters').append(`
 <div class="cardFilter">
@@ -50,6 +55,73 @@ $('.dataTable').append(`
 
 // retornar para tela anterior
 $("#buttonReturn").on('click', function() {
-    window.location.replace("https://ccs.atendimento-kainos.com.br/atendente/whats.html");
+    window.location.replace("https://ccs.atendimento-kainos.com.br/atendente/chat.html");
 })
 
+// Select Theme
+function selectTheme(theme, cancel = false) {
+    let r = document.querySelector(':root');
+
+    switch (theme) {
+        case 'THM-1':
+            r.style.setProperty('--color-primary', '#4F345A');
+            r.style.setProperty('--color-secondary', '#5D4E6D');
+            r.style.setProperty('--color-text-primary', '#8FA998');
+            r.style.setProperty('--color-text-secondary', '#9CBFA7');
+            r.style.setProperty('--color-hover-secondary', '#C9F299');
+            break;
+
+        case 'THM-2':
+            r.style.setProperty('--color-primary', '#423E28');
+            r.style.setProperty('--color-secondary', '#50723C');
+            r.style.setProperty('--color-text-primary', '#63B995');
+            r.style.setProperty('--color-text-secondary', '#86DEB7');
+            r.style.setProperty('--color-hover-secondary', '#ADEEE3');
+            break;
+
+        case 'THM-3':
+            r.style.setProperty('--color-primary', '#432371');
+            r.style.setProperty('--color-secondary', '#714674');
+            r.style.setProperty('--color-text-primary', '#9F6976');
+            r.style.setProperty('--color-text-secondary', '#CC8B79');
+            r.style.setProperty('--color-hover-secondary', '#FAAE7B');
+            break;
+
+        case 'THM-4':
+            r.style.setProperty('--color-primary', '#0D41E1');
+            r.style.setProperty('--color-secondary', '#0C63E7');
+            r.style.setProperty('--color-text-primary', 'white');
+            r.style.setProperty('--color-text-secondary', 'wheat');
+            r.style.setProperty('--color-hover-secondary', '#07C8F9');
+            break;
+
+        case 'THM-5':
+            r.style.setProperty('--color-primary', '#E85C90');
+            r.style.setProperty('--color-secondary', '#C481A7');
+            r.style.setProperty('--color-text-primary', '#A0A6BE');
+            r.style.setProperty('--color-text-secondary', '#7CCAD5');
+            r.style.setProperty('--color-hover-secondary', '#58EFEC');
+            break;
+
+        case 'THM-6':
+            r.style.setProperty('--color-primary', '#0E6058');
+            r.style.setProperty('--color-secondary', '#1C9984');
+            r.style.setProperty('--color-text-primary', '#fff');
+            r.style.setProperty('--color-text-secondary', '#fff');
+            r.style.setProperty('--color-hover-secondary', '#036A56');
+            break;
+
+        default:
+            break;
+    }
+
+    if (cancel) {
+        r.style.setProperty('--color-primary', currentColorPrimary);
+        r.style.setProperty('--color-secondary', currentColorSecondary);
+        r.style.setProperty('--color-text-primary', currentColorTextPrimary);
+        r.style.setProperty('--color-text-secondary', currentColorTextSecondary);
+        r.style.setProperty('--color-hover-secondary', currentHoverSecondary);
+    } else {
+        sessionStorage.setItem('tema', theme)
+    }
+}
