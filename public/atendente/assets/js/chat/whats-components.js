@@ -116,6 +116,7 @@ $('#confirmEnd').on('click', function () {
                 protocolo: $('#endFormProtocolo').val(),
                 banco: $('#endFormBanco').val()
             });
+            $("#interactionEndedModal").fadeIn("fast")
             $('#endFormCpf').val('')
         }
     } else {
@@ -191,7 +192,7 @@ $("#buttonResponseEdit").on('click', function () {
 // Acessar página de consulta
 $("#buttonConsult").on('click', function () {
     console.log('> Consulta Atendimentos');
-    window.open("https://ccs.atendimento-kainos.com.br/atendente/consulta.html");
+    window.open("https://ccs.atendimento-kainos.com.br/atendente/consulta-atendimento.html");
 });
 
 // Historico de Conversa com o Usuario
@@ -236,6 +237,8 @@ $("#editQuestionsButton").on('click', function () {
     }
     for(i=1; i < 6; i++){
         let question = $("#questioInput" + i).val();
+        const rex = /[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug;
+        question = question.replace(rex, match => `&#x${match.codePointAt(0).toString(16)}`);
         if(question != ''){
             payload.questions.push({
                 'id': 'questioInput' + i + '_' + agentFkid,
@@ -279,7 +282,7 @@ $('#docInput').change(function () {
 // Sendo Audio
 $("#buttonSendAudio").click(()=>{
     console.log('> Send audio Button');
-    audioRecorder();
+    // audioRecorder();
 })
 
 // Confirma envio de audio
@@ -287,8 +290,8 @@ $("#button-send-audio").on('click', () => {
     $(".chat-body-input-box").css("grid-template-columns", "8% 76% 8% 8%")
     $(".audio-modal").css("display", "none")
     $("#buttonSendAudio").css("display", "flex")
-    resetTimer()
-    mediaRecorder.stop()
+    // resetTimer()
+    // mediaRecorder.stop()
 })
 
 // Cancela envio de audio
@@ -338,9 +341,4 @@ $(".user-pic-button, .avatar-pic").click((ev) => {
     sessionStorage.setItem('avatar',imgId)
     socket.emit('upd_avatar', {avatar : imgId, fkid: agentFkid})
     $("#user-profile-pic").prop("src", img)
-})
-
-// Modal de Confirmação de Encerramento
-$("#confirmEnd").click(() => {
-    $("#interactionEndedModal").fadeIn("fast")
 })

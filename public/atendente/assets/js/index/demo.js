@@ -604,7 +604,7 @@
         content += '<label class="px-demo-themes-item">';
 
         content += '<input type="radio" class="px-demo-themes-toggler" name="px-demo-current-theme" value="' + THEMES[i] + '"' + (demoSettings.theme === THEMES[i] ? ' checked' : '') + '>';
-        content += '<img src="assets/demo/themes/' + THEMES[i] + '.png" class="px-demo-themes-thumbnail">';
+        content += '<img src="assets/js/index/demo/themes/' + THEMES[i] + '.png" class="px-demo-themes-thumbnail">';
         content += '<div class="px-demo-themes-title font-weight-semibold"><span class="text-white">' + capitalizeAllLetters(THEMES[i], '-') + '</span><div class="bg-primary"></div></div>';
 
         content += '</label>';

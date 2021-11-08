@@ -591,7 +591,7 @@ io.on('connection', function (socket) {
 
 	socket.on('bi-report2', async function (payload) {
 		log("> Datatable Report2");
-		let procedureQuery = 'CALL ccs_consulta("0","' + payload.transbordoDt + '","' + payload.params + '", "COUNT(*) as total");';
+		let procedureQuery = 'CALL ccs_consulta("MAX","' + payload.transbordoDt + '","' + payload.params + '", "COUNT(*) as total");';
 		let procedureParams = [];
 		let procedureList = await runDynamicQuery(procedureQuery, procedureParams);
 		if (procedureList.length > 0) {
@@ -599,7 +599,7 @@ io.on('connection', function (socket) {
 			if (count == 0) {
 				socket.emit('bi-report2', { count: 0, reportadata: '' });
 			} else {
-				let bkpProcedureQuery = 'CALL ccs_consulta("' + payload.limit + '","' + payload.transbordoDt + '","' + payload.params + '", "*");';
+				let bkpProcedureQuery = 'CALL ccs_consulta("MAX","' + payload.transbordoDt + '","' + payload.params + '", "*");';
 				let bkpProcedureParams = [];
 				let bkpPocedureList = await runDynamicQuery(bkpProcedureQuery, bkpProcedureParams);
 				if (bkpPocedureList.length > 0) {
@@ -607,16 +607,16 @@ io.on('connection', function (socket) {
 					let lenchat = bkpPocedureList[1].length - 1;
 					foreachasync(bkpPocedureList[1], function (element, index) {
 						let serialized = {
-							filename: element.filename,
+							// filename: element.filename,
 							sessionid: element.sessionid,
 							cpf: element.cpf,
-							atendir: element.atendir,
+							// atendir: element.atendir,
 							atendente: element.atendente,
 							mobile: element.mobile,
 							hora: element.hora,
 							data: element.data,
 							status: element.status,
-							banco: element.banco,
+							// banco: element.banco,
 							nome: element.nome,
 							protocolo: element.protocolo
 						};
@@ -879,12 +879,10 @@ io.on('connection', function (socket) {
 				let logs = JSON.stringify(logsList);
 				socket.emit('bi-historyone', { contacts: contacts, logs: logs });
 			} else {
-				let bkpLogsQuery = "SELECT a.sessionid, DATE_ADD(a.dt, INTERVAL 3 HOUR) as dt, a.fromname, a.msgdir, a.msgtype, a.msgtext, a.msgurl, a.msgcaption FROM tab_logs_old AS a WHERE a.sessionid IN (" + sessionlist + ") ORDER BY a.dt;";
-				let bkpLogsParams = [];
-				let bkpLogsList = await runDynamicQuery(bkpLogsQuery, bkpLogsParams);
-				let logs = JSON.stringify(bkpLogsList);
-				socket.emit('bi-historyone', { contacts: contacts, logs: logs });
+				socket.emit('bi-historyone', { contacts: contacts, logs: [] });
 			}
+		} else {
+			socket.emit('bi-historyone', { contacts: [], logs: [] });
 		}
 	});
 
@@ -919,7 +917,7 @@ io.on('connection', function (socket) {
 
 	socket.on('bi-getmailing', async function (payload) {
 		log("> Get Active Mailing");
-		let ativoQuery = "SELECT * FROM tab_ativo WHERE status=0 ORDER BY nome";
+		let ativoQuery = "SELECT * FROM tab_ativo ORDER BY nome";
 		let ativoParams = [];
 		let ativoList = await runDynamicQuery(ativoQuery, ativoParams);
 		if (ativoList.length > 0) {
@@ -932,7 +930,7 @@ io.on('connection', function (socket) {
 
 	socket.on('bi-mailativo', async function (payload) {
 		log("> Get Active Mailing");
-		let ativoQuery = "SELECT * FROM tab_ativo WHERE status=0 ORDER BY nome";
+		let ativoQuery = "SELECT * FROM tab_ativo ORDER BY nome";
 		let ativoParams = [];
 		let ativoList = await runDynamicQuery(ativoQuery, ativoParams);
 		if (ativoList.length > 0) {
@@ -957,17 +955,38 @@ io.on('connection', function (socket) {
 		let atendeinParams = [mobile];
 		let atendeinList = await runDynamicQuery(atendeinQuery, atendeinParams);
 		if (atendeinList.length == 0) {
-			let sessionid = await getCustomUuid();
-			// Insert atendein
-			let insertAtdQuery = "INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, atendir) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-			let insertAtdParams = [sessionid, mobile, dtin, account, photo, fkto, fkname, atendir];
-			let insertAtdList = await runDynamicQuery(insertAtdQuery, insertAtdParams);
-			// Update Mailing
-			let updateAtdQuery = "UPDATE tab_ativo SET status=1 WHERE mobile = ?";
-			let updateAtdParams = [mobile];
-			let updateAtdList = await runDynamicQuery(updateAtdQuery, updateAtdParams);
-			// Socket Event Emmit
-			socket.emit('bi-atendemail', { status: '200' });
+			// Find how many in Atendimento
+			let outInAtendeQuery = "SELECT * FROM tab_atendein WHERE fkto = ? AND atendir ='out';";
+			let outInAtendeParams = [fkto];
+			let outInAtendeList = await runDynamicQuery(outInAtendeQuery, outInAtendeParams);
+			if (outInAtendeList.length < 5) {
+				let outInEncerraQuery = "SELECT * FROM tab_encerrain WHERE fkto = ? AND atendir ='out' AND dten >= DATE_SUB(NOW(),INTERVAL 1 HOUR) ORDER BY dtin ASC;";
+				let outInEncerraParams = [fkto];
+				let outInEncerraList = await runDynamicQuery(outInEncerraQuery, outInEncerraParams);
+				let totalAtivos = outInAtendeList.length + outInEncerraList.length;
+				if (totalAtivos < 10) {
+					// Get Custom UUID
+					let sessionid = await getCustomUuid();
+					// Insert atendein
+					let insertAtdQuery = "INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, atendir) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+					let insertAtdParams = [sessionid, mobile, dtin, account, photo, fkto, fkname, atendir];
+					let insertAtdList = await runDynamicQuery(insertAtdQuery, insertAtdParams);
+					// Update Mailing
+					let updateAtdQuery = "UPDATE tab_ativo SET status=1 WHERE mobile = ?";
+					let updateAtdParams = [mobile];
+					let updateAtdList = await runDynamicQuery(updateAtdQuery, updateAtdParams);
+					// Socket Event Emmit
+					socket.emit('bi-atendemail', { status: '200' });
+				} else {
+					// Get time Left
+					let getTimeQuery = "SELECT TIMESTAMPDIFF(MINUTE,NOW(), DATE_ADD(dtin, INTERVAL 1 HOUR)) as timeLeft FROM tab_encerrain WHERE sessionid = ?;";
+					let getTimeParams = [outInEncerraList[0].sessionid];
+					let getTimeList = await runDynamicQuery(getTimeQuery, getTimeParams);
+					socket.emit('bi-atendemail', { status: getTimeList[0].timeLeft });
+				}
+			} else {
+				socket.emit('bi-atendemail', { status: '429' });
+			}
 		} else {
 			socket.emit('bi-atendemail', { status: '400' });
 		}
@@ -1201,8 +1220,8 @@ io.on('connection', function (socket) {
 	});
 
 	// AVATAR EVENT
-	socket.on('upd_training', async function (payload) {
-		log("> Update training message");
+	socket.on('upd_avatar', async function (payload) {
+		log("> Update user avatar");
 		let updAvatarQuery = 'UPDATE tab_usuarios SET avatar=? where id=?';
 		let updAvatarParams = [payload.avatar, payload.fkid];
 		let updAvatar = await runDynamicQuery(updAvatarQuery, updAvatarParams);
@@ -1210,7 +1229,7 @@ io.on('connection', function (socket) {
 
 	// AVATAR EVENT
 	socket.on('upd_theme', async function (payload) {
-		log("> Update training message");
+		log("> Update user theme");
 		let updTemaQuery = 'UPDATE tab_usuarios SET tema=? where id=?';
 		let updTemaParams = [payload.tema, payload.fkid];
 		let updTema = await runDynamicQuery(updTemaQuery, updTemaParams);

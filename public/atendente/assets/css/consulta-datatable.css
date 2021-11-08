@@ -10,6 +10,9 @@
  *   DataTables 1.11.3, DateTime 1.1.1, FixedHeader 3.2.0, Responsive 2.2.9, SearchPanes 1.4.0
  */
 
+ .dataTables_scrollHeadInner{  width:100% !important; }
+ .dataTables_scrollHeadInner table{  width:100% !important; }
+
  td.dt-control {
     background: url("https://www.datatables.net/examples/resources/details_open.png") no-repeat center center;
     cursor: pointer;

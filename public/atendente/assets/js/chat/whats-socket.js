@@ -112,7 +112,7 @@ socket.on('bi-questions', async function (payload) {
         questionsDefault.append(questionsComponent);
         // Append question on Edit question Modal
         if($('#editAnswerModal:visible').length == 0){
-            $('#' + questionId).val(questionMessage);
+            // $('#' + questionId).val(questionMessage);
         }
     }
 });
@@ -221,7 +221,7 @@ socket.on('bi-transferok', async function (payload) {
 socket.on('receive_chat', async function (payload) {
     console.log('> Mensagem recebida');
     if (agentFkid == payload.fkto) {
-        let audio = new Audio('assets/aud/tethys.mp3');
+        let audio = new Audio('assets/audio/tethys.mp3');
         let userMobile = payload.contact_uid;
         let messageType = payload.message_type;
         let messageText = payload.body_text;
@@ -292,7 +292,6 @@ socket.on('bi-mailativo', function (payload) {
             let row = [data[i].nome, data[i].banco, data[i].cpf, data[i].mobile, callBtn]
             dataSet.push(row);
         }
-        //console.log(dataSet);
         $('#table_id').dataTable({
             "destroy": true,
             "autoWidth": true,
@@ -343,9 +342,17 @@ socket.on('bi-mailativo', function (payload) {
 socket.on("bi-atendemail", function (payload) {
     if (payload.status == '200') {
         socket.emit('bi-atendein', { fkid: agentFkid });
-    } else {
+    } else if (payload.status == '429') {
+        let modalTitle = "Aviso";
+        let modalDesc = "Você já tem 5 chamadas em atendimento. Encerre uma das interações ativas para poder chamar um novo contato!";
+        callWarningModal(modalTitle, modalDesc)
+    } else if (payload.status == '400') {
         let modalTitle = "Aviso";
         let modalDesc = "Este numero já se encontra em atendimento!";
+        callWarningModal(modalTitle, modalDesc)
+    } else {
+        let modalTitle = "Aviso";
+        let modalDesc = "Você atingiu o limite de contatos ativos por hora, aguarde " + payload.status + " minuto(s) para poder realizar um novo contato ativo.";
         callWarningModal(modalTitle, modalDesc)
     }
 });

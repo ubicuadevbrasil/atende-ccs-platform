@@ -385,52 +385,6 @@ function selectTheme(theme, cancel = false) {
     }
 }
 
-// Gravador de Audio
-function audioRecorder() {
-    if (currentUserMobile) {
-        $(".chat-body-input-box").css("grid-template-columns", "8% 69% 18% 8%")
-        $(".audio-modal").css("display", "flex")
-        $("#buttonSendAudio").css("display", "none")
-        startTimer()
-
-        navigator
-            .mediaDevices
-            .getUserMedia({ audio: true })
-            .then(stream => {
-                mediaRecorder = new MediaRecorder(stream)
-                mediaRecorder.ondataavailable = data => {
-                    chunks.push(data.data)
-                    // createDownloadLink(data.data)
-                }
-                mediaRecorder.onstart = () => {
-                    chunks = []
-                }
-                mediaRecorder.onstop = () => {
-                    const blob = new Blob(chunks, { type: 'audio/ogg; code=opus' })
-                    // const blob = new Blob(chunks, {type: 'audio/mpeg-3; code=opus'})
-                    const reader = new window.FileReader()
-                    let arquivo = new File([blob], "audio.mp3", { type: "audio/ogg" })
-                    reader.readAsDataURL(blob)
-                    reader.onloadend = async () => {
-                        const audio = document.createElement('audio')
-                        uploadAudioFile(arquivo, 'audio')
-                        audio.src = reader.result
-                        audio.controls = true
-                        audio.nodeType = 'audio/mpeg3'
-                        // await uploadFile(reader.result, '    audio')
-                    }
-                }
-                mediaRecorder.start()
-            }, err => {
-                console.log(err)
-            })
-    } else {
-        let modalTitle = "Aviso";
-        let modalDesc = "Nenhum Atendimento Iniciado!";
-        callWarningModal(modalTitle, modalDesc)
-    }
-}
-
 // Upload audio
 function uploadAudioFile(file) {
     return new Promise(function (resolve, reject) {
@@ -451,8 +405,7 @@ function uploadAudioFile(file) {
                     mobile: currentUserMobile,
                     type: 'audio',
                     hashfile: fileHash,
-                    descfile: file.name,
-                    myMedia: loadBase64(fileHash)
+                    descfile: file.name
                 }
                 // Emit socket event to send media message
                 socket.emit('send_media', fileJson);

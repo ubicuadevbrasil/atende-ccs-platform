@@ -11,48 +11,96 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="./assets/css/consulta-datatable.css">
-    <link rel="stylesheet" href="./assets/css/consulta-atendimento.css">
     <link rel="stylesheet" href="./assets/css/whats-consulta-atendimento.css">
+    <link rel="stylesheet" href="../atendente/assets/css/whats-modal.css">
+    <link rel="stylesheet" href="./assets/css/consulta-atendimento.css">
 
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="https://kit.fontawesome.com/5ae1266f50.js" crossorigin="anonymous"></script>
 
     <title>Document</title>
 </head>
 
 <body>
+    <!-- Painel Principal -->
     <div class="panel-body">
-        <!-- <div id="sidebar" class="sidebar">
+
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar">
             <span class="expand-sidebar-icon" id="hamburgerIcon">
-                <i class="fas fa-bars"></i>
+                <div id="nav-icon4">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </span>
+
             <div class="hide-container" style="display: none;">
                 <div class="user-icon-container">
                     <span class="user-icon">
-                        <img src="../atendente/assets/images/avatar 01.png" alt="user-icon">
+                        <img id="user-profile-pic" style="width: 100px;" src="../atendente/assets/images/AVT-1.png"
+                            alt="user-icon">
                     </span>
-                    <button id="engrenagemIcon" class="engrenagem-icon">
+                    <span class="engrenagem-icon">
                         <img src="../atendente/assets/images/engrenagem.png" alt="engrenagem">
+                    </span>
+                </div>
+
+                <div class="change-profile-modal">
+                    <button class="user-pic-button">
+                        <img id="AVT-1" class="avatar-pic" src="../atendente/assets/images/AVT-1.png" alt="user-icon">
+                    </button>
+                    <button class="user-pic-button">
+                        <img id="AVT-2" class="avatar-pic" src="../atendente/assets/images/AVT-2.png" alt="user-icon">
+                    </button>
+                    <button class="user-pic-button">
+                        <img id="AVT-3" class="avatar-pic" src="../atendente/assets/images/AVT-3.png" alt="user-icon">
+                    </button>
+                    <button class="user-pic-button">
+                        <img id="AVT-4" class="avatar-pic" src="../atendente/assets/images/AVT-4.png" alt="user-icon">
+                    </button>
+                    <button class="user-pic-button">
+                        <img id="AVT-5" class="avatar-pic" src="../atendente/assets/images/AVT-5.png" alt="user-icon">
+                    </button>
+                    <button class="user-pic-button">
+                        <img id="AVT-6" class="avatar-pic" src="../atendente/assets/images/AVT-6.png" alt="user-icon">
+                    </button>
+                    <button class="user-pic-button">
+                        <img id="AVT-7" class="avatar-pic" src="../atendente/assets/images/AVT-7.png" alt="user-icon">
+                    </button>
+                    <button class="user-pic-button">
+                        <img id="AVT-8" class="avatar-pic" src="../atendente/assets/images/AVT-8.png" alt="user-icon">
+                    </button>
+                    <button class="user-pic-button">
+                        <img id="AVT-9" class="avatar-pic" src="../atendente/assets/images/AVT-9.png" alt="user-icon">
                     </button>
                 </div>
-                <div id="alterProfileImg" class="d-none">
-                </div>
+
                 <div class="user-name-container">
                     <span style="font-size: 13px;">Atendente:</span>
-                    <span id="user-name" style="font-size: 22px;">Usuário XI</span>
+                    <span id="user-name" style="font-size: 22px;"></span>
                 </div>
-                <p id="operacao" class="operacao" style="font-size: 18px;">Operação Ativa</p>
             </div>
             <div class="side-bar-buttons">
-                <button id="editor-button" class="side-bar-button">
-                    <i class="fas fa-pencil-alt"></i>
-                    <span class="d-none editor-label" name="editor-label">Editor de respostas</span>
-                </button>
-                <button id="logout-button" class="side-bar-button">
+                <div class="top-buttons">
+                    <button id="buttonResponseEdit" class="side-bar-button">
+                        <i class="fas fa-pencil-alt"></i>
+                        <span class="d-none editor-label" name="editor-label">Editor de respostas</span>
+                    </button>
+
+                    <button id="buttonThemeEdit" class="side-bar-button">
+                        <i class="fas fa-palette"></i>
+                        <span class="d-none editor-label" name="editor-label">Editar Tema</span>
+                    </button>
+                </div>
+
+                <button id="buttonLogout" class="side-bar-button">
                     <i class="fas fa-power-off"></i>
                     <span class="d-none editor-label" name="editor-label">Log out</span>
                 </button>
             </div>
-        </div> -->
+        </div>
+        <!-- Sidebar End -->
         <main class="mainContent">
             <div class="returnTab">
                 <div class="tabIcons">
@@ -79,17 +127,192 @@
         </main>
     </div>
 
-    <script src="./assets/js/jquery-3.6.0.js"></script>
+    <!-- Modal editor de respostas -->
+    <div id="editAnswerModal" class="modal">
+        <div class="modal-content editor-answer">
+            <div class="modal-header modal-cadastro-header" style="background-color: var(--color-primary);">
+                <i class="fas fa-edit"></i>
+                <span class="modal-header-label" style="margin-left: 1rem;">Editor de respostas programadas</span>
+                <span class="close-icon">&times;</span>
+            </div>
+            <div class="modal-body">
+
+                <p>Escreva nos campos de 1 a 5 mensagens pré-programadas para envio para o cliente. Limite 1024
+                    caracteres</p>
+
+                <div class="modal-fields">
+                    <div class="field" style="align-items: flex-start;">
+                        <label for="field1">Resposta 1</label>
+                        <div class="input-row">
+                            <input type="text" id="questioInput1" placeholder="Digite aqui uma frase..."
+                                class="modal-input2">
+                        </div>
+                    </div>
+                    <div class="field" style="align-items: flex-start;">
+                        <label for="field2">Resposta 2</label>
+                        <div class="input-row">
+                            <input type="text" id="questioInput2" placeholder="Digite aqui uma frase..."
+                                class="modal-input2">
+                        </div>
+                    </div>
+                    <div class="field" style="align-items: flex-start;">
+                        <label for="field3">Resposta 3</label>
+                        <div class="input-row">
+                            <input type="text" id="questioInput3" placeholder="Digite aqui uma frase..."
+                                class="modal-input2">
+                        </div>
+                    </div>
+                    <div class="field" style="align-items: flex-start;">
+                        <label for="field4">Resposta 4</label>
+                        <div class="input-row">
+                            <input type="text" id="questioInput4" placeholder="Digite aqui uma frase..."
+                                class="modal-input2">
+                        </div>
+                    </div>
+                    <div class="field" style="align-items: flex-start;">
+                        <label for="field5">Resposta 5</label>
+                        <div class="input-row">
+                            <input type="text" id="questioInput5" placeholder="Digite aqui uma frase..."
+                                class="modal-input2">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-button close cancel-button">Cancelar</button>
+                    <button id="editQuestionsButton" class="modal-button close"
+                        style="background-color: #25D366;">Gravar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal editor de respostas End -->
+
+    <!-- Modal editor de Temas -->
+    <div id="editThemeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header modal-cadastro-header" style="background-color: var(--color-primary);">
+                <i class="fas fa-edit"></i>
+                <span class="modal-header-label" style="margin-left: 1rem;">Selecione o tema</span>
+                <span class="close-icon" id="buttonThemeClose">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="theme-buttons">
+
+                    <button class="theme-button" onclick="selectTheme('THM-1')">
+                        <div class="theme-button-color-array theme-cornor-left" style="background-color: #4F345A;">
+                        </div>
+                        <div class="theme-button-color-array" style="background-color: #5D4E6D;"></div>
+                        <div class="theme-button-color-array" style="background-color: #8FA998;"></div>
+                        <div class="theme-button-color-array" style="background-color: #9CBFA7;"></div>
+                        <div class="theme-button-color-array theme-cornor-right" style="background-color: #C9F299;">
+                        </div>
+                    </button>
+
+                    <button class="theme-button" onclick="selectTheme('THM-2')">
+                        <div class="theme-button-color-array theme-cornor-left" style="background-color: #423E28;">
+                        </div>
+                        <div class="theme-button-color-array" style="background-color: #50723C;"></div>
+                        <div class="theme-button-color-array" style="background-color: #63B995;"></div>
+                        <div class="theme-button-color-array" style="background-color: #86DEB7;"></div>
+                        <div class="theme-button-color-array theme-cornor-right" style="background-color: #ADEEE3;">
+                        </div>
+                    </button>
+
+                    <button class="theme-button" onclick="selectTheme('THM-3')">
+                        <div class="theme-button-color-array theme-cornor-left" style="background-color: #432371;">
+                        </div>
+                        <div class="theme-button-color-array" style="background-color: #714674;"></div>
+                        <div class="theme-button-color-array" style="background-color: #9F6976;"></div>
+                        <div class="theme-button-color-array" style="background-color: #CC8B79;"></div>
+                        <div class="theme-button-color-array theme-cornor-right" style="background-color: #FAAE7B;">
+                        </div>
+                    </button>
+
+                    <button class="theme-button" onclick="selectTheme('THM-4')">
+                        <div class="theme-button-color-array theme-cornor-left" style="background-color: #0D41E1;">
+                        </div>
+                        <div class="theme-button-color-array" style="background-color: #0C63E7;"></div>
+                        <div class="theme-button-color-array" style="background-color: #0A85ED;"></div>
+                        <div class="theme-button-color-array" style="background-color: #09A6F3;"></div>
+                        <div class="theme-button-color-array theme-cornor-right" style="background-color: #07C8F9;">
+                        </div>
+                    </button>
+
+                    <button class="theme-button" onclick="selectTheme('THM-5')">
+                        <div class="theme-button-color-array theme-cornor-left" style="background-color: #E85C90;">
+                        </div>
+                        <div class="theme-button-color-array" style="background-color: #C481A7;"></div>
+                        <div class="theme-button-color-array" style="background-color: #A0A6BE;"></div>
+                        <div class="theme-button-color-array" style="background-color: #7CCAD5;"></div>
+                        <div class="theme-button-color-array theme-cornor-right" style="background-color: #58EFEC;">
+                        </div>
+                    </button>
+                    <button class="theme-button" onclick="selectTheme('THM-6')">
+                        <div class="theme-button-color-array theme-cornor-left" style="background-color: #0A4C47;">
+                        </div>
+                        <div class="theme-button-color-array" style="background-color: #0E6058;"></div>
+                        <div class="theme-button-color-array" style="background-color: #117A6D;"></div>
+                        <div class="theme-button-color-array" style="background-color: #1C9984;"></div>
+                        <div class="theme-button-color-array theme-cornor-right" style="background-color: #518f84;">
+                        </div>
+                    </button>
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-button close cancel-button" id="buttonThemeCancel">Cancelar</button>
+                    <button id="applyThemeButton" class="modal-button close"
+                        style="background-color: var(--color-primary);">Aplicar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal editor de respostas End -->
+    <!-- Modal Histórico -->
+    <div id="historicoModal" class="modal modal-history">
+        <div class="modal-content history-modal-content">
+            <div class="modal-header padding-header" style="background-color: var(--color-primary);">
+                <i class="fas fa-history"></i>
+                <span class="modal-header-label">Historico do Usuario</span>
+                <span class="close-icon">&times;</span>
+            </div>
+            <div id="chatHistory" class="modal-body modal-history-background">
+            </div>
+        </div>
+    </div>
+    <!-- Modal Histórico End-->
+    <!-- Modal Aviso Generico -->
+    <div id="warningModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header warning-header" style="background-color: #E2BD23;">
+                <i class="fas fa-exclamation"></i>
+            </div>
+            <div class="modal-body">
+                <span id="warningModalTitle"></span>
+                <span id="warningModalDesc"></span>
+                <button class="modal-button close" style="background-color: #E2BD23;">OK</button>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Aviso Generico End -->
+    <!-- Jquery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script src="./assets/js/dependencies/jquery-3.6.0.js"></script>
+    <!-- Jquery End -->
+
+    <script src="../atendente/assets/js/dependencies/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="https://kit.fontawesome.com/5127f4cea9.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
-
-    <script src="./assets/js/consulta-atendimento.js"></script>
-    <script src="./assets/js/datatable.js"></script>
-    <script src="./assets/js/datatables-main.js"></script>
-    <script src="./assets/js/whats-consulta-atendimentos.js"></script>
+    
+    <script src="./assets/js/consulta-atendimento/consulta-atendimento.js"></script>
+    <script src="./assets/js/consulta-atendimento/datatable.js"></script>
+    <script src="./assets/js/dependencies/datatables-main.js"></script>
+    <script src="./assets/js/chat/sidebar.js"></script>
+    <script src="../atendente/assets/js/chat/whats-components.js"></script>
+    <script src="../atendente/assets/js/chat/whats-modal.js"></script>
+    <script src="../atendente/assets/js/chat/inputEmoji.js"></script>
+    <script src="../atendente/assets/js/chat/whats-elements.js"></script>
+    <script src="../atendente/assets/js/chat/whats-tools.js"></script>
 </body>
 
 </html>

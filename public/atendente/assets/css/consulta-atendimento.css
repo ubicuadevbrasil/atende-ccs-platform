@@ -16,6 +16,7 @@ body {
     align-items: center;
     width: 100vw;
     height: 100vh;
+    overflow: auto;
 }
 
 .returnTab {
@@ -182,7 +183,7 @@ body {
 }
 
 .dataTable {
-    /* padding: 0px 20px 20px 20px; */
+    padding: 0px 20px 20px 20px;
 
 }
 .tableStyle thead th {
@@ -220,3 +221,10 @@ body {
     cursor: pointer;
 }
 
+.history-modal-content{
+    width: 50% !important;
+}
+
+.modal-history-background{
+    height: 50vh !important;
+}
