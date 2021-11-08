@@ -1,9 +1,9 @@
 :root{
-    --color-primary: #0E6058;
-    --color-secondary: #1C9984;
+    --color-primary: #1D2A4C;
+    --color-secondary: #263860;
     --color-text-primary: #fff;
     --color-text-secondary: #fff;
-    --color-hover-secondary: #036A56;
+    --color-hover-secondary: #334E7F;
     --color-white: #fff;
     --color-black: #000;
 }
@@ -764,7 +764,7 @@ textarea:focus, input:focus {
 }
 
 .side-bar-button:hover {
-    background-color: #042626;
+    background-color: #334E7F;
     cursor: pointer;
 }
 

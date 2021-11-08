@@ -112,7 +112,7 @@ socket.on('bi-questions', async function (payload) {
         questionsDefault.append(questionsComponent);
         // Append question on Edit question Modal
         if($('#editAnswerModal:visible').length == 0){
-            // $('#' + questionId).val(questionMessage);
+            // $('#' + questionId).attr("placeholder", questionMessage);
         }
     }
 });

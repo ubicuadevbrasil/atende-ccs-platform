@@ -1,3 +1,13 @@
+:root{
+    --color-primary: #1D2A4C;
+    --color-secondary: #263860;
+    --color-text-primary: #fff;
+    --color-text-secondary: #fff;
+    --color-hover-secondary: #334E7F;
+    --color-white: #fff;
+    --color-black: #000;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -111,7 +121,7 @@ body {
     align-items: center;
     height: 25px;
     width: 25px;
-    background-color: #1BC1A5;
+    background-color: var(--color-secondary);
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
 }
@@ -153,7 +163,7 @@ body {
 }
 
 .searchInput {
-    background-color: #128C7E;
+    background-color: var(--color-secondary);
     cursor: pointer;
 }
 

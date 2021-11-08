@@ -40,7 +40,7 @@ $("#sendMessageButton").on("click", async function () {
             socket.emit('send_chat', {
                 mobile: currentUserMobile,
                 type: "chat",
-                message: "" + msgtext + ""
+                message: msgtext
             });
             // Cria componente de MSG no Chat
             let messageTime = await getTime();
@@ -192,7 +192,7 @@ $("#buttonResponseEdit").on('click', function () {
 // Acessar página de consulta
 $("#buttonConsult").on('click', function () {
     console.log('> Consulta Atendimentos');
-    window.open("https://ccs.atendimento-kainos.com.br/atendente/consulta.html");
+    window.open("https://ccs.atendimento-fortalcred.com.br/atendente/consulta.html");
 });
 
 // Historico de Conversa com o Usuario
