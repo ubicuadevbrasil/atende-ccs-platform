@@ -9,14 +9,14 @@ $('.filters').append(`
 <div class="cardFilterImg">
     <img class="cpfIcon" src="./assets/images/cpfbranco.png">
 </div>
-<input id="cpfSearch" class="cpfSearch" placeholder="CPF/CNPJ" type="text" onkeypress="$(this).mask('000.000.000-00/9999-99')">
+<input id="cpfSearch" class="cpfSearch" placeholder="CPF/CNPJ" type="text">
 </div>
 
 <div class="cardFilter">
 <div class="cardFilterImg">
     <img class="phoneIcon" src="./assets/images/telefone.png">
 </div>
-<input id="phoneSearch" class="phoneSearch" placeholder="Celular" type="text" onkeypress="$(this).mask('+00 (00) 0000-00009')">
+<input id="phoneSearch" class="phoneSearch" placeholder="Celular" type="text">
 </div>
 
 <div class="cardFilter">
@@ -30,7 +30,7 @@ $('.filters').append(`
 <div class="cardFilterImg">
     <img class="barsIcon" style="height: 20px; width: 20px;" src="./assets/images/menuHamburguer.png">
 </div>
-<input id="protocolSearch" class="protocolSearch" placeholder="N° Protocolo" type="text" maxlength="4">
+<input id="protocolSearch" class="protocolSearch" placeholder="N° Protocolo" type="text">
 </div>
 
 <div style="margin-left: 35px" class="cardFilter">
@@ -40,6 +40,10 @@ $('.filters').append(`
 <input id="btnBusca" placeholder="Busca" class="searchInput" type="text" readonly="true">
 </div>
 `)
+
+// Masks
+$('#cpfSearch').mask('999.999.999-99');
+$('#phoneSearch').mask('99 99999-9999');
 
 //datatable
 $('.dataTable').append(`
@@ -55,7 +59,7 @@ $('.dataTable').append(`
 
 // retornar para tela anterior
 $("#buttonReturn").on('click', function () {
-    window.location.replace("https://ccs.atendimento-fortalcred.com.br/atendente/chat.html");
+    window.location.replace("https://ccs-pi.atendimento-fortalcred.com.br/atendente/chat.html");
 })
 
 // Select Theme

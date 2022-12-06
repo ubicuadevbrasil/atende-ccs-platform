@@ -17,6 +17,10 @@ $("#filaButton").on("click", function () {
     let filaIn = $('#fila').text();
     // Busca quantidade na fila (se maior que 0, chama cliente)
     if (filaIn > 0) {
+        // Enable Loading Button
+        $("#filaButton").addClass("filaLoader");
+        $("#filaButton").children().hide();
+        $("#filaLoader").show();
         // Evento para chamar cliente
         socket.emit('bi-answer_new_queue', {
             fkid: agentFkid,
@@ -54,9 +58,12 @@ $("#sendMessageButton").on("click", async function () {
             $('#messageInputBox').val(null);
             //
             let parentid = $(`#list${currentUserMobile}`).parent()[0].id;
-            if( (parentid == 'userRecList') || (parentid == 'userAtvList')){
+            if ((parentid == 'userRecList') || (parentid == 'userAtvList')) {
                 $(`#list${currentUserMobile}`).appendTo("#userAtendeList");
             }
+            // Re Order Div List
+            let parentDiv = $(`#list${currentUserMobile}`).parent()[0].id
+            $(`#list${currentUserMobile}`).prependTo(`#${parentDiv}`)
         } else {
             let modalTitle = "Aviso";
             let modalDesc = "Campo de Texto Vazio!";
@@ -192,13 +199,17 @@ $("#buttonResponseEdit").on('click', function () {
 // Acessar página de consulta
 $("#buttonConsult").on('click', function () {
     console.log('> Consulta Atendimentos');
-    window.open("https://ccs.atendimento-fortalcred.com.br/atendente/consulta.html");
+    window.open("https://ccs-pi.atendimento-fortalcred.com.br/atendente/consulta.html","_self");
 });
 
 // Historico de Conversa com o Usuario
 $('#historyButton').on('click', function () {
     console.log('> Consulta historico do atendente');
     if (currentUserMobile) {
+        // Enable Loading Button
+        $("#historyButton").addClass("filaLoader");
+        $("#historyButton").children().hide();
+        $("#historyLoader").show();
         // Limpa janela de Chat atual
         $("#chatHistory").empty();
         // Evento para buscar historico do Cliente
@@ -224,34 +235,45 @@ $("#singupButton").on('click', function () {
             mobile: currentUserMobile
         })
         $("#userInfoName" + currentUserMobile).text(userName);
+        $("#cpf" + currentUserMobile).text(userCPF);
         $("#userNome").val('');
         $("#userCPF").val('');
     }
 });
 
+// Input de Mobile
+$("#inputClient").on('click', function () {
+    console.log('> Inicia input de Cliente');
+    $("#userInputModal").fadeIn("fast")
+});
+
 // Edita respostas programadas
 $("#editQuestionsButton").on('click', function () {
     let payload = {
-        fkid : agentFkid,
-        questions : []
+        fkid: agentFkid,
+        questions: []
     }
-    for(i=1; i < 6; i++){
+    for (i = 1; i < 6; i++) {
         let question = $("#questioInput" + i).val();
         const rex = /[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug;
         question = question.replace(rex, match => `&#x${match.codePointAt(0).toString(16)}`);
-        if(question != ''){
+        if (question != '') {
             payload.questions.push({
                 'id': 'questioInput' + i + '_' + agentFkid,
-                'message' : question
+                'message': question
             })
         }
     }
     console.log(payload);
-    socket.emit('ins-questions',payload)
+    socket.emit('ins-questions', payload)
 })
 
 // Busca Mailing Ativo
-$("#callMailingButton").on('click', function (){
+$("#callMailingButton").on('click', function () {
+    // Enable Loading Button
+    $("#callMailingButton").addClass("filaLoader");
+    $("#callMailingButton").children().hide();
+    $("#mailingLoader").show();
     socket.emit('bi-mailativo');
 });
 
@@ -280,7 +302,7 @@ $('#docInput').change(function () {
 });
 
 // Sendo Audio
-$("#buttonSendAudio").click(()=>{
+$("#buttonSendAudio").click(() => {
     console.log('> Send audio Button');
     // audioRecorder();
 })
@@ -338,7 +360,47 @@ $(".user-pic-button, .avatar-pic").click((ev) => {
 
     let img = $(ev.target).closest(".user-pic-button").find(".avatar-pic").prop("src")
     let imgId = $(ev.target).closest(".user-pic-button").find(".avatar-pic").prop("id")
-    sessionStorage.setItem('avatar',imgId)
-    socket.emit('upd_avatar', {avatar : imgId, fkid: agentFkid})
+    sessionStorage.setItem('avatar', imgId)
+    socket.emit('upd_avatar', { avatar: imgId, fkid: agentFkid })
     $("#user-profile-pic").prop("src", img)
+})
+
+// Call Input Mobile
+$("#callInputMobile").on('click', () => {
+    let inputMobile = $("#userInputMobile").val();
+    let regx = new RegExp("[^0-9]", "g");
+    let mobileParam = inputMobile.replace(regx, "")
+    if(mobileParam.length == 13){
+        $("#userInputMobile").val(null);
+        socket.emit('bi-callinput', {
+            fkid: agentFkid,
+            fkname: agentFkname,
+            mobile: mobileParam
+        });
+    } else {
+        let modalTitle = "Aviso";
+        let modalDesc = "Digite corretamente o numero do Cliente!";
+        callWarningModal(modalTitle, modalDesc)
+    }
+})
+
+//
+$("#searchClients").on('keyup', () => {
+    let searchText = $("#searchClients").val();
+    let atendeArr = $("#userAtendeList").children();
+    for(i=0; i < atendeArr.length; i++){
+        //let clientName = atendeArr[i].children[1].children[0].textContent;
+        let clientName = atendeArr[i].outerHTML;
+        // Set to Lower Case
+        clientName = clientName.toLocaleLowerCase();
+        searchText = searchText.toLocaleLowerCase();
+        if(clientName.indexOf(searchText) > -1){
+            atendeArr[i].style = 'display: grid'
+        } else {
+            atendeArr[i].style = 'display: none'
+        }
+        if(searchText == '' || searchText == null){
+            atendeArr[i].style = 'display: grid'
+        }
+    }
 })

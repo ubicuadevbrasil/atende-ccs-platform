@@ -109,7 +109,7 @@ function getperfil(id) {
     return perfil;
 }
 
-function tabsup(id, numb, cpf, name, hour, date, state, atendir, filename, banco, nome, protocolo) {
+function tabsup(id, numb, cpf, name, hour, date, state, atendir, filename, banco, nome, protocolo, situation) {
 
     if (numb == null || numb == "" || numb == "null") {
         numb = '-';
@@ -144,6 +144,9 @@ function tabsup(id, numb, cpf, name, hour, date, state, atendir, filename, banco
     if (protocolo == null || protocolo == "" || protocolo == "null") {
         protocolo = '-';
     }
+    if (situation == null || situation == "" || situation == "null") {
+        situation = '-';
+    }
 
     var tab = "<tr id='count" + id + "' class='gradeA odd' role='row'>";
     tab += "<td class='sorting_1'>" + nome + "</td>";
@@ -157,6 +160,7 @@ function tabsup(id, numb, cpf, name, hour, date, state, atendir, filename, banco
     tab += "<td>" + state + "</td>";
     tab += "<td>" + atendir + "</td>";
     tab += "<td>" + filename + "</td>";
+    tab += "<td>" + situation + "</td>";
     tab += "<td id='" + id + "' class='text-center' onclick='openhist(this.id)'><i class='fa fa-comments' style='cursor: pointer;'></i></td>";
     tab += "</tr>";
 

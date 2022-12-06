@@ -14,7 +14,7 @@ const schedule = require('node-schedule');
 const CronJob = require('cron').CronJob;
 const foreachasync = require('foreachasync').forEachAsync;
 const helmet = require('helmet');
-const port = process.env.PORT || 443;
+const port = process.env.PORT || 80;
 
 // Constantes
 const cdn = process.env.CCS_CDN_FILE;
@@ -28,11 +28,50 @@ const dbcc = require('./database/dbcc');
 const exportReqs = require('./routes/reports')
 const ubcApi = require('./routes/api')
 
+// CPU Usage
+var os = require("os");
+
+//Create function to get CPU information
+function cpuAverage() {
+
+	//Initialise sum of idle and time of cores and fetch CPU info
+	var totalIdle = 0, totalTick = 0;
+	var cpus = os.cpus();
+
+	//Loop through CPU cores
+	for (var i = 0, len = cpus.length; i < len; i++) {
+
+		//Select CPU core
+		var cpu = cpus[i];
+
+		//Total up the time in the cores tick
+		for (type in cpu.times) {
+			totalTick += cpu.times[type];
+		}
+
+		//Total up the idle time of the core
+		totalIdle += cpu.times.idle;
+	}
+
+	//Return the average Idle and Tick times
+	return { idle: totalIdle / cpus.length, total: totalTick / cpus.length };
+}
+
+//Grab first CPU Measure
+var startMeasure = cpuAverage();
+
 // Config App Express
-const options = { key: fs.readFileSync(process.env.CCS_OPTIONSKEY), cert: fs.readFileSync(process.env.CCS_OPTIONSCERT) };
+//const options = { key: fs.readFileSync(process.env.CCS_OPTIONSKEY), cert: fs.readFileSync(process.env.CCS_OPTIONSCERT) };
 const app = express();
-const server = require('https').createServer(options, app);
+const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
+
+// Logging
+var logging = true
+if (!logging) {
+	console.log = function () { };
+	log = function (msg) { }
+}
 
 // Configure App Server
 io.origins('*:*')
@@ -51,8 +90,22 @@ app.get('/', function (req, res) {
 
 // Schedules
 let socketParam;
-const job_message = new CronJob('*/5 * * * * *', function () {
+const job_message = new CronJob('*/10 * * * * *', function () {
 	sentinelNewmessages(socketParam)
+
+	//Grab second Measure
+	var endMeasure = cpuAverage();
+
+	//Calculate the difference in idle and total time between the measures
+	var idleDifference = endMeasure.idle - startMeasure.idle;
+	var totalDifference = endMeasure.total - startMeasure.total;
+
+	//Calculate the average percentage CPU usage
+	var percentageCPU = 100 - ~~(100 * idleDifference / totalDifference);
+
+	//Output result to console
+	console.log(percentageCPU + "% CPU Usage.");
+
 	setTimeout(5000);
 }, null, true, 'America/Los_Angeles');
 job_message.start();
@@ -65,7 +118,6 @@ io.on('connection', function (socket) {
 	socketParam = socket;
 
 	//	SEND INFO FUNCTIONS
-
 	socket.on('send_chat', async function (payload) {
 		log("> Nova Mensagem Enviada", payload);
 		let mobile = payload.mobile;
@@ -92,10 +144,10 @@ io.on('connection', function (socket) {
 			}
 			let extResponse = await sendExtensionMessage(messageJson);
 			// Record Message
-			if (extResponse === 'ok') {
+			if (extResponse === 200) {
 				// Encode Emoji
-    			const rex = /[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug;
-    			msgtext = msgtext.replace(rex, match => `&#x${match.codePointAt(0).toString(16)}`);
+				const rex = /[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug;
+				msgtext = msgtext.replace(rex, match => `&#x${match.codePointAt(0).toString(16)}`);
 				// Insert message log
 				let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(UUID(), ?, ?, ?, ?, ?, ?, ?, ?)";
 				let insertLogParams = [sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext];
@@ -107,7 +159,7 @@ io.on('connection', function (socket) {
 	socket.on('send_welcome', async function (payload) {
 		log("Nova Mensagem Enviada Welcome", payload);
 		let mobile = payload.mobile;
-		let msgtext = "Olá, vai tomar no cú!";
+		let msgtext = "";
 		// Extension Message Json
 		let messageJson = {
 			infra: _mobileUid,
@@ -162,7 +214,7 @@ io.on('connection', function (socket) {
 		// Envia msg para EXT
 		let extResponse = await sendExtensionMessage(messageJson);
 		// Record Message
-		if (extResponse === 'ok') {
+		if (extResponse === 200) {
 			// Select from atendein
 			let getAtendeBkpQuery = "SELECT * FROM tab_atendein WHERE mobile=? LIMIT 1";
 			let getAtendeBkpParams = [mobile];
@@ -372,13 +424,12 @@ io.on('connection', function (socket) {
 	socket.on('bi-atendein', async function (payload) {
 		log("> Buscando Atendimentos");
 		// Select from atendimento
-		let getFromAtendimentoQuery = "SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, A.origem, A.sessionBot, A.sessionBotCcs FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin";
+		let getFromAtendimentoQuery = "SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, A.cnpj, A.origem, A.sessionBot, A.sessionBotCcs, A.protocolo FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.fkto=? GROUP BY mobile ORDER BY A.dtin";
 		let getFromAtendimentoParams = [payload.fkid];
 		let getFromAtendimentoList = await runDynamicQuery(getFromAtendimentoQuery, getFromAtendimentoParams);
 		if (getFromAtendimentoList.length > 0) {
 			let contacts = JSON.stringify(getFromAtendimentoList);
 			let sessionlist = await generateSessionArr(getFromAtendimentoList);
-			console.log(sessionlist);
 			// Get History
 			let getFromHistoryQuery = "SELECT sessionid, dt, msgdir, msgtype, msgtext, msgurl, msgcaption, fromname FROM tab_logs WHERE sessionid IN (" + sessionlist + ") ORDER BY dt;";
 			let getFromHistoryParams = [];
@@ -392,7 +443,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-questions', async function (payload) {
-		log("> Buscando Respostas");
+		//log("> Buscando Respostas");
 		// Select from atendimento
 		let getFromQuestionsQuery = `SELECT * FROM tab_questions WHERE id LIKE "%${payload.fkid}%" ORDER BY dataCadastro ASC`;
 		let getFromQuestionsParams = [payload.fkid];
@@ -408,6 +459,7 @@ io.on('connection', function (socket) {
 		let normalQueueQuery = "SELECT mobile, dtin, account, photo, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name FROM tab_filain WHERE status=1 ORDER BY dtin LIMIT 1";
 		let normalQueueParams = [];
 		let normalQueueList = await runDynamicQuery(normalQueueQuery, normalQueueParams);
+		console.log(normalQueueList);
 		if (normalQueueList.length > 0) {
 			// Get Mail Info
 			let mailName, mailCpf, mailInfoCad;
@@ -428,6 +480,7 @@ io.on('connection', function (socket) {
 			let name = normalQueueList[0].name;
 			let mailInfo = mailInfoCad;
 			// Inserto into Databse
+			console.log(mobile, dtin, account, photo, fkto, fkname, atendir, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name, mailInfo);
 			let atendimentoRes = await insertAtendein(mobile, dtin, account, photo, fkto, fkname, atendir, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name, mailInfo);
 			socket.emit('bi-answer_new_queue', payload);
 		}
@@ -477,6 +530,9 @@ io.on('connection', function (socket) {
 		let atendirSelParams = [mobile];
 		let atendirSelList = await runDynamicQuery(atendirSelQuery, atendirSelParams);
 		payload.atendir = atendirSelList[0].atendir
+		payload.protocolo = atendirSelList[0].protocolo
+		payload.name = atendirSelList[0].name
+		payload.cpf = atendirSelList[0].cpf
 		// Verificar se  atendente está online e enviar a transferência de atendimento
 		let fkOnline = false;
 		for (var i in io.sockets.connected) {
@@ -523,7 +579,7 @@ io.on('connection', function (socket) {
 	socket.on('bi-transferok', async function (payload) {
 		log('> Transferencia finalizada');
 		// Buscar cliente em atendimento
-		let atendeinSelQuery = "SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, B.cpf, B.nome, A.origem FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.mobile=? GROUP BY mobile ORDER BY A.dtin";
+		let atendeinSelQuery = "SELECT A.sessionid, A.mobile, A.account, A.photo, A.name, A.atendir, A.cnpj, B.nome, A.origem FROM tab_atendein AS A LEFT JOIN tab_ativo AS B ON B.mobile = A.mobile WHERE A.mobile=? GROUP BY mobile ORDER BY A.dtin";
 		let atendeinSelParams = [payload.mobile];
 		let atendeinSelList = await runDynamicQuery(atendeinSelQuery, atendeinSelParams);
 		if (atendeinSelList.length > 0) {
@@ -580,7 +636,8 @@ io.on('connection', function (socket) {
 							status: element.status,
 							banco: element.banco,
 							nome: element.nome,
-							protocolo: element.protocolo
+							protocolo: element.protocolo,
+							situation: element.situation
 						};
 						reportdata.push(serialized);
 						if (lenchat == index) {
@@ -663,6 +720,7 @@ io.on('connection', function (socket) {
 			ws.getCell('K1').value = "Hr Atendimento";
 			ws.getCell('L1').value = "Dt Ecerramento";
 			ws.getCell('M1').value = "Hr Ecerramento";
+			ws.getCell('N1').value = "Status de Atendimento";
 			// Create excel rows
 			foreachasync(procedureList[1], function (element, index) {
 				ws.getCell('A' + line).value = element.protocolo;
@@ -678,6 +736,7 @@ io.on('connection', function (socket) {
 				ws.getCell('K' + line).value = element.hratende;
 				ws.getCell('L' + line).value = element.dtencerra;
 				ws.getCell('M' + line).value = element.hrencerra;
+				ws.getCell('N' + line).value = element.situation;
 				line = line + 1;
 			}).then(function () {
 				try {
@@ -778,15 +837,6 @@ io.on('connection', function (socket) {
 
 	// SENTINEL EVENTS
 
-	socket.on('sentinel_clients_alive', function () {
-		let payload = [];
-		for (var i in io.sockets.connected) {
-			payload.push({ fkname: io.sockets.connected[i].fkname, fkdt: io.sockets.connected[i].fkon, fkip: io.sockets.connected[i].fkip });
-			socket.broadcast.emit('sentinel_clients_alive');
-		}
-		socket.broadcast.emit('sentinel_clients_alive');
-	});
-
 	socket.on('sentinel_message_send', async function (payload) {
 		log('> Sentinel message');
 		// Fix Payload
@@ -836,13 +886,16 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('sentinel_clients_queue', async function (payload) {
+		//log("Queue")
 		// Get fila info
 		let vwFilaQuery = "SELECT * FROM vw_fila;";
 		let vwFilaParams = [];
 		let vwFilaList = await runDynamicQuery(vwFilaQuery, vwFilaParams);
-		socket.broadcast.emit('sentinel_clients_queue', vwFilaList);
+		socket.emit('sentinel_clients_queue', vwFilaList);
+
+		//log("Alive")
 		// Get agents params
-		let payload = [];
+		let alive = [];
 		for (var i in io.sockets.connected) {
 			let row = {
 				'socketid': i,
@@ -852,24 +905,46 @@ io.on('connection', function (socket) {
 				'fkip': io.sockets.connected[i].fkip,
 				'fkstatus': io.sockets.connected[i].fkstatus
 			}
-			payload.push(row);
+			alive.push(row);
 		}
-		socket.broadcast.emit('sentinel_clients_alive', JSON.stringify(payload));
+		socket.emit('sentinel_clients_alive', JSON.stringify(alive));
+
+		//log("Agentes")
 		// Get agents info
-		let vwAgentsQuery = "SELECT * FROM vw_fila;";
+		let vwAgentsQuery = "SELECT * FROM vw_agentes";
 		let vwAgentsParams = [];
 		let vwAgentsList = await runDynamicQuery(vwAgentsQuery, vwAgentsParams);
 		if (vwAgentsList.length > 0) {
-			socket.broadcast.emit('view_agents', JSON.stringify(vwAgentsList));
+			socket.emit('view_agents', JSON.stringify(vwAgentsList));
 		}
 	});
 
 	// HISTORY EVENTS
-
 	socket.on('bi-historyone', async function (payload) {
 		log("> Buscando historico de atendimento")
-		let contactsQuery = "SELECT sessionid, dtin, mobile, account, photo, sessionBot, sessionBotCcs FROM tab_encerrain WHERE sessionid=? ORDER BY dtin DESC LIMIT 1";
-		let contactsParams = [payload.sessionid];
+		let contactsQuery = `
+		(SELECT 
+			sessionid, dtin, mobile, account, photo, sessionBot, sessionBotCcs 
+			FROM tab_encerrain 
+			WHERE sessionid=?
+			ORDER BY dtin DESC
+			LIMIT 1)
+		UNION
+		(SELECT 
+			sessionBotCcs AS sessionid, dtin, mobile, account, photo, sessionBot, sessionBotCcs 
+			FROM tab_filain
+			WHERE sessionBotCcs=?
+			ORDER BY dtin DESC
+			LIMIT 1)	
+		UNION
+		(SELECT 
+			sessionid, dtin, mobile, account, photo, sessionBot, sessionBotCcs 
+			FROM tab_atendein
+			WHERE sessionid=?
+			ORDER BY dtin DESC
+			LIMIT 1)
+		`;
+		let contactsParams = [payload.sessionid,payload.sessionid,payload.sessionid];
 		let contactsList = await runDynamicQuery(contactsQuery, contactsParams);
 		if (contactsList.length > 0) {
 			let contacts = JSON.stringify(contactsList);
@@ -953,43 +1028,51 @@ io.on('connection', function (socket) {
 		let dtin = getTimestamp();
 		let account = null;
 		let photo = null;
+
 		// Search for atendein
 		let atendeinQuery = "SELECT * FROM tab_atendein WHERE mobile=? LIMIT 1";
 		let atendeinParams = [mobile];
 		let atendeinList = await runDynamicQuery(atendeinQuery, atendeinParams);
 		if (atendeinList.length == 0) {
-			// Find how many in Atendimento
-			let outInAtendeQuery = "SELECT * FROM tab_atendein WHERE fkto = ? AND atendir ='out';";
-			let outInAtendeParams = [fkto];
-			let outInAtendeList = await runDynamicQuery(outInAtendeQuery, outInAtendeParams);
-			if (outInAtendeList.length < 5) {
-				let outInEncerraQuery = "SELECT * FROM tab_encerrain WHERE fkto = ? AND atendir ='out' AND dten >= DATE_SUB(NOW(),INTERVAL 1 HOUR) ORDER BY dtin ASC;";
-				let outInEncerraParams = [fkto];
-				let outInEncerraList = await runDynamicQuery(outInEncerraQuery, outInEncerraParams);
-				let totalAtivos = outInAtendeList.length + outInEncerraList.length;
-				if (totalAtivos < 10) {
-					// Get Custom UUID
-					let sessionid = await getCustomUuid();
-					// Insert atendein
-					let insertAtdQuery = "INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, atendir) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-					let insertAtdParams = [sessionid, mobile, dtin, account, photo, fkto, fkname, atendir];
-					let insertAtdList = await runDynamicQuery(insertAtdQuery, insertAtdParams);
-					// Update Mailing
-					let updateAtdQuery = "UPDATE tab_ativo SET status=1 WHERE mobile = ?";
-					let updateAtdParams = [mobile];
-					let updateAtdList = await runDynamicQuery(updateAtdQuery, updateAtdParams);
-					// Socket Event Emmit
-					socket.emit('bi-atendemail', { status: '200' });
-				} else {
-					// Get time Left
-					let getTimeQuery = "SELECT TIMESTAMPDIFF(MINUTE,NOW(), DATE_ADD(dtin, INTERVAL 1 HOUR)) as timeLeft FROM tab_encerrain WHERE sessionid = ?;";
-					let getTimeParams = [outInEncerraList[0].sessionid];
-					let getTimeList = await runDynamicQuery(getTimeQuery, getTimeParams);
-					socket.emit('bi-atendemail', { status: getTimeList[0].timeLeft });
-				}
+			let followByAnother = await checkAtendemail(mobile, fkto)
+			if (followByAnother) {
+				socket.emit('bi-atendemail', { status: '69' });
 			} else {
-				socket.emit('bi-atendemail', { status: '429' });
+				// Find how many in Atendimento
+				let outInAtendeQuery = "SELECT * FROM tab_atendein WHERE fkto = ? AND atendir ='out';";
+				let outInAtendeParams = [fkto];
+				let outInAtendeList = await runDynamicQuery(outInAtendeQuery, outInAtendeParams);
+				if (outInAtendeList.length < 5) {
+					let outInEncerraQuery = "SELECT * FROM tab_encerrain WHERE fkto = ? AND atendir ='out' AND dten >= DATE_SUB(NOW(),INTERVAL 1 HOUR) ORDER BY dtin ASC;";
+					let outInEncerraParams = [fkto];
+					let outInEncerraList = await runDynamicQuery(outInEncerraQuery, outInEncerraParams);
+					let totalAtivos = outInAtendeList.length + outInEncerraList.length;
+					if (totalAtivos < 10) {
+						// Get Custom UUID
+						let sessionid = await getCustomUuid();
+						let protocol = await getProtocol();
+						// Insert atendein
+						let insertAtdQuery = "INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, atendir, protocolo) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+						let insertAtdParams = [sessionid, mobile, dtin, account, photo, fkto, fkname, atendir, protocol];
+						let insertAtdList = await runDynamicQuery(insertAtdQuery, insertAtdParams);
+						// Update Mailing
+						let updateAtdQuery = "UPDATE tab_ativo SET status=1 WHERE mobile = ?";
+						let updateAtdParams = [mobile];
+						let updateAtdList = await runDynamicQuery(updateAtdQuery, updateAtdParams);
+						// Socket Event Emmit
+						socket.emit('bi-atendemail', { status: '200' });
+					} else {
+						// Get time Left
+						let getTimeQuery = "SELECT TIMESTAMPDIFF(MINUTE,NOW(), DATE_ADD(dtin, INTERVAL 1 HOUR)) as timeLeft FROM tab_encerrain WHERE sessionid = ?;";
+						let getTimeParams = [outInEncerraList[0].sessionid];
+						let getTimeList = await runDynamicQuery(getTimeQuery, getTimeParams);
+						socket.emit('bi-atendemail', { status: getTimeList[0].timeLeft });
+					}
+				} else {
+					socket.emit('bi-atendemail', { status: '429' });
+				}
 			}
+
 		} else {
 			socket.emit('bi-atendemail', { status: '400' });
 		}
@@ -1029,20 +1112,29 @@ io.on('connection', function (socket) {
 		let mobile = payload.mobile;
 		let atendir = 'out';
 		let dtin = getTimestamp();
+
 		// Select from fila
 		let filaQuery = "SELECT * FROM tab_filain WHERE mobile=? LIMIT 1";
 		let filaParams = [mobile];
 		let filaList = await runDynamicQuery(filaQuery, filaParams);
 		if (filaList.length == 0) {
-			let atendeQuery = "SELECT * FROM tab_filain WHERE mobile=? LIMIT 1";
+			let atendeQuery = "SELECT * FROM tab_atendein WHERE mobile=? LIMIT 1";
 			let atendeParams = [mobile];
 			let atendeList = await runDynamicQuery(atendeQuery, atendeParams);
 			if (atendeList.length == 0) {
-				// Insert into atendein
-				let atendeQuery = "INSERT INTO tab_atendein (sessionid, mobile, dtin, fkto, fkname, atendir) VALUES(UUID(), ?, ?, ?, ?, ?)";
-				let atendeParams = [mobile, dtin, fkto, fkname, atendir];
-				let atendeList = await runDynamicQuery(atendeQuery, atendeParams);
-				socket.emit('bi-callinput', { status: '200' });
+				let followByAnother = await checkAtendemail(mobile, fkto)
+				if (followByAnother) {
+					socket.emit('bi-callinput', { status: '69' });
+				} else {
+					//
+					let protocol = await getProtocol();
+					// Insert into atendein
+					let atendeQuery = "INSERT INTO tab_atendein (sessionid, mobile, dtin, fkto, fkname, atendir, protocolo) VALUES(UUID(), ?, ?, ?, ?, ?, ?)";
+					let atendeParams = [mobile, dtin, fkto, fkname, atendir, protocol];
+					let atendeList = await runDynamicQuery(atendeQuery, atendeParams);
+					socket.emit('bi-callinput', { status: '200' });
+				}
+
 			} else {
 				socket.emit('bi-callinput', { status: '400' });
 			}
@@ -1156,11 +1248,11 @@ io.on('connection', function (socket) {
 
 	socket.on('get_cliInfo', async function (payload) {
 		log("> Get cliente info")
-		let getClientQuery = "SELECT NAME,cnpj FROM tab_atendein WHERE mobile = ?";
+		let getClientQuery = "SELECT name,cnpj FROM tab_atendein WHERE mobile = ?";
 		let getClientParams = [payload.mobile];
 		let getClient = await runDynamicQuery(getClientQuery, getClientParams);
 		if (getClient.length > 0) {
-			socket.emit('get_cliInfo', { nome: getClient[0].NAME, cpf: getClient[0].cnpj });
+			socket.emit('get_cliInfo', { nome: getClient[0].name, cpf: getClient[0].cnpj });
 		}
 	});
 
@@ -1237,37 +1329,6 @@ io.on('connection', function (socket) {
 		let updTemaParams = [payload.tema, payload.fkid];
 		let updTema = await runDynamicQuery(updTemaQuery, updTemaParams);
 	})
-	
-	// SCHEDULE CCS FILA
-	
-	const job = schedule.scheduleJob('*/5 * * * * *', async function () {
-		// Get fila info
-		let vwFilaQuery = "SELECT * FROM vw_fila;";
-		let vwFilaParams = [];
-		let vwFilaList = await runDynamicQuery(vwFilaQuery, vwFilaParams);
-		socket.broadcast.emit('sentinel_clients_queue', vwFilaList);
-		// Get agents params
-		let payload = [];
-		for (var i in io.sockets.connected) {
-			let row = {
-				'socketid': i,
-				'fkid': io.sockets.connected[i].fkid,
-				'fkname': io.sockets.connected[i].fkname,
-				'fkon': io.sockets.connected[i].fkon,
-				'fkip': io.sockets.connected[i].fkip,
-				'fkstatus': io.sockets.connected[i].fkstatus
-			}
-			payload.push(row);
-		}
-		socket.broadcast.emit('sentinel_clients_alive', JSON.stringify(payload));
-		// Get agents info
-		let vwAgentsQuery = "SELECT * FROM vw_fila;";
-		let vwAgentsParams = [];
-		let vwAgentsList = await runDynamicQuery(vwAgentsQuery, vwAgentsParams);
-		if (vwAgentsList.length > 0) {
-			socket.broadcast.emit('view_agents', JSON.stringify(vwAgentsList));
-		}
-	});
 
 });
 
@@ -1290,6 +1351,7 @@ function sentinelNewmessages(socket) {
 				message_body_text = element.body_text;
 				message_body_caption = element.body_caption;
 				message_body_url = element.body_url;
+
 				// Select from atendimento
 				let queryB = "SELECT sessionid, fkto, fkname, name FROM tab_atendein WHERE mobile=? LIMIT 1;"
 				let paramsB = [message_mobile]
@@ -1375,33 +1437,47 @@ function sentinelNewmessages(socket) {
 						let paramsD = [message_mobile]
 						let priorList = await runDynamicQuery(queryD, paramsD);
 						if (priorList.length == 1) {
-							let queryInsert = "INSERT INTO tab_filain (mobile, account, status, sessionBotCcs) VALUES(?, 'prior', '1', UUID());"
-							let paramsInsert = [message_mobile]
-							let insert = await runDynamicQuery(queryInsert, paramsInsert);
-							// Log send welcome message
-							let msgtext = "Olá, tudo bem? Bem-vindo a Central de Vendas do Agibank! Temos a melhor solução de crédito para o seu momento.\n\nPara agilizar o seu atendimento responda com o nº da opção desejada. \n\n1 - 💳 Cartão de Crédito \n\n2 - 💵 Portabilidade\n\n3 - 💰 Crédito Consignado\n\n4- 📋 Consultar Contratos ";
-							// Extension Message Json
-							let messageJson = {
-								infra: "5511959829784@c.us",
-								id: message_mobile + '@c.us',
-								msg: msgtext,
-								media: 'chat'
+							// Check if user has followup
+							let isFollow = await checkFollow(message_mobile, io)
+							if (isFollow == true) {
+								resolve('finished')
+							} else {
+								let protocol = await getProtocol();
+								let queryInsert = "INSERT INTO tab_filain (mobile, account, status, sessionBotCcs, protocolo) VALUES(?, 'prior', '1', UUID(), ?);"
+								let paramsInsert = [message_mobile, protocol]
+								let insert = await runDynamicQuery(queryInsert, paramsInsert);
+								// Log send welcome message
+								let msgtext = "Olá, tudo bem? Bem-vindo a Central de Vendas do Agibank! Temos a melhor solução de crédito para o seu momento.\n\nProtocolo de atendimento: _*" + protocol + "*_\n\nPara agilizar o seu atendimento responda com o nº da opção desejada. \n\n1 - 💳 Cartão de Crédito \n\n2 - 💵 Portabilidade\n\n3 - 💰 Crédito Consignado\n\n4 - 📋 Consultar Contratos\n\n5 - 🏦 Credito Pessoal ";
+								// Extension Message Json
+								let messageJson = {
+									infra: _mobileUid,
+									id: message_mobile + '@c.us',
+									msg: msgtext,
+									media: 'chat'
+								}
+								let extResponse = await sendExtensionMessage(messageJson);
 							}
-							let extResponse = await sendExtensionMessage(messageJson);
+
 						} else {
-							let queryInsert = "INSERT INTO tab_filain (mobile, status, sessionBotCcs) VALUES(?, '1', UUID());"
-							let paramsInsert = [message_mobile]
-							let insert = await runDynamicQuery(queryInsert, paramsInsert);
-							// Log send welcome message
-							let msgtext = "Olá, tudo bem? Bem-vindo a Central de Vendas do Agibank! Temos a melhor solução de crédito para o seu momento.\n\nPara agilizar o seu atendimento responda com o nº da opção desejada. \n\n1 - 💳 Cartão de Crédito \n\n2 - 💵 Portabilidade\n\n3 - 💰 Crédito Consignado\n\n4- 📋 Consultar Contratos ";
-							// Extension Message Json
-							let messageJson = {
-								infra: "5511959829784@c.us",
-								id: message_mobile + '@c.us',
-								msg: msgtext,
-								media: 'chat'
+							let isFollow = await checkFollow(message_mobile, io)
+							if (isFollow == true) {
+								resolve('finished')
+							} else {
+								let protocol = await getProtocol();
+								let queryInsert = "INSERT INTO tab_filain (mobile, status, sessionBotCcs, protocolo) VALUES(?, '1', UUID(), ?);"
+								let paramsInsert = [message_mobile, protocol]
+								let insert = await runDynamicQuery(queryInsert, paramsInsert);
+								// Log send welcome message
+								let msgtext = "Olá, tudo bem? Bem-vindo a Central de Vendas do Agibank! Temos a melhor solução de crédito para o seu momento.\n\nProtocolo de atendimento: _*" + protocol + "*_\n\nPara agilizar o seu atendimento responda com o nº da opção desejada. \n\n1 - 💳 Cartão de Crédito \n\n2 - 💵 Portabilidade\n\n3 - 💰 Crédito Consignado\n\n4 - 📋 Consultar Contratos\n\n5 - 🏦 Credito Pessoal ";
+								// Extension Message Json
+								let messageJson = {
+									infra: _mobileUid,
+									id: message_mobile + '@c.us',
+									msg: msgtext,
+									media: 'chat'
+								}
+								let extResponse = await sendExtensionMessage(messageJson);
 							}
-							let extResponse = await sendExtensionMessage(messageJson);
 						}
 					}
 				}

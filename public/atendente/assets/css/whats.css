@@ -1,4 +1,4 @@
-:root{
+:root {
     --color-primary: #1D2A4C;
     --color-secondary: #263860;
     --color-text-primary: #fff;
@@ -35,6 +35,11 @@ html, body {
 
 textarea:focus, input:focus {
     outline: none;
+}
+
+.date-color {
+    background-color: var(--color-primary);
+    color: var(--color-text-primary);
 }
 
 .panel-body {
@@ -180,7 +185,7 @@ textarea:focus, input:focus {
     box-sizing: content-box;
     border-bottom: solid black 1px;
     font-size: 0.8em;
-    max-height: 8vh;
+    /* max-height: 8vh; */
     padding: 5px;
     white-space: nowrap
 }
@@ -371,7 +376,7 @@ textarea:focus, input:focus {
     margin-top: 1vh;
     margin-right: 2vh;
     margin-bottom: 1vh;
-    max-width: 50%;
+    max-width: 90%;
     padding: 5px;
     border-radius: 5px;
     background-color: #8CEAEA;
@@ -418,7 +423,7 @@ textarea:focus, input:focus {
     margin-top: 1vh;
     margin-left: 2vh;
     margin-bottom: 1vh;
-    max-width: 50%;
+    max-width: 90%;
     padding: 5px;
     border-radius: 5px;
     background-color: #8EEDA3;
@@ -429,7 +434,7 @@ textarea:focus, input:focus {
 }
 
 .chat-body-messages-image {
-    max-width: 50vw;
+    max-width: 100%;
     max-height: 40vh;
     border-radius: 5px;
 }
@@ -576,11 +581,11 @@ textarea:focus, input:focus {
     display: none;
 }
 
-.activeChat{
+.activeChat {
     background-color: lightgray;
 }
 
-.call-mailing-button{
+.call-mailing-button {
     background-color: var(--color-secondary);
     color: var(--color-text-secondary);
     border: none;
@@ -590,7 +595,7 @@ textarea:focus, input:focus {
     font-size: 1em;
 }
 
-.call-mailing-button:hover{
+.call-mailing-button:hover {
     cursor: pointer;
 }
 
@@ -724,15 +729,14 @@ textarea:focus, input:focus {
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
     padding: 3px;
-
 }
+
 .modal-input2 {
     width: 100%;
     background-color: #E6E6E6;
     border: 0;
     border-radius: 3px;
     padding: 5px;
-
 }
 
 .input-icon {
@@ -769,97 +773,96 @@ textarea:focus, input:focus {
 }
 
 #nav-icon4 span:nth-child(1) {
-  top: 0px;
-  -webkit-transform-origin: left center;
-  -moz-transform-origin: left center;
-  -o-transform-origin: left center;
-  transform-origin: left center;
+    top: 0px;
+    -webkit-transform-origin: left center;
+    -moz-transform-origin: left center;
+    -o-transform-origin: left center;
+    transform-origin: left center;
 }
 
 #nav-icon4 span:nth-child(2) {
-  top: 10px;
-  -webkit-transform-origin: left center;
-  -moz-transform-origin: left center;
-  -o-transform-origin: left center;
-  transform-origin: left center;
+    top: 10px;
+    -webkit-transform-origin: left center;
+    -moz-transform-origin: left center;
+    -o-transform-origin: left center;
+    transform-origin: left center;
 }
 
 #nav-icon4 span:nth-child(3) {
-  top: 20px;
-  -webkit-transform-origin: left center;
-  -moz-transform-origin: left center;
-  -o-transform-origin: left center;
-  transform-origin: left center;
+    top: 20px;
+    -webkit-transform-origin: left center;
+    -moz-transform-origin: left center;
+    -o-transform-origin: left center;
+    transform-origin: left center;
 }
 
 #nav-icon4.open span:nth-child(1) {
-  -webkit-transform: rotate(45deg);
-  -moz-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
-  transform: rotate(45deg);
-  top: -3px;
-  left: 24px;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+    top: -3px;
+    left: 24px;
 }
 
 #nav-icon4.open span:nth-child(2) {
-  width: 0%;
-  opacity: 0;
+    width: 0%;
+    opacity: 0;
 }
 
 #nav-icon4.open span:nth-child(3) {
-  -webkit-transform: rotate(-45deg);
-  -moz-transform: rotate(-45deg);
-  -o-transform: rotate(-45deg);
-  transform: rotate(-45deg);
-  top: 27px;
-  left: 24px;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    top: 27px;
+    left: 24px;
 }
 
 #nav-icon4 {
-  width: 60px;
-  height: 45px;
-  position: relative;
-  margin: 1rem 0;
-  -webkit-transform: rotate(0deg);
-  -moz-transform: rotate(0deg);
-  -o-transform: rotate(0deg);
-  transform: rotate(0deg);
-  -webkit-transition: .5s ease-in-out;
-  -moz-transition: .5s ease-in-out;
-  -o-transition: .5s ease-in-out;
-  transition: .5s ease-in-out;
-  cursor: pointer;
-
+    width: 60px;
+    height: 45px;
+    position: relative;
+    margin: 1rem 0;
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transition: .5s ease-in-out;
+    -moz-transition: .5s ease-in-out;
+    -o-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;
+    cursor: pointer;
 }
 
 #nav-icon4 span {
-  display: block;
-  position: absolute;
-  height: 5px;
-  width: 70%;
-  background: white;
-  border-radius: 9px;
-  opacity: 1;
-  right: 10px;
-  -webkit-transform: rotate(0deg);
-  -moz-transform: rotate(0deg);
-  -o-transform: rotate(0deg);
-  transform: rotate(0deg);
-  -webkit-transition: .25s ease-in-out;
-  -moz-transition: .25s ease-in-out;
-  -o-transition: .25s ease-in-out;
-  transition: .25s ease-in-out;
+    display: block;
+    position: absolute;
+    height: 5px;
+    width: 70%;
+    background: white;
+    border-radius: 9px;
+    opacity: 1;
+    right: 10px;
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transition: .25s ease-in-out;
+    -moz-transition: .25s ease-in-out;
+    -o-transition: .25s ease-in-out;
+    transition: .25s ease-in-out;
 }
 
-.mailing-modal{
-    width: 40% !important;
+.mailing-modal {
+    width: 60% !important;
 }
 
-.mailing-modal-body{
+.mailing-modal-body {
     padding: 1rem 1rem 1rem !important;
 }
 
-.theme-button{
+.theme-button {
     width: 85%;
     display: flex;
     flex-direction: row;
@@ -872,23 +875,22 @@ textarea:focus, input:focus {
     margin: 0.5rem;
 }
 
-.theme-button-color-array{
+.theme-button-color-array {
     width: 100%;
     height: 6vh;
-
 }
 
-.theme-cornor-left{
+.theme-cornor-left {
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
 }
 
-.theme-cornor-right{
+.theme-cornor-right {
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
 }
 
-.theme-buttons{
+.theme-buttons {
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -902,20 +904,19 @@ textarea:focus, input:focus {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-
     width: 100%;
 }
 
-.audio-modal{
+.audio-modal {
     margin-left: auto;
-    display: none; 
+    display: none;
     justify-content: space-around;
     align-items: center;
     color: red;
     width: 100%;
 }
 
-.audio-button{
+.audio-button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -941,12 +942,12 @@ textarea:focus, input:focus {
     width: 100%;
 }
 
-.user-photo{
+.user-photo {
     display: flex;
     flex-direction: column;
 }
 
-.message-notify{
+.message-notify {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -973,7 +974,7 @@ textarea:focus, input:focus {
     display: grid !important;
 }
 
-.user-pic-button{
+.user-pic-button {
     background-color: transparent;
     border: 0;
     width: 100%;
@@ -1000,12 +1001,58 @@ textarea:focus, input:focus {
     width: 9px;
     background-color: #C1272D;
     border-radius: 50%;
-
     animation: blinker 1.5s linear infinite;
-  }
-  
-  @keyframes blinker {
+}
+
+@keyframes blinker {
     50% {
-      opacity: 0;
+        opacity: 0;
     }
-  }
+}
+
+.lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 1.2em;
+    height: 1.2em;
+}
+
+.lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 1.2em;
+    height: 1.2em;
+    border: 6px solid #fff;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #fff transparent transparent transparent;
+}
+
+.lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+}
+
+.lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+}
+
+.lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+}
+
+@keyframes lds-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.filaLoader{
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    pointer-events: none !important;
+}

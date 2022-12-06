@@ -17,6 +17,9 @@ cancelButton.addEventListener("click", cancelRecordingWhats);
 
 // Começa a gravação e cria o listener nativo do navegador
 function startRecording() {
+	// Block Changing Chats
+	varOpenChat = false
+
     $(".chat-body-input-box").css("grid-template-columns", "8% 69% 18% 8%")
     $(".audio-modal").css("display", "flex")
     $("#buttonSendAudio").css("display", "none")
@@ -48,7 +51,7 @@ function startRecording() {
 		}
 
 		recorder.setOptions({
-		  timeLimit:120,
+		  timeLimit:3600,
 		  encodeAfterRecord:encodeAfterRecord,
 	      ogg: {quality: 0.5},
 	      mp3: {bitRate: 160}
@@ -63,13 +66,16 @@ function startRecording() {
 function stopRecording() {
 	gumStream.getAudioTracks()[0].stop();
 	recorder.finishRecording();
-
+	// Unblock Changing Chats
+	varOpenChat = true
 }
 
 // Para a gravação da stream e cancela recorder
 function cancelRecordingWhats() {
 	gumStream.getAudioTracks()[0].stop();
     recorder.cancelRecording()
+	// Unblock Changing Chats
+	varOpenChat = true
 }
 
 //Envia para o CDN e transforma blob em arquivo

@@ -1,4 +1,4 @@
-function userListDiv(mobile, message, messageTime, protocolo, name) {
+function userListDiv(mobile, message, messageTime, protocolo, name, cpf) {
     let nameInfo;
     if(name != '' && name != null){
         nameInfo = name
@@ -9,7 +9,7 @@ function userListDiv(mobile, message, messageTime, protocolo, name) {
         <div id="list${mobile}" class="user-list-item" onclick="openChat(this.id)">
             <div class="user-photo">
                 <span id="notifyUser${mobile}" class="message-notify" ></span>
-                <img src="https://cdn.ubicuacloud.com/file/null" alt="" class="user-list-item-avatar">
+                <img src="../atendente/assets/images/avatarLog.png" alt="" class="user-list-item-avatar">
             </div>
             <div class="user-list-item-text-group">
                 <div>
@@ -21,8 +21,12 @@ function userListDiv(mobile, message, messageTime, protocolo, name) {
                     </span>
                 </div>
                 <div>
+                    ${mobile}
+                </div>
+                <div id="protocol${mobile}">
                     ${protocolo}
                 </div>
+                <div id="cpf${mobile}" style="display: none"></div>
             </div>
             <div class="user-list-item-time-group">
                 <div>
@@ -57,6 +61,15 @@ function questionsDiv(id, message) {
     return component
 }
 
+function messageDate(date) {
+    var msg = "<center><div class='center' style='padding: 5px 0px; width: 120px;'>";
+    msg += "<div class='date-color' style='word-wrap: break-word; border-radius: 10px; padding: 4px'>";
+    msg += "<center><i class='fa fa-calendar'></i> " + date + "</center>";
+    msg += "</div></div></center>";
+
+    return (msg);
+}
+
 function messageRight(message, messageTime) {
     let component = `
         <div class="chat-body-messages-block-right">
@@ -84,7 +97,9 @@ function messageLeft(message, messageTime) {
 function messageImageRight(image, caption, messageTime) {
     let component = `
         <div class="chat-body-messages-block-right">
-            <img src="${image}" class="chat-body-messages-image" alt="">
+            <a href="${image}" target="_blank">
+                <img src="${image}" class="chat-body-messages-image" alt="">
+            </a>
             ${caption}
             <div class="chat-body-messages-block-right-time">
                 ${messageTime}
@@ -97,7 +112,9 @@ function messageImageRight(image, caption, messageTime) {
 function messageImageLeft(image, caption, messageTime) {
     let component = `
         <div class="chat-body-messages-block-left">
-            <img src="${image}" class="chat-body-messages-image" alt="">
+            <a href="${image}" target="_blank">
+                <img src="${image}" class="chat-body-messages-image" alt="">
+            </a>
             ${caption}
             <div class="chat-body-messages-block-left-time">
                 ${messageTime}
@@ -110,7 +127,11 @@ function messageImageLeft(image, caption, messageTime) {
 function messageAudioRight(url, caption, messageTime) {
     let component = `
         <div class="chat-body-messages-block-right">
-            <a href="${url}" target="_blank"><strong>Enviou um audio...</strong></a>
+            <audio controls>
+                <source src="${url}" type="audio/ogg">
+                <source src="${url}" type="audio/mpeg">
+                Your browser does not support the audio tag.
+            </audio> 
             ${caption}
             <div class="chat-body-messages-block-right-time">
                 ${messageTime}
@@ -123,7 +144,11 @@ function messageAudioRight(url, caption, messageTime) {
 function messageAudioLeft(url, caption, messageTime) {
     let component = `
         <div class="chat-body-messages-block-left">
-            <a href="${url}" target="_blank"><strong>Enviou um audio...</strong></a>
+            <audio controls>
+                <source src="${url}" type="audio/ogg">
+                <source src="${url}" type="audio/mpeg">
+                Your browser does not support the audio tag.
+            </audio> 
             ${caption}
             <div class="chat-body-messages-block-left-time">
                 ${messageTime}

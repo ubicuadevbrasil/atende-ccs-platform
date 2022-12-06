@@ -1,12 +1,23 @@
 var sid;
-var socket = io.connect();
-var operador = sessionStorage.getItem('fkname');
+const socket = io.connect();
+const agentFkid = sessionStorage.getItem('fkid');
+const agentFkname = sessionStorage.getItem('fkname');
+const operador = sessionStorage.getItem('fkname');
 
 $('#lboperador').text(operador);
 
 if (sessionStorage.getItem('fkname') == null) {
     window.location = "index.html";
 }
+
+socket.on("connect", function () {
+    console.log("Connected")
+    socket.emit('sentinel_clients_queue')
+})
+
+let queueInterval = setInterval(() => {
+    socket.emit('sentinel_clients_queue')
+}, 15000);
 
 socket.on('sentinel_clients_queue', function (payload) {
     console.log(payload)
@@ -62,7 +73,7 @@ socket.on('sentinel_clients_queue', function (payload) {
     // }
     // $("#TempoMedio").text(media + " minutos");
 
-    let seconds = payload[3].total;
+    let seconds = payload[7].total;
     let timeEdt = new Date(seconds * 1000).toISOString().substr(11, 8)
     let timeText = timeEdt.split(":")[0] + ":" + timeEdt.split(":")[1]
     $("#TempoMedio").text(timeText);
@@ -76,10 +87,10 @@ socket.on('sentinel_clients_queue', function (payload) {
     // }
     // $("#TempoMedioPrior").text(mediaPrior + " minutos");
 
-    let secondsPrior = payload[7].total;
-    let timeEdtPrior = new Date(secondsPrior * 1000).toISOString().substr(11, 8)
-    let timeTextPrior = timeEdtPrior.split(":")[0] + ":" + timeEdtPrior.split(":")[1]
-    $("#TempoMedioPrior").text(timeTextPrior);
+    // let secondsPrior = payload[7].total;
+    // let timeEdtPrior = new Date(secondsPrior * 1000).toISOString().substr(11, 8)
+    // let timeTextPrior = timeEdtPrior.split(":")[0] + ":" + timeEdtPrior.split(":")[1]
+    // $("#TempoMedioPrior").text(timeTextPrior);
 });
 
 socket.on('sentinel_clients_alive', function (payload) {
@@ -112,12 +123,16 @@ socket.on('sentinel_clients_alive', function (payload) {
 });
 
 socket.on('view_agents', function (payload) {
-    //console.log(payload)
+    console.log(payload)
     var ta = JSON.parse(payload);
     for (i = 0; i < ta.length; i++) {
         $('#' + ta[i].atendimentos + ta[i].fkto).text(ta[i].total);
     }
 
+});
+
+socket.on('disconnect', function () {
+    console.log('> Desconectado');
 });
 
 function onforcedisconnect(socketid) {
@@ -129,4 +144,5 @@ $('#confirmadeslogar').on('click', function () {
     //$('#modal-default4').modal('toggle');
     var payload = { socketid: sid };
     socket.emit('force_disconnect', payload);
+    socket.emit('sentinel_clients_queue')
 });

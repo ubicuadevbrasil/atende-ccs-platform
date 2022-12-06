@@ -71,9 +71,11 @@ socket.on('bi-report1', function (payload) {
         contg = 1;
         var pagct = 0;
 
+        console.log(tbres);
+
         for (i = 0; i < qnt; i++) {
             var table = '';
-            table += tabsup(tbres[i].sessionid, tbres[i].mobile, tbres[i].cpf, tbres[i].atendente, tbres[i].hora, tbres[i].data, tbres[i].status, tbres[i].atendir, tbres[i].filename, tbres[i].banco, tbres[i].nome, tbres[i].protocolo);
+            table += tabsup(tbres[i].sessionid, tbres[i].mobile, tbres[i].cpf, tbres[i].atendente, tbres[i].hora, tbres[i].data, tbres[i].status, tbres[i].atendir, tbres[i].filename, tbres[i].banco, tbres[i].nome, tbres[i].protocolo, tbres[i].situation);
             $('#tableresult').append(table);
         }
 
@@ -140,7 +142,7 @@ socket.on('bi-blocktoxls', function (payload) {
 
 socket.on('bi-historyone', function (payload) {
     console.log(payload)
-    if (payload.contacts.length != 0) {
+    if (payload.contacts.length != 0 && payload.logs.length > 0) {
         var logs = JSON.parse(payload.logs);
         var contacts = JSON.parse(payload.contacts);
         //var bot = JSON.parse(payload.bot);
@@ -151,8 +153,8 @@ socket.on('bi-historyone', function (payload) {
         $('#modalHistorico').modal();
     } else {
         let modalTitle = "Aviso";
-	let modalDesc = "Não Há Nenhum Histórico Desse Contato!";
-	callWarningModal(modalTitle,modalDesc)
+	    let modalDesc = "Não Há Nenhum Histórico Desse Contato!";
+	    alert("Não Há Nenhum Histórico Desse Contato!")
     }
 });
 
@@ -241,6 +243,8 @@ function testsock2() {
     var v_protocolo = $('#iPROTOCOLO').val();
     var v_canal = $('#iCANAL').val();
     var v_nomecliente = $('#iNomeCliente').val();
+    var v_atendenome = $('#iNomeAtendente').val();
+    var v_situation = $('#iStatusQueue').val();
 
     globalqry2 = "";
 
@@ -293,6 +297,24 @@ function testsock2() {
             globalqry2 += " and name= '" + v_nomecliente + "'";
         } else {
             globalqry2 += "name= '" + v_nomecliente + "'";
+        }
+    }
+
+    //
+
+    if (v_atendenome != "") {
+        if (globalqry2 != "") {
+            globalqry2 += " and atendente LIKE '%" + v_atendenome + "%'";
+        } else {
+            globalqry2 += "atendente LIKE '%" + v_atendenome + "%'";
+        }
+    }
+
+    if (v_situation != "") {
+        if (globalqry2 != "") {
+            globalqry2 += " and situation= '" + v_situation + "'";
+        } else {
+            globalqry2 += "situation= '" + v_situation + "'";
         }
     }
 

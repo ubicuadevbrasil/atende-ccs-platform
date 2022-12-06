@@ -320,6 +320,7 @@ function conversor_remessa(data) {
     var minutos = dateTime.getMinutes();
     var horas = dateTime.getHours();
     var segundos = dateTime.getSeconds();
+    horas = horas - 2
     if (horas < 10) {
         horas = "0" + horas;
     }

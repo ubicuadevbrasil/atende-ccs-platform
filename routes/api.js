@@ -12,8 +12,6 @@ const emoji = require('emoji');
 
 // Config App Express
 const app = express();
-const options = { key: fs.readFileSync(process.env.CCS_OPTIONSKEY), cert: fs.readFileSync(process.env.CCS_OPTIONSCERT) };
-const server = require('https').createServer(options, app);
 const io = app.get("socketio");
 
 // Mariadb Connection

@@ -22,8 +22,6 @@ socket.on('connect', function () {
     socket.emit('bi-listagents', { fkid: 'a05c3708-32b3-11e8-9d7a-000c29369337' });
     socket.emit('bi-listblock', { fkid: 'a05c3708-32b3-11e8-9d7a-000c29369337' });
 
-    socket.emit('bi-training');
-
     socket.on('bi-listagents', function (payload) {
         var json = JSON.parse(payload);
         var cx = json.length;
@@ -68,13 +66,6 @@ socket.on('disconnect', function () {
     console.log('------------------------DISCONECTADO-----DISCONECTADO------------------------------');
     console.log('-----------------------------------------------------------------------------------');
     console.log('-----------------------------------------------------------------------------------');
-});
-
-socket.on('bi-training', function (payload) {
-    console.log(payload);
-    if (payload[0].training == "false") {
-        $('#switchEdit').trigger("click")
-    }
 });
 
 $('#atendenv').on('click', function () {

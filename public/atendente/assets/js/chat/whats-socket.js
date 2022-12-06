@@ -20,7 +20,7 @@ let timeout = setTimeout(function () {
         fkid: agentFkid,
         fkname: agentFkname,
     })
-}, 4200000);
+}, 10800000);
 
 textInputDetect.addEventListener("keydown", function (e) {
     if (e.code === "Enter") {
@@ -33,6 +33,7 @@ if (!agentFkname || !agentFkid) { window.location = "index.html" }
 $("#user-name").text(agentFkname);
 $('#endFormCpf').mask('999.999.999-99');
 $('#userCPF').mask('999.999.999-99');
+$('#userInputMobile').mask('+99 99 99999-9999');
 
 // Update to block timeout
 $(document).on('mousemove', function () {
@@ -45,19 +46,22 @@ $(document).on('mousemove', function () {
             fkid: agentFkid,
             fkname: agentFkname,
         });
-    }, 4200000);
+    }, 10800000);
 });
 
 // Check for new Questions
-setInterval(() => {
+var chatInterval = setInterval(() => {
     socket.emit('bi-questions', { fkid: agentFkid });
-}, 2500);
+    //socket.emit('bi-atendein', { fkid: agentFkid });
+    socket.emit('sentinel_clients_queue', { fkid: agentFkid });
+}, 15000);
 
 // Detect Connection
 socket.on('connect', function () {
     console.log('> Conectado')
     socket.emit('bi-atendein', { fkid: agentFkid });
     socket.emit('bi-questions', { fkid: agentFkid });
+    socket.emit('sentinel_clients_queue', { fkid: agentFkid });
     selectTheme(sessionStorage.getItem('tema'), false);
     $("#user-profile-pic").prop("src", "../atendente/assets/images/" + (sessionStorage.getItem('avatar')) + ".png");
 });
@@ -86,11 +90,17 @@ socket.on('bi-answer_new_queue', async function (payload) {
     await answerNewQueue(payload)
     // Sleep and execute bi-atendein for History purposes
     socket.emit('bi-atendein', { fkid: agentFkid });
+    // Disable Loader
+    // Enable Loading Button
+    $("#filaButton").removeClass("filaLoader");
+    $("#filaButton").children().show();
+    $("#filaLoader").hide();
 });
 
 // Busca e Atualiza atendimentos em curso
 socket.on('bi-atendein', async function (payload) {
     console.log('> Buscando atendimentos e historicos');
+    console.log(payload)
     if (payload.logs.length > 0 && payload.contacts.length > 0) {
         let logs = JSON.parse(payload.logs);
         let contacts = JSON.parse(payload.contacts);
@@ -104,14 +114,14 @@ socket.on('bi-atendein', async function (payload) {
 socket.on('bi-questions', async function (payload) {
     console.log('> Buscando Respostas Automaticas');
     questionsDefault.empty()
-    for(i=0; i < payload.questions.length; i++){
+    for (i = 0; i < payload.questions.length; i++) {
         let questions = payload.questions[i];
-        let questionId = payload.questions[i].id.replace('_' + agentFkid,'');
+        let questionId = payload.questions[i].id.replace('_' + agentFkid, '');
         let questionMessage = payload.questions[i].message;
         let questionsComponent = questionsDiv(i, questionMessage);
         questionsDefault.append(questionsComponent);
         // Append question on Edit question Modal
-        if($('#editAnswerModal:visible').length == 0){
+        if ($('#editAnswerModal:visible').length == 0) {
             // $('#' + questionId).attr("placeholder", questionMessage);
         }
     }
@@ -146,6 +156,16 @@ socket.on('sentinel_clients_queue', function (payload) {
 
 // Detecta status de encerramentos
 socket.on('bi-statusen', function (payload) {
+    // Cliente Protocol
+    let protocol = document.getElementById('protocol' + currentUserMobile).innerText;
+    let cpf = document.getElementById('cpf' + currentUserMobile).innerText;
+    if (protocol != '-') {
+        $('#endFormProtocolo').val(protocol)
+        $("#endFormProtocolo").prop("disabled", true);
+    } else {
+        $("#endFormProtocolo").prop("disabled", false);
+    }
+    $("#endFormCpf").val(cpf);
     let statusEnc = JSON.parse(payload);
     $("#endOptions").empty().append("<option value='0'>Selecione</option>");
     for (i = 0; i < statusEnc.length; i++) {
@@ -199,10 +219,13 @@ socket.on('bi-transferok', async function (payload) {
     console.log('> Transferencia OK');
     // Cria componentes de Chat
     let userMobile = payload.mobile;
+    let protocol = payload.protocolo;
+    let name = payload.name;
+    let cpf = payload.cnpj;
     // Prep user components
     if (userMobile != null) {
         // Create user components
-        let userChatComponent = userListDiv(userMobile, '', '', '123456');
+        let userChatComponent = userListDiv(userMobile, '', '', protocol, name, cpf);
         if (payload.atendir == 'in') {
             inUsersDisplay.append(userChatComponent);
         } else if (payload.atendir == 'out') {
@@ -234,6 +257,8 @@ socket.on('receive_chat', async function (payload) {
             messageComponent = messageLeft(messageText, messageTime);
         } else if (messageType === 'image') {
             messageComponent = messageImageLeft(messageUrl, messageCaption, messageTime);
+        } else if (messageType == 'audio' || messageType == 'ptt') {
+            messageComponent = messageAudioLeft(messageUrl, messageCaption, messageTime);
         } else {
             messageComponent = messageAttachLeft(messageUrl, messageCaption, messageTime);
         }
@@ -252,6 +277,9 @@ socket.on('receive_chat', async function (payload) {
         audio.play();
         // Scroll to last message
         document.getElementById(`chat${currentUserMobile}`).scrollBy(0, 9999999999999999);
+        // Re Order Div List
+        let parentDiv = $(`#list${userMobile}`).parent()[0].id
+        $(`#list${userMobile}`).prependTo(`#${parentDiv}`)
     }
 
 });
@@ -260,6 +288,10 @@ socket.on('receive_chat', async function (payload) {
 socket.on('bi-lasthistory', async function (payload) {
     console.log('> Busca historico do Cliente')
     if (payload.contacts.length != 0) {
+        // Enable Loading Button
+        $("#historyButton").removeClass("filaLoader");
+        $("#historyButton").children().show();
+        $("#historyLoader").hide();
         let logs = JSON.parse(payload.logs);
         let contacts = JSON.parse(payload.contacts);
         await historyMessage(contacts, logs, 'chatHistory');
@@ -285,6 +317,10 @@ socket.on('get_cliInfo', async function (payload) {
 // Recebe Mailing Ativo
 socket.on('bi-mailativo', function (payload) {
     if (payload != "" && payload != null) {
+        // Enable Loading Button
+        $("#callMailingButton").removeClass("filaLoader");
+        $("#callMailingButton").children().show();
+        $("#mailingLoader").hide();
         let data = JSON.parse(payload);
         let dataSet = [];
         for (i = 0; data.length > i; i++) {
@@ -350,9 +386,34 @@ socket.on("bi-atendemail", function (payload) {
         let modalTitle = "Aviso";
         let modalDesc = "Este numero já se encontra em atendimento!";
         callWarningModal(modalTitle, modalDesc)
+    } else if (payload.status = '69') {
+        let modalTitle = "Aviso";
+        let modalDesc = "Esse cliente já está em negociação com outro analista. Selecione outro contato.";
+        callWarningModal(modalTitle, modalDesc)
     } else {
         let modalTitle = "Aviso";
         let modalDesc = "Você atingiu o limite de contatos ativos por hora, aguarde " + payload.status + " minuto(s) para poder realizar um novo contato ativo.";
+        callWarningModal(modalTitle, modalDesc)
+    }
+});
+
+// Recebe inserção de Input
+socket.on("bi-callinput", function (payload) {
+    // Chama input Confirmada com sucesso
+    console.log(payload)
+    if (payload.status == '200') {
+        socket.emit('bi-atendein', { fkid: agentFkid });
+    } else if (payload.status == '400') {
+        let modalTitle = "Aviso";
+        let modalDesc = "Este numero já se encontra em atendimento!";
+        callWarningModal(modalTitle, modalDesc)
+    } else if (payload.status = '69') {
+        let modalTitle = "Aviso";
+        let modalDesc = "Esse cliente já está em negociação com outro analista. Selecione outro contato.";
+        callWarningModal(modalTitle, modalDesc)
+    } else {
+        let modalTitle = "Aviso";
+        let modalDesc = "Falha na chamada do Cliente!";
         callWarningModal(modalTitle, modalDesc)
     }
 });

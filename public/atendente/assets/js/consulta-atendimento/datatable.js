@@ -212,14 +212,14 @@ function testsock2() {
     globalqry2 = "";
 
     if (v_CPF != "") {
-        globalqry2 += "WHERE cpf= '" + v_CPF + "'";
+        globalqry2 += "WHERE cpf= '" + v_CPF.replace('.','').replace('.','').replace('-','') + "'";
     }
 
     if (v_number != "") {
         if (globalqry2 != "") {
-            globalqry2 += " and mobile= '55" + v_number + "'";
+            globalqry2 += " and mobile= '55" + v_number.replace(' ','').replace('-','') + "'";
         } else {
-            globalqry2 += "WHERE mobile= '55" + v_number + "'";
+            globalqry2 += "WHERE mobile= '55" + v_number.replace(' ','').replace('-','') + "'";
         }
     }
 

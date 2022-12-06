@@ -11,6 +11,10 @@ let millisecondTimer = 0;
 let cronTimer;
 let chunks = [];
 let mediaRecorder;
+let inputMessages = [];
+
+// Window Actions
+let varOpenChat = true;
 
 // Upload File
 function uploadFile(file, uploadType) {
@@ -108,6 +112,9 @@ function arrangeUserChat(contacts, logs) {
             let account = contacts[i].account;
             let userAtendir = contacts[i].atendir;
             let userName = contacts[i].name;
+            let protocol = contacts[i].protocolo;
+            let userCpf = contacts[i].cnpj;
+            if (!protocol) { protocol = '-' }
             // User components
             let userChat = $("#list" + userMobile);
             let userChatDisplay = $("#chat" + userMobile);
@@ -115,7 +122,7 @@ function arrangeUserChat(contacts, logs) {
             if (userChatDisplay.length == 0) { userChatDisplay.empty() }
             // Arrange user Chats
             if (userChat.length == 0) {
-                let userChatComponent = userListDiv(userMobile, userLastMsg, userLastMsgTime, '123456', userName);
+                let userChatComponent = userListDiv(userMobile, userLastMsg, userLastMsgTime, protocol, userName, userCpf);
                 if (logs.filter(element => (element.sessionid == contacts[i].sessionid) && (element.msgdir == 'o')).length > 0) {
                     atendeUsersDisplay.append(userChatComponent);
                 } else {
@@ -131,6 +138,8 @@ function arrangeUserChat(contacts, logs) {
             if (userChatDisplay.length == 0) {
                 chatDefault.first().after(userChatDisplayComponent)
             }
+            // Insert CPF
+            $("#cpf" + userMobile).text(userCpf);
         }
         resolve('ok')
     })
@@ -142,10 +151,11 @@ function answerNewQueue(payload) {
         // User Info
         let userMobile = payload.mobile;
         let userName = payload.name;
+        let protocol = payload.protocol;
         // Prep user components
         if (userMobile != null) {
             // Create user components
-            let userChatComponent = userListDiv(userMobile, '', '', '123456', userName);
+            let userChatComponent = userListDiv(userMobile, '', '', protocol, userName, '');
             inUsersDisplay.append(userChatComponent);
             let userChatDisplayComponent = userChatDiv(userMobile);
             // Arrange user Chat component
@@ -160,6 +170,8 @@ function answerNewQueue(payload) {
 function historyMessage(contacts, logs, area) {
     let contactsLength = contacts.length;
     let logsLength = logs.length;
+    let dtdiff = 0;
+
     for (i = 0; i < contactsLength; i++) {
         if (area == 'chatPannel') {
             $('#chat' + contacts[i].mobile).empty();
@@ -167,37 +179,69 @@ function historyMessage(contacts, logs, area) {
             $('#chatHistory').empty();
         }
     }
+
+    let messageCountArr = []
+
     for (a = 0; a < logsLength; a++) {
         let messageTime = dateConvert(logs[a].dt);
         for (i = 0; i < contactsLength; i++) {
             let messageComponent;
+
+            if (!messageCountArr[contacts[i].mobile]) {
+                messageCountArr[contacts[i].mobile] = 0
+            }
+
             if ((contacts[i].sessionid == logs[a].sessionid) || (contacts[i].sessionBot == logs[a].sessionid) || (contacts[i].sessionBotCcs == logs[a].sessionid)) {
+
+                // Check for direction and message type
                 if (logs[a].msgdir === 'i') {
+                    messageCountArr[contacts[i].mobile] = messageCountArr[contacts[i].mobile] + 1
                     if (logs[a].msgtype === 'chat') {
                         messageComponent = messageLeft(logs[a].msgtext, messageTime);
                     } else if (logs[a].msgtype === 'image') {
                         messageComponent = messageImageLeft(logs[a].msgurl, logs[a].msgcaption, messageTime);
-                    } else if (logs[a].msgtype == 'audio') {
+                    } else if (logs[a].msgtype == 'audio' || logs[a].msgtype == 'ptt') {
                         messageComponent = messageAudioLeft(logs[a].msgurl, '', messageTime);
                     } else {
                         messageComponent = messageAttachLeft(logs[a].msgurl, logs[a].msgcaption, messageTime);
                     }
                 } else if (logs[a].msgdir === 'o') {
+                    messageCountArr[contacts[i].mobile] = 0
                     if (logs[a].msgtype === 'chat' || logs[a].msgtype === 'transfer') {
                         messageComponent = messageRight(logs[a].msgtext, messageTime);
                     } else if (logs[a].msgtype === 'image') {
                         messageComponent = messageImageRight(logs[a].msgurl, logs[a].msgcaption, messageTime);
-                    } else if (logs[a].msgtype == 'audio') {
+                    } else if (logs[a].msgtype == 'audio' || logs[a].msgtype == 'ptt') {
                         messageComponent = messageAudioRight(logs[a].msgurl, '', messageTime);
                     } else {
                         messageComponent = messageAttachRight(logs[a].msgurl, logs[a].msgcaption, messageTime);
                     }
                 }
+
+                // chatPannel
                 if (area == 'chatPannel') {
                     $('#chat' + contacts[i].mobile).append(messageComponent);
                 } else if (area == 'chatHistory') {
+                    var dtin = new Date(logs[a].dt)
+                    if (dtdiff != dtin.getDate()) {
+                        dtdiff = dtin.getDate();
+
+                        var dtprint = convertDate(dtin);
+                        var msgdt = '';
+                        msgdt += messageDate(dtprint);
+                        $('#chatHistory').append(msgdt);
+                    }
+
                     $('#chatHistory').append(messageComponent);
                 }
+            }
+        }
+    }
+
+    for (i = 0; i < contactsLength; i++) {
+        if (area == 'chatPannel') {
+            if (messageCountArr[contacts[i].mobile] != 0) {
+                document.getElementById(`notifyUser${contacts[i].mobile}`).innerText = messageCountArr[contacts[i].mobile]
             }
         }
     }
@@ -227,30 +271,54 @@ function callMobile(mobile) {
 
 // OpenChat
 function openChat(mobile) {
-    let chatComponents = $('#chatPanel').children();
-    mobile = mobile.replace('list', '')
-    for (i = 0; i < chatComponents.length; i++) {
-        if (chatComponents[i].id.indexOf('chat') > -1 && chatComponents[i].id != `chat${mobile}` && chatComponents[i].className.indexOf('closedChat') == -1) {
-            document.getElementById(chatComponents[i].id).classList.add('closedChat');
-        } else if (chatComponents[i].id == `chat${mobile}` && chatComponents[i].className.indexOf('closedChat') > -1) {
-            // Set current user mobile
-            currentUserMobile = mobile;
-            document.getElementById(chatComponents[i].id).classList.remove('closedChat');
-            document.getElementById(`list${mobile}`).classList.add('activeChat');
-            document.getElementById('userChatAvatar').classList.remove('closedChat');
-            document.getElementById('closeChatButton').classList.remove('closedChat');
-            document.getElementById(`chat${mobile}`).scrollBy(0, 9999999999999999);
-            document.getElementById('userMobileSpan').innerText = $(`#userInfoName${mobile}`).text();
+    if (varOpenChat == true) {
+        // openChat original Func
+        let chatComponents = $('#chatPanel').children();
+        mobile = mobile.replace('list', '')
+        // inputMessages
+        if ($("#messageInputBox").val() != '') {
+            let findInputArr = inputMessages.find(obj => {
+                return obj.mobile === currentUserMobile
+            })
+            if (!findInputArr) {
+                inputMessages.push({ "mobile": currentUserMobile, "inputValue": $("#messageInputBox").val() })
+            } else {
+                findInputArr.inputValue = $("#messageInputBox").val()
+            }
         }
-        if (chatComponents[i].id == `chat${mobile}`) {
-            // Set current user mobile
-            document.getElementById(`notifyUser${currentUserMobile}`).innerText = ''
+        // Clear Chat
+        $("#messageInputBox").val('')
+        // Re-Insert Input value Message
+        let inputMessageVal = inputMessages.find(obj => {
+            return obj.mobile === mobile
+        })
+        if (inputMessageVal) {
+            $("#messageInputBox").val(inputMessageVal.inputValue)
         }
-    }
-    let userList = document.getElementsByClassName('user-list-item');
-    for (i = 0; i < userList.length; i++) {
-        if (userList[i].id != `list${mobile}`) {
-            userList[i].classList.remove('activeChat');
+        // Opening Chats
+        for (i = 0; i < chatComponents.length; i++) {
+            if (chatComponents[i].id.indexOf('chat') > -1 && chatComponents[i].id != `chat${mobile}` && chatComponents[i].className.indexOf('closedChat') == -1) {
+                document.getElementById(chatComponents[i].id).classList.add('closedChat');
+            } else if (chatComponents[i].id == `chat${mobile}` && chatComponents[i].className.indexOf('closedChat') > -1) {
+                // Set current user mobile
+                currentUserMobile = mobile;
+                document.getElementById(chatComponents[i].id).classList.remove('closedChat');
+                document.getElementById(`list${mobile}`).classList.add('activeChat');
+                document.getElementById('userChatAvatar').classList.remove('closedChat');
+                document.getElementById('closeChatButton').classList.remove('closedChat');
+                document.getElementById(`chat${mobile}`).scrollBy(0, 9999999999999999);
+                document.getElementById('userMobileSpan').innerText = $(`#userInfoName${mobile}`).text();
+            }
+            if (chatComponents[i].id == `chat${mobile}`) {
+                // Set current user mobile
+                document.getElementById(`notifyUser${currentUserMobile}`).innerText = ''
+            }
+        }
+        let userList = document.getElementsByClassName('user-list-item');
+        for (i = 0; i < userList.length; i++) {
+            if (userList[i].id != `list${mobile}`) {
+                userList[i].classList.remove('activeChat');
+            }
         }
     }
 }
@@ -279,6 +347,12 @@ function dateConvert(data) {
     if (segundos == 0) { segundos = "00" }
     let dataFormatada = (horas + ":" + minutos);
     return (dataFormatada);
+}
+
+function convertDate(inputFormat) {
+    function pad(s) { return (s < 10) ? '0' + s : s; }
+    var d = new Date(inputFormat);
+    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/');
 }
 
 // Get Message TIme
