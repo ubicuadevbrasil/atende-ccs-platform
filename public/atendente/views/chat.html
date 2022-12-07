@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubicua Cloud</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
+    <link rel="stylesheet" href="../assets/css/whats.css">
+    <link rel="stylesheet" href="../assets/css/whats-modal.css">
+    <link rel="shortcut icon" href="../assets/images/5797ico3.png" />
+    <link rel="stylesheet" href="//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+    <script src="https://kit.fontawesome.com/5ae1266f50.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <!-- Painel Principal -->
+    <div class="panel-body">
+
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar"></div>
+        <!-- Sidebar End -->
+
+        <!-- Contacts Lists -->
+        <div id="" class="contacts-lists">
+            <!-- Fila Button -->
+            <div id="filaButton" class="fila-button">
+                <div>
+                    <span>Atender</span>
+                </div>
+                <div>
+                    <div class="fila-white-box">
+                        <span id="fila">0</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Atendimento List -->
+            <div class="calls-list">
+                <div class="calls-list-title">
+                    Em Atendimento
+                </div>
+                <div id="userAtendeList" class="calls-list-group"></div>
+            </div>
+            <!-- Receptivo List -->
+            <div class="calls-list">
+                <div class="calls-list-title">
+                    Receptivo
+                </div>
+                <div id="userRecList" class="calls-list-group"></div>
+            </div>
+            <!-- Ativo List -->
+            <div class="calls-list">
+                <div class="calls-list-title ativo-header">
+                    <span>Ativo</span>
+                    <button id="callMailingButton" class="ativo-search">
+                        <span class="ativo-search-span">Pesquisar</span>
+                        <div class="ativo-search-icons">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </button>
+                </div>
+                <div id="userAtvList" class="calls-list-group"></div>
+            </div>
+        </div>
+        <!-- Contacts Lists End -->
+
+        <!-- Chat Section -->
+        <div class="chat-section">
+            <div class="chat-group">
+                <div class="chat-header">
+                    <div class="chat-header-icon">
+                        <img id="userChatAvatar" src="https://cdn.ubicuacloud.com/file/null" alt=""
+                            class="chat-avatar-icon closedChat">
+                    </div>
+                    <div>
+                        <span id="userMobileSpan"></span>
+                    </div>
+                    <div class="chat-header-button">
+                        <button id="closeChatButton" class="chat-header-close-button closedChat"> <i
+                                class="fas fa-sign-out-alt"></i> Encerrar</button>
+                    </div>
+                </div>
+                <div id="chatPanel" class="chat-body">
+                    <div id="chatDefault" class="chat-body-messages"></div>
+                    <div class="chat-body-input">
+                        <div class="chat-body-input-box">
+                            <div id="attachMediaButton" class="chat-body-input-box-icon-div">
+                                <img src="../assets/images/clipIcon.png" class="chat-body-input-icons" alt="">
+                            </div>
+                            <div>
+                                <input type="text" name="" id="messageInputBox" placeholder="Digite uma Mensagem">
+                            </div>
+                            <div class="audio-modal">
+                                <div class="audio-button cancel-button-audio" id="button-cancel-audio">
+                                    <i class="fas fa-times" style="color: #C1272D;"></i>
+                                </div>
+                                <div class="blink-ball"></div>
+                                <span id="minuteTimer">00</span>:
+                                <span id="secondTimer">00</span>
+                                <div class="audio-button check-button" id="button-send-audio">
+                                    <i class="fas fa-check" style="color: #00897C;"></i>
+                                </div>
+                            </div>
+                            <div class="chat-body-input-box-icon-div" id="buttonSendAudio">
+                                <img src="../assets/images/micIcon.png" class="chat-body-input-icons" alt="">
+                            </div>
+                            <div id="sendMessageButton" class="chat-body-input-box-icon-div">
+                                <img src="../assets/images/sendIcon.png" class="chat-body-input-icons" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Chat Section End -->
+
+        <!-- Chat Options -->
+        <div class="chat-options-lists">
+            <div class="chat-options">
+                <div class="chat-options-title">
+                    <span><i class="fas fa-info-circle"></i><span class="right-side-label"
+                            style="margin-left: 5px;">Menu</span></span>
+                </div>
+                <div class="chat-options-group">
+                    <button id="historyButton" class="chat-options-group-buttons">
+                        <i class="fas fa-comments"></i>
+                        <span class="right-side-label">Historico</span>
+                    </button>
+                    <button id="buttonTransfer" class="chat-options-group-buttons">
+                        <i class="fas fa-people-arrows"></i>
+                        <span class="right-side-label">Transferir</span>
+                    </button>
+                    <button id="buttonSignUp" class="chat-options-group-buttons">
+                        <i class="fas fa-edit"></i>
+                        <span class="right-side-label">Cadastrar Cliente</span>
+                    </button>
+                    <button id="buttonConsult" class="chat-options-group-buttons">
+                        <i class="fas fa-search"></i>
+                        <span class="right-side-label">Consulta</span>
+                    </button>
+                </div>
+            </div>
+            <div class="chat-info">
+                <div class="chat-info-title">
+                    <span><i class="far fa-clock"></i><span class="right-side-label" style="margin-left: 5px;">Respostas
+                            Programadas</span></span>
+                </div>
+                <div id="questionsGroup" class="chat-info-group">
+                </div>
+            </div>
+        </div>
+        <!-- Chat Options End -->
+
+    </div>
+    <!-- Painel Principal End -->
+
+    <!-- Media Inputs -->
+    <input id="imageInput" type="file" name="" accept="image/*" style="display: none;" />
+    <input id="videoInput" type="file" name="" accept="video/mp4" style="display: none;" />
+    <input id="audioInput" type="file" name="" accept="audio/*" style="display: none;" />
+    <input id="docInput" type="file" name="" style="display: none;" />
+    <!-- Media Inputs Ends -->
+
+</body>
+
+<!-- Dependencies -->
+<script src="../assets/js/dependencies/socket.io.js"></script>
+<script src="../assets/js/dependencies/jquery.min.js"></script>
+<script src="../assets/js/dependencies/jquery.mask.min.js"></script>
+<script src="//cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script src="../assets/js/dependencies/WebAudioRecorder.js"></script>
+<!-- Dependencies End -->
+
+<!-- Components -->
+<script src="../assets/js/components/sidebar.js"></script>
+<script src="../assets/js/components/modals.js"></script>
+<!-- Components End -->
+
+<!-- Page Scripts -->
+<script src="../assets/js/chat/recorder.js"></script>
+<script src="../assets/js/chat/inputEmoji.js"></script>
+<script src="../assets/js/chat/components.js"></script>
+<script src="../assets/js/chat/tools.js"></script>
+<script src="../assets/js/chat/listeners.js"></script>
+<script src="../assets/js/chat/socket.js"></script>
+<!-- Page Scripts End -->
+
+</html>

@@ -1,0 +1,132 @@
+.whitetext {
+  color: white;
+}
+
+.buttonatend {
+  background-color: transparent;
+  border-radius: 5px;
+  border: none;
+  color: #444a68;
+  font-size: 15px;
+}
+
+tbody > tr:hover {
+  background-color: #e3e3e5;
+}
+
+.bigtext {
+  font-size: 18px;
+}
+
+.gridmodal {
+  display: grid;
+  grid-template-columns: 5% 95%;
+  margin-top: 0vh;
+  font-size: 20px;
+}
+
+.gridmodal2 {
+  display: grid;
+  grid-template-columns: 30% 50%;
+  margin-top: 3vh;
+  font-size: 20px;
+  align-items: center;
+}
+
+.gridmodal3 {
+  display: grid;
+  grid-template-columns: 5% 85% 10%;
+  margin-top: 0vh;
+  font-size: 20px;
+}
+
+.gridradio {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 5vh;
+}
+
+.gridradio > div > button {
+  font-size: 25px;
+}
+
+.gridradio > div {
+  font-size: 15px;
+}
+
+.gridmodal > div {
+  margin-top: 5vh;
+}
+
+.w90 {
+  width: 90%;
+}
+
+.backblue {
+  width: 170px;
+  border-style: none;
+  margin-left: 10px;
+  background-color: #3690e6;
+  height: 31px;
+  border-radius: 2px;
+}
+
+.option-text-ubc {
+  color: #a1a7ab;
+}
+
+h1 {
+  margin: 0px;
+  font-size: 18;
+}
+
+.op {
+  font-size: 4;
+}
+
+
+.gridnv1 {
+ display: grid;
+ grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
+ grid-gap: 1vw;
+ align-items: left;
+ justify-items: right;
+}
+
+.displayoff {
+  display: none;
+}
+
+.pagination > li > span:active,
+.pagination > li > span:focus,
+.pagination > li > span:hover {
+  border-color: #3690e6;
+}
+
+td > table > .myTablebg > tr > th {
+  background-color: #fff !important;
+  border-bottom-color: #ececec !important;
+  border-top-color: #ececec !important;
+  border-left-color: #ececec !important;
+  border-right-color: #ececec !important;
+  color: black;
+}
+
+td > table > .myTablebg > tr,
+td > table > .myTablebg {
+  background-color: #fff !important;
+  border-bottom-color: #ececec !important;
+  border-top-color: #ececec !important;
+  border-left-color: #ececec !important;
+  border-right-color: #ececec !important;
+}
+
+td > table{
+    border-top-color: #ececec !important;
+  }
+
+  .ubcDashGrid{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 1vw;
+  }

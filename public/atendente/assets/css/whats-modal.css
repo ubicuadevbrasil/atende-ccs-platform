@@ -1,0 +1,143 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* The Modal (background) */
+
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 15;
+    /* Sit on top */
+    padding-top: 100px;
+    /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.34);
+    /* Black w/ opacity */
+}
+
+.modal-history{
+    background-color: rgba(0, 0, 0, 0.66) !important;
+}
+
+/* Modal Content */
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    background-color: #fefefe;
+    margin: auto;
+    border: 1px solid #888;
+    width: 25%;
+    border-radius: 8px;
+    border: none;
+}
+
+#modal-title {
+    font-weight: bold;
+}
+
+#modal-text {
+    margin: 0.5rem 0;
+    font-size: 12px;
+    text-align: center;
+}
+
+.modal-header {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    color: white;
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    padding: 0rem 1.5rem;
+    justify-content: flex-start;
+}
+
+.warning-header {
+    padding: 1.5rem !important;
+    font-size: 90px !important;
+    justify-content: center !important;
+}
+
+.padding-header {
+    padding: 0.5rem 1.5rem !important;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem 1rem 0;
+}
+
+.modal-button {
+    background-color: #08364D;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    padding: 0.2rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin: 10px auto;
+    cursor: pointer;
+}
+
+.modal-content .buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.modal-content .anexo-button {
+    padding: 0.5rem 2rem;
+    border-radius: 5px;
+    width: 80%;
+}
+
+.modal-button i {
+    margin-right: 10px;
+}
+
+.close-icon {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    align-self: flex-start;
+    margin-left: auto;
+}
+
+.modal-header-icon {
+    font-size: 30px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.anexo-content {
+    width: 27%;
+}
+
+.modal-history-background {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background-image: url('../images/chatBackground.png');
+    height: 40vh;
+}
+
+.history-modal-content {
+    width: 40% !important;
+}
