@@ -13,7 +13,7 @@ $("#buttonLogout").on("click", function () {
 
 // Botão de Atender Fila
 $("#filaButton").on("click", function () {
-    console.log('> Atende usuario da fila');
+    console.log('> Atende usuario da fila2');
     let filaIn = $('#fila').text();
     // Busca quantidade na fila (se maior que 0, chama cliente)
     if (filaIn > 0) {

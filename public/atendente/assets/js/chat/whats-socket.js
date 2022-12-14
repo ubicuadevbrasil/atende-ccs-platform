@@ -85,7 +85,7 @@ socket.on('bi-usertimeout', function (payload) {
 
 // Atender Fila
 socket.on('bi-answer_new_queue', async function (payload) {
-    console.log('> Atendendo Fila');
+    console.log('> Atendendo Fila2');
     // Answer New Queue
     await answerNewQueue(payload)
     // Sleep and execute bi-atendein for History purposes
