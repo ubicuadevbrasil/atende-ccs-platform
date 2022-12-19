@@ -13,11 +13,41 @@ if (sessionStorage.getItem('fkname') == null) {
 socket.on("connect", function () {
     console.log("Connected")
     socket.emit('sentinel_clients_queue')
+    socket.emit('bi-balanceamento')
 })
+
+let balanceamentoInterval = setInterval(() => {
+    socket.emit('bi-balanceamento')
+ }, 5000);
 
 let queueInterval = setInterval(() => {
     socket.emit('sentinel_clients_queue')
 }, 15000);
+
+socket.on('bi-balanceamento', function (payload) {
+    console.log("Testando 123: ", payload);
+    $("#atendeinCel").empty()
+    for (let i = 0; i < payload.length; i++) {
+        let card = `
+        <div>
+            <div class="box bg-info darken">
+                <div class="box-cell p-x-3 p-y-1">
+                    <div class="font-weight-semibold font-size-12">Balanceamento<br>(${payload[i].infraMobile.replace('@c.us','')})</div>
+                    <div class="font-weight-bold font-size-20">
+                    <small class="font-weight-light font-size-12"></small>
+                    <br>
+                    <div class="font-weight-semibold font-size-12">Enviadas: ${payload[i].total}</div>
+                    <div class="font-weight-semibold font-size-12">Recebidas: ${payload[i].msgIn}</div>
+                    <div class="font-weight-semibold font-size-12">Atendimentos: ${payload[i].atendeIn}</div>
+                    </div>
+                    <i class="box-bg-icon middle right font-size-52 ion-ios-people"></i>
+                </div>
+            </div>
+        </div>
+        `
+        $("#atendeinCel").append(card)
+    }
+})
 
 socket.on('sentinel_clients_queue', function (payload) {
     console.log(payload)

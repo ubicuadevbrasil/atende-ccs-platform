@@ -4,6 +4,8 @@ module.exports = function () {
 	const request = require('request');
 	const foreachasync = require('foreachasync').forEachAsync;
 
+	let infraMobile = process.env.CCS_MOBILE.replace("@c.us","");
+
 	this.getTimestamp = function () {
 		var date = new Date();
 		var year = date.getFullYear();
@@ -153,7 +155,7 @@ module.exports = function () {
 					if(!protocol){
 						protocol = await getProtocol();
 					}
-					dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name, mailInfo, protocolo) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name, mailInfo, protocol], function (err, result) {
+					dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name, mailInfo, protocolo, infraMobile) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name, mailInfo, protocol, infraMobile], function (err, result) {
 						console.log(result)
 						if (err) {
 							console.log("Erro ao Encaminhar Usuário para Atendimento, Erro: " + err);

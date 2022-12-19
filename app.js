@@ -14,7 +14,7 @@ const schedule = require('node-schedule');
 const CronJob = require('cron').CronJob;
 const foreachasync = require('foreachasync').forEachAsync;
 const helmet = require('helmet');
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 8083;
 
 // Constantes
 const cdn = process.env.CCS_CDN_FILE;
@@ -111,6 +111,9 @@ const job_message = new CronJob('*/10 * * * * *', function () {
 job_message.start();
 
 // Socket Events
+
+let infraMobile = process.env.CCS_MOBILE.replace("@c.us","");
+
 io.on('connection', function (socket) {
 
 	let numUsers = 0;
@@ -149,8 +152,8 @@ io.on('connection', function (socket) {
 				const rex = /[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug;
 				msgtext = msgtext.replace(rex, match => `&#x${match.codePointAt(0).toString(16)}`);
 				// Insert message log
-				let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(UUID(), ?, ?, ?, ?, ?, ?, ?, ?)";
-				let insertLogParams = [sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext];
+				let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext, infraMobile) VALUES(UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				let insertLogParams = [sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext, infraMobile];
 				let insertLogInsert = await runDynamicQuery(insertLogQuery, insertLogParams);
 			}
 		}
@@ -221,8 +224,8 @@ io.on('connection', function (socket) {
 			let getAtendeBkpList = await runDynamicQuery(getAtendeBkpQuery, getAtendeBkpParams);
 			if (getAtendeBkpList.length > 0) {
 				// Armazenando Log da Conversa
-				let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-				let insertLogParams = [customUuid, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption];
+				let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption, infraMobile) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				let insertLogParams = [customUuid, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption, infraMobile];
 				let insertLogInsert = await runDynamicQuery(insertLogQuery, insertLogParams);
 			}
 		}
@@ -459,7 +462,7 @@ io.on('connection', function (socket) {
 		let normalQueueQuery = "SELECT mobile, dtin, account, photo, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name FROM tab_filain WHERE status=1 ORDER BY dtin LIMIT 1";
 		let normalQueueParams = [];
 		let normalQueueList = await runDynamicQuery(normalQueueQuery, normalQueueParams);
-		console.log(normalQueueList);
+		console.log('testee::: ', normalQueueList);
 		if (normalQueueList.length > 0) {
 			// Get Mail Info
 			let mailName, mailCpf, mailInfoCad;
@@ -480,7 +483,7 @@ io.on('connection', function (socket) {
 			let name = normalQueueList[0].name;
 			let mailInfo = mailInfoCad;
 			// Inserto into Databse
-			console.log(mobile, dtin, account, photo, fkto, fkname, atendir, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name, mailInfo);
+			console.log('TESTANDOOO: ', mobile, dtin, account, photo, fkto, fkname, atendir, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name, mailInfo);
 			let atendimentoRes = await insertAtendein(mobile, dtin, account, photo, fkto, fkname, atendir, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name, mailInfo);
 			socket.emit('bi-answer_new_queue', payload);
 		}
@@ -561,8 +564,8 @@ io.on('connection', function (socket) {
 				let msgtext = message;
 				let atendir = atendeinSelList[0].atendir;
 				// Insert message log
-				let atendeinInsQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(UUID(), ?, ?, ?, ?, ?, ?, ?, ?)";
-				let atendeinInsParams = [sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext];
+				let atendeinInsQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext, infraMobile) VALUES(UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				let atendeinInsParams = [sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext, infraMobile];
 				let atendeinInsList = await runDynamicQuery(atendeinInsQuery, atendeinInsParams);
 				// Update message log
 				let atendeinUpdQuery = "UPDATE tab_atendein SET transfer=1, fkto=?, fkname=? WHERE mobile=?";
@@ -863,12 +866,12 @@ io.on('connection', function (socket) {
 				let msgcaption = payload.body_caption;
 				// Insert message log
 				if (payload.message_type == "chat") {
-					let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-					let insertLogParams = [id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext];
+					let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext, infraMobile) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					let insertLogParams = [id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext, infraMobile];
 					let insertLogList = await runDynamicQuery(insertLogQuery, insertLogParams);
 				} else {
-					let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-					let insertLogParams = [id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption];
+					let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption, infraMobile) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					let insertLogParams = [id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption, infraMobile];
 					let insertLogList = await runDynamicQuery(insertLogQuery, insertLogParams);
 				}
 				// Emmit socket event
@@ -1052,8 +1055,8 @@ io.on('connection', function (socket) {
 						let sessionid = await getCustomUuid();
 						let protocol = await getProtocol();
 						// Insert atendein
-						let insertAtdQuery = "INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, atendir, protocolo) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-						let insertAtdParams = [sessionid, mobile, dtin, account, photo, fkto, fkname, atendir, protocol];
+						let insertAtdQuery = "INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, atendir, protocolo, infraMobile) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+						let insertAtdParams = [sessionid, mobile, dtin, account, photo, fkto, fkname, atendir, protocol, infraMobile];
 						let insertAtdList = await runDynamicQuery(insertAtdQuery, insertAtdParams);
 						// Update Mailing
 						let updateAtdQuery = "UPDATE tab_ativo SET status=1 WHERE mobile = ?";
@@ -1129,8 +1132,8 @@ io.on('connection', function (socket) {
 					//
 					let protocol = await getProtocol();
 					// Insert into atendein
-					let atendeQuery = "INSERT INTO tab_atendein (sessionid, mobile, dtin, fkto, fkname, atendir, protocolo) VALUES(UUID(), ?, ?, ?, ?, ?, ?)";
-					let atendeParams = [mobile, dtin, fkto, fkname, atendir, protocol];
+					let atendeQuery = "INSERT INTO tab_atendein (sessionid, mobile, originalMobile, status, dtin, fkto, fkname, atendir, protocolo, infraMobile) VALUES(UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					let atendeParams = [mobile, originalMobile, status, dtin, fkto, fkname, atendir, protocol, infraMobile];
 					let atendeList = await runDynamicQuery(atendeQuery, atendeParams);
 					socket.emit('bi-callinput', { status: '200' });
 				}
@@ -1405,12 +1408,12 @@ function sentinelNewmessages(socket) {
 							if (findMessageList.length < 1) {
 								// Insert message log
 								if (payload.message_type == "chat") {
-									let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-									let insertLogParams = [id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext];
+									let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext, infraMobile) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+									let insertLogParams = [id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgtext, infraMobile];
 									let insertLogList = await runDynamicQuery(insertLogQuery, insertLogParams);
 								} else {
-									let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-									let insertLogParams = [id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption];
+									let insertLogQuery = "INSERT INTO tab_logs (id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption, infraMobile) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+									let insertLogParams = [id, sessionid, fromid, fromname, toid, toname, msgdir, msgtype, msgurl, msgcaption, infraMobile];
 									let insertLogList = await runDynamicQuery(insertLogQuery, insertLogParams);
 								}
 								console.log('Emit Messages');
