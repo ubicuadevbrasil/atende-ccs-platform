@@ -14,7 +14,7 @@ const schedule = require('node-schedule');
 const CronJob = require('cron').CronJob;
 const foreachasync = require('foreachasync').forEachAsync;
 const helmet = require('helmet');
-const port = process.env.PORT || 8083;
+const port = process.env.PORT || 80;
 
 // Constantes
 const cdn = process.env.CCS_CDN_FILE;
@@ -921,6 +921,17 @@ io.on('connection', function (socket) {
 			socket.emit('view_agents', JSON.stringify(vwAgentsList));
 		}
 	});
+
+	socket.on("bi-balanceamento", async function (payload) {
+		console.log("> Buscando balanceamento")
+		let jsonString = infraMobile
+		let contactsQuery = "CALL ccs_volume_msgsV3(?)";
+		let contactsParams = [jsonString];
+		let contactsList = await runDynamicQuery(contactsQuery, contactsParams);
+		let fullContactsList = await getMoreBalanceInfo(contactsList[0])
+		// console.log("contactsList", contactsList)
+		socket.emit('bi-balanceamento', fullContactsList);
+	})
 
 	// HISTORY EVENTS
 	socket.on('bi-historyone', async function (payload) {

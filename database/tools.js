@@ -4,7 +4,7 @@ module.exports = function () {
 	const request = require('request');
 	const foreachasync = require('foreachasync').forEachAsync;
 
-	let infraMobile = process.env.CCS_MOBILE.replace("@c.us","");
+	let infraMobile = process.env.CCS_MOBILE.replace("@c.us", "");
 
 	this.getTimestamp = function () {
 		var date = new Date();
@@ -152,7 +152,7 @@ module.exports = function () {
 					dbcc.query("UPDATE tab_filain SET status=2 WHERE mobile=" + mobile);
 					let sessionid = await getCustomUuid();
 					let protocol = await getQueueProtocol();
-					if(!protocol){
+					if (!protocol) {
 						protocol = await getProtocol();
 					}
 					dbcc.query("INSERT INTO tab_atendein (sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name, mailInfo, protocolo, infraMobile) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot, origem, sessionBotCcs, optAtendimento, optValue, name, mailInfo, protocol, infraMobile], function (err, result) {
@@ -162,7 +162,7 @@ module.exports = function () {
 							console.log("Values: " + sessionid, mobile, dtin, account, photo, fkto, fkname, sessionBot, origem, sessionBotCcs)
 						} else {
 							dbcc.query("DELETE FROM tab_filain WHERE mobile=" + mobile);
-							payload = { sessionid: sessionid, mobile: mobile, account: account, photo: photo, atendir: atendir, protocol : protocol };
+							payload = { sessionid: sessionid, mobile: mobile, account: account, photo: photo, atendir: atendir, protocol: protocol };
 							resolve(payload)
 						}
 					});
@@ -315,6 +315,34 @@ module.exports = function () {
 					resolve(false)
 				}
 			} catch (err) {
+				reject(err)
+			}
+		})
+	}
+
+	this.getMoreBalanceInfo = async function (mobiles) {
+		return new Promise(async function (resolve, reject) {
+			try {
+				console.log('>>>>', mobiles);
+				for (let i = 0; i < mobiles.length; i++) {
+					console.log('>>>> ', mobiles[i].infraMobile);
+					let query = "SELECT COUNT(*) AS qtd  FROM tab_logs WHERE infraMobile LIKE ? AND msgdir = 'i' AND DATE(dt) = DATE(NOW());";
+					let params = [`%${mobiles[i].infraMobile.replace("@c.us", "")}%`];
+					let list = await runDynamicQuery(query, params);
+					if (list.length > 0) {
+						mobiles[i].msgIn = list[0].qtd
+					}
+					//
+					let subQuery = "SELECT COUNT(*) AS qtd FROM tab_atendein WHERE infraMobile = ?;"
+					let subParams = [mobiles[i].infraMobile.replace("@c.us", "")];
+					let subList = await runDynamicQuery(subQuery, subParams);
+					if (subList.length > 0) {
+						mobiles[i].atendeIn = subList[0].qtd
+					}
+				}
+				resolve(mobiles)
+			} catch (err) {
+				console.log(err)
 				reject(err)
 			}
 		})
