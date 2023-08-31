@@ -33,10 +33,15 @@ module.exports = function () {
 
 	this.getProtocol = function () {
 		return new Promise(function (resolve, reject) {
-			let myDate = new Date().toISOString()
-			myDate = myDate.replace('-', '').replace('-', '').replace('T', '').replace(':', '').replace(':', '').replace(':', '').replace('.', '').replace('Z', '')
-
-			resolve(myDate)
+			try {
+				log("getProtocol")
+				let myDate = new Date().toISOString()
+				myDate = myDate.replace('-', '').replace('-', '').replace('T', '').replace(':', '').replace(':', '').replace(':', '').replace('.', '').replace('Z', '')
+				resolve(myDate)
+			} catch (err) {
+				console.log(err)
+				reject(err)
+			}
 		})
 	}
 
@@ -301,7 +306,7 @@ module.exports = function () {
 				let followQuery = "SELECT a.*, b.descricao FROM tab_encerrain AS a LEFT JOIN tab_statusen AS b ON a.`status` = b.`id`WHERE dten BETWEEN (CURRENT_TIMESTAMP() - INTERVAL 200 DAY) AND CURRENT_TIMESTAMP() AND b.descricao LIKE '%FOLLOW%' AND a.mobile = ? ORDER BY a.dten DESC LIMIT 1"
 				let followParams = [mobile]
 				let folllowList = await runDynamicQuery(followQuery, followParams);
-
+				log("Default Test")
 				if (folllowList.length > 0) {
 					let fkto = folllowList[0].fkto
 
