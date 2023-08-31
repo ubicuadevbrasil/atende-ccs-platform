@@ -17,6 +17,7 @@ socket.on("connect", function () {
 })
 
 let balanceamentoInterval = setInterval(() => {
+    console.log('bi-balanceamento')
     socket.emit('bi-balanceamento')
  }, 5000);
 

@@ -922,6 +922,17 @@ io.on('connection', function (socket) {
 		}
 	});
 
+	socket.on("bi-balanceamento", async function (payload) {
+		console.log("> Buscando balanceamento")
+		let jsonString = infraMobile
+		let contactsQuery = "CALL ccs_volume_msgsV3(?)";
+		let contactsParams = [jsonString];
+		let contactsList = await runDynamicQuery(contactsQuery, contactsParams);
+		let fullContactsList = await getMoreBalanceInfo(contactsList[0])
+		// console.log("contactsList", contactsList)
+		socket.emit('bi-balanceamento', fullContactsList);
+	})
+
 	// HISTORY EVENTS
 	socket.on('bi-historyone', async function (payload) {
 		log("> Buscando historico de atendimento")
@@ -1109,40 +1120,46 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('bi-callinput', async function (payload) {
-		log("> Call Input");
-		let fkto = payload.fkid;
-		let fkname = payload.fkname;
-		let mobile = payload.mobile;
-		let atendir = 'out';
-		let dtin = getTimestamp();
-
-		// Select from fila
-		let filaQuery = "SELECT * FROM tab_filain WHERE mobile=? LIMIT 1";
-		let filaParams = [mobile];
-		let filaList = await runDynamicQuery(filaQuery, filaParams);
-		if (filaList.length == 0) {
-			let atendeQuery = "SELECT * FROM tab_atendein WHERE mobile=? LIMIT 1";
-			let atendeParams = [mobile];
-			let atendeList = await runDynamicQuery(atendeQuery, atendeParams);
-			if (atendeList.length == 0) {
-				let followByAnother = await checkAtendemail(mobile, fkto)
-				if (followByAnother) {
-					socket.emit('bi-callinput', { status: '69' });
+		try {
+			log("> Call Input");
+			let fkto = payload.fkid;
+			let fkname = payload.fkname;
+			let mobile = payload.mobile;
+			let atendir = 'out';
+			let dtin = getTimestamp();
+	
+			// Select from fila
+			let filaQuery = "SELECT * FROM tab_filain WHERE mobile=? LIMIT 1";
+			let filaParams = [mobile];
+			let filaList = await runDynamicQuery(filaQuery, filaParams);
+			if (filaList.length == 0) {
+				let atendeQuery = "SELECT * FROM tab_atendein WHERE mobile=? LIMIT 1";
+				let atendeParams = [mobile];
+				let atendeList = await runDynamicQuery(atendeQuery, atendeParams);
+				if (atendeList.length == 0) {
+					let followByAnother = await checkAtendemail(mobile, fkto)
+					if (followByAnother) {
+						socket.emit('bi-callinput', { status: '69' });
+					} else {
+						log("Go to insert")
+						let protocol = await getProtocol();
+						log(protocol)
+						// Insert into atendein
+						let atendeQuery_Min = "INSERT INTO tab_atendein (sessionid, mobile, status, dtin, fkto, fkname, atendir, protocolo) VALUES(UUID(), ?, ?, ?, ?, ?, ?, ?)";
+						let atendeParams_Min = [mobile, 0, dtin, fkto, fkname, atendir, protocol];
+						console.log(atendeQuery_Min)
+						console.log(atendeParams_Min)
+						let atendeList = await runDynamicQuery(atendeQuery_Min, atendeParams_Min);
+						socket.emit('bi-callinput', { status: '200' });
+					}
 				} else {
-					//
-					let protocol = await getProtocol();
-					// Insert into atendein
-					let atendeQuery = "INSERT INTO tab_atendein (sessionid, mobile, originalMobile, status, dtin, fkto, fkname, atendir, protocolo, infraMobile) VALUES(UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-					let atendeParams = [mobile, originalMobile, status, dtin, fkto, fkname, atendir, protocol, infraMobile];
-					let atendeList = await runDynamicQuery(atendeQuery, atendeParams);
-					socket.emit('bi-callinput', { status: '200' });
+					socket.emit('bi-callinput', { status: '400' });
 				}
-
 			} else {
 				socket.emit('bi-callinput', { status: '400' });
 			}
-		} else {
-			socket.emit('bi-callinput', { status: '400' });
+		} catch (err) {
+			log("> Error Calling Inpput ", err);
 		}
 	});
 
