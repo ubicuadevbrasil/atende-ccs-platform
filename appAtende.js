@@ -67,7 +67,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
 
 // Logging
-var logging = true
+var logging = false
 if (!logging) {
 	console.log = function () { };
 	log = function (msg) { }
